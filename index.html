@@ -281,13 +281,13 @@
 <!-- FACE CONFIRM MODAL -->
 <div class="modal-backdrop" id="faceConfirmModal">
   <div class="modal-card">
-    <div class="modal-icon">🎉</div>
+    <div class="modal-icon">🫆</div>
     <h3>พบใบหน้าของท่าน</h3>
-    <p>ระบบระบุตัวตนได้แล้ว</p>
+    <p></p>
     <div class="modal-name" id="faceConfirmName"></div>
     <div class="modal-buttons">
       <button class="modal-btn primary" onclick="confirmFaceLogin()">✅ ยืนยันเข้าสู่ระบบ</button>
-      <button class="modal-btn outline" onclick="cancelFaceConfirm()">🔄 ลองใหม่</button>
+      <button class="modal-btn outline" onclick="cancelFaceConfirm()">❌ มีข้อผิดพลาด ลองใหม่</button>
     </div>
   </div>
 </div>
@@ -420,8 +420,8 @@
       <!-- iPhone Toggle -->
       <div class="login-toggle-wrap">
         <div class="login-toggle-bg" id="toggleBg"></div>
-        <button class="toggle-btn active" id="tab1" onclick="switchLoginTab(1)">🔢 เลข 13 หลัก</button>
-        <button class="toggle-btn" id="tab2" onclick="switchLoginTab(2)">😊 Facial Login</button>
+        <button class="toggle-btn active" id="tab1" onclick="switchLoginTab(1)"> เลข 13 หลัก</button>
+        <button class="toggle-btn" id="tab2" onclick="switchLoginTab(2)">📷 Facial Login</button>
       </div>
 
       <!-- Panel 1: ID + Phone -->
@@ -612,6 +612,20 @@ let savedPdfLinks = {};
 let existingFiles = {};
 let dropdownsLoaded = false;
 
+// ===== GAS API URL (สำหรับ GitHub Pages) =====
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
+
+async function callGAS(action, params) {
+  const response = await fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: action, params: params || {} })
+  });
+  if (!response.ok) throw new Error('HTTP ' + response.status);
+  return await response.json();
+}
+
+
 // Face login state
 let faceModelsLoaded = false;
 let faceScanActive = false;
@@ -634,10 +648,10 @@ let regVideoStream = null;
 let regCamInterval = null;
 
 const FACE_MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-const SCAN_STRICT = 0.97;  // ยืนยันตัวตน
-const SCAN_MATCH  = 0.95;  // คะแนนขั้นต่ำต่อรูป
-const SCAN_GAP    = 0.05;  // ห่างจากอันดับ 2
-const SCAN_FLOOR  = 0.85;  // ต่ำกว่านี้ = ไม่ใช่คนในระบบ แจ้งทันที
+const SCAN_THRESHOLD_SINGLE = 0.93;
+const SCAN_THRESHOLD_MULTI = 0.90;
+const SCAN_GAP = 0.05;
+const SCAN_REJECT = 0.85;
 
 // ===== UTILS =====
 function showLoading(msg) {
@@ -697,8 +711,8 @@ function doLogin() {
   const btn = document.getElementById('btnLogin');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
-  google.script.run
-    .withSuccessHandler(function(result) {
+  callGAS('loginUser', { idNumber: id, phone: phone })
+    .then(function(result) {
       btn.disabled = false; btn.textContent = '🔐 เข้าสู่ระบบ';
       if (result.success) {
         currentUser = result.name;
@@ -710,11 +724,10 @@ function doLogin() {
         errEl.style.display = 'block';
       }
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e) {
       btn.disabled = false; btn.textContent = '🔐 เข้าสู่ระบบ';
       errEl.textContent = 'เกิดข้อผิดพลาด: ' + e; errEl.style.display = 'block';
-    })
-    .loginUser(id, phone);
+    });
 }
 document.getElementById('loginId').addEventListener('keypress', function(e) { if (e.key==='Enter') doLogin(); });
 document.getElementById('loginPhone').addEventListener('keypress', function(e) { if (e.key==='Enter') doLogin(); });
@@ -750,16 +763,15 @@ async function startFaceLogin() {
   // Load embeddings from server
   if (!embeddingsLoaded) {
     setFaceStatus('loading', '📥 กำลังโหลดข้อมูลใบหน้า...');
-    google.script.run
-      .withSuccessHandler(function(data) {
+    callGAS('getAllFaceEmbeddings', {})
+      .then(function(data) {
         allFaceEmbeddings = data;
         embeddingsLoaded = true;
         openFaceCamera();
       })
-      .withFailureHandler(function(e) {
+      .catch(function(e) {
         setFaceStatus('error', '❌ โหลดข้อมูลไม่สำเร็จ');
-      })
-      .getAllFaceEmbeddings();
+      });
   } else {
     openFaceCamera();
   }
@@ -855,50 +867,42 @@ function matchFaceDescriptor(descriptor) {
     return { success: false, noRegistration: true };
   }
 
-  // คำนวณคะแนนต่อ user พร้อม matchCount (logic จาก Code.gs)
-  const users = [];
+  let bestScore = -1;
+  let bestName = '';
+  let secondBestScore = -1;
+
   for (const user of allFaceEmbeddings) {
-    let best = 0;
-    let matchCount = 0;
     for (const embStr of user.embeddings) {
       try {
         const stored = JSON.parse(embStr);
         if (!stored || stored.length !== descriptor.length) continue;
-        const sim = cosineSimilarity(descriptor, new Float32Array(stored));
-        if (sim > best) best = sim;
-        if (sim >= SCAN_MATCH) matchCount++;
-      } catch(_) { continue; }
+        const storedF32 = new Float32Array(stored);
+        const sim = cosineSimilarity(descriptor, storedF32);
+        if (sim > bestScore) {
+          secondBestScore = bestScore;
+          bestScore = sim;
+          bestName = user.name;
+        } else if (sim > secondBestScore) {
+          secondBestScore = sim;
+        }
+      } catch(e) { continue; }
     }
-    users.push({ name: user.name, best, matchCount });
   }
 
-  users.sort((a, b) => b.best - a.best);
+  // Safety reject
+  if (bestScore < SCAN_REJECT) return { success: false };
 
-  const top         = users[0];
-  const second      = users[1] || null;
-  const bestScore   = top.best;
-  const matchCount  = top.matchCount;
-  const secondScore = second ? second.best : 0;
+  const isSingle = allFaceEmbeddings.length === 1;
+  const threshold = isSingle ? SCAN_THRESHOLD_SINGLE : SCAN_THRESHOLD_MULTI;
 
-  // ต่ำกว่า FLOOR = ไม่ใช่คนในระบบแน่ๆ แจ้งทันที
-  if (bestScore < SCAN_FLOOR) {
-    return { success: false, noRegistration: true };
+  if (bestScore < threshold) return { success: false };
+
+  // Gap check (only when multiple users)
+  if (!isSingle && secondBestScore >= 0) {
+    if ((bestScore - secondBestScore) < SCAN_GAP) return { success: false };
   }
 
-  // กรณีคนเดียวในระบบ
-  if (users.length === 1) {
-    if (bestScore >= SCAN_STRICT && matchCount >= 2) {
-      return { success: true, name: top.name };
-    }
-    return { success: false };
-  }
-
-  // กรณีหลายคน
-  if (matchCount < 2) return { success: false };
-  if ((bestScore - secondScore) <= SCAN_GAP) return { success: false };
-  if (bestScore >= SCAN_STRICT) return { success: true, name: top.name };
-
-  return { success: false };
+  return { success: true, name: bestName, score: bestScore };
 }
 
 function cosineSimilarity(a, b) {
@@ -985,8 +989,8 @@ function doRegStep1() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-  google.script.run
-    .withSuccessHandler(function(result) {
+  callGAS('checkFaceRegistration', { idNumber: id, phone: phone })
+    .then(function(result) {
       btn.disabled = false; btn.textContent = 'ถัดไป →';
       if (!result.found) {
         errEl.textContent = 'ไม่พบข้อมูลผู้ใช้ กรุณาตรวจสอบเลขประจำตัวและเบอร์โทรศัพท์';
@@ -1024,11 +1028,10 @@ function doRegStep1() {
       }
       showRegStep('regStep2');
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e) {
       btn.disabled = false; btn.textContent = 'ถัดไป →';
       errEl.textContent = 'เกิดข้อผิดพลาด: ' + e; errEl.style.display = 'block';
-    })
-    .checkFaceRegistration(id, phone);
+    });
 }
 
 async function proceedToCapture() {
@@ -1140,8 +1143,8 @@ async function submitRegistration() {
   stopRegCamera();
   showRegStep('regStep4');
 
-  google.script.run
-    .withSuccessHandler(function(result) {
+  callGAS('saveFaceRegistration', { idNumber: regIdVal, phone: regPhoneVal, embeddings: regEmbeddings, faceImages: regPhotos })
+    .then(function(result) {
       document.getElementById('regModal').classList.remove('active');
       if (result.success) {
         embeddingsLoaded = false; // reload on next scan
@@ -1153,11 +1156,10 @@ async function submitRegistration() {
         alert('เกิดข้อผิดพลาด: ' + (result.error || 'ไม่ทราบสาเหตุ'));
       }
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e) {
       document.getElementById('regModal').classList.remove('active');
       alert('เกิดข้อผิดพลาด: ' + e);
-    })
-    .saveFaceRegistration(regIdVal, regPhoneVal, regEmbeddings, regPhotos);
+    });
 }
 
 // ===== HISTORY =====
@@ -1165,16 +1167,15 @@ function loadHistory() {
   showPage('pageHistory');
   document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
   showLoading('กำลังโหลดรายการรายงาน...');
-  google.script.run
-    .withSuccessHandler(function(reports) {
+  callGAS('getUserReports', { userName: currentUser })
+    .then(function(reports) {
       hideLoading(); renderHistory(reports);
       if (!dropdownsLoaded) preloadDropdowns();
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e) {
       hideLoading(); renderHistory([]);
       document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
-    })
-    .getUserReports(currentUser);
+    });
 }
 
 function renderHistory(reports) {
@@ -1203,10 +1204,10 @@ function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'
 // ===== DROPDOWNS =====
 let ddData = { departments: [], positions: [], types: [], references: [] };
 function preloadDropdowns() {
-  google.script.run.withSuccessHandler(function(d) { ddData.departments = d; }).getDepartments();
-  google.script.run.withSuccessHandler(function(d) { ddData.positions = d; }).getDropdownOptions('position');
-  google.script.run.withSuccessHandler(function(d) { ddData.types = d; }).getDropdownOptions('type');
-  google.script.run.withSuccessHandler(function(d) { ddData.references = d; }).getDropdownOptions('reference');
+  callGAS('getDepartments', {}).then(function(d) { ddData.departments = d; }).catch(function(){});
+  callGAS('getDropdownOptions', { column: 'position' }).then(function(d) { ddData.positions = d; }).catch(function(){});
+  callGAS('getDropdownOptions', { column: 'type' }).then(function(d) { ddData.types = d; }).catch(function(){});
+  callGAS('getDropdownOptions', { column: 'reference' }).then(function(d) { ddData.references = d; }).catch(function(){});
   dropdownsLoaded = true;
 }
 function populateSelect(id, options, currentVal) {
@@ -1226,10 +1227,9 @@ function openEditForm(rowIndex, reportNum) {
   document.getElementById('editReportNumLabel').textContent = 'หมายเลขรายงาน: ' + reportNum;
   document.getElementById('alertEdit').innerHTML = '';
   showLoading('กำลังโหลดข้อมูลรายงาน...');
-  google.script.run
-    .withSuccessHandler(function(rowData) { hideLoading(); fillEditForm(rowData); showPage('pageEdit'); })
-    .withFailureHandler(function(e) { hideLoading(); alert('เกิดข้อผิดพลาด: ' + e); })
-    .getReportRowData(rowIndex);
+  callGAS('getReportRowData', { rowIndex: rowIndex })
+    .then(function(rowData) { hideLoading(); fillEditForm(rowData); showPage('pageEdit'); })
+    .catch(function(e) { hideLoading(); alert('เกิดข้อผิดพลาด: ' + e); });
 }
 
 function fillEditForm(d) {
@@ -1277,7 +1277,7 @@ function loadDropdownsForEdit(d) {
   function setupDeptAndName() {
     populateSelect('e_department', ddData.departments, d.department);
     if (d.department) {
-      google.script.run.withSuccessHandler(function(names) { populateSelect('e_reporterName', names, d.reporterName); }).getNamesByDepartment(d.department);
+      callGAS('getNamesByDepartment', { department: d.department }).then(function(names) { populateSelect('e_reporterName', names, d.reporterName); }).catch(function(){});
     }
   }
   function setupOthers() {
@@ -1289,10 +1289,10 @@ function loadDropdownsForEdit(d) {
   else {
     let loaded = 0;
     function checkDone() { loaded++; if (loaded >= 4) { setupDeptAndName(); setupOthers(); } }
-    google.script.run.withSuccessHandler(function(d2) { ddData.departments=d2; checkDone(); }).getDepartments();
-    google.script.run.withSuccessHandler(function(d2) { ddData.positions=d2; checkDone(); }).getDropdownOptions('position');
-    google.script.run.withSuccessHandler(function(d2) { ddData.types=d2; checkDone(); }).getDropdownOptions('type');
-    google.script.run.withSuccessHandler(function(d2) { ddData.references=d2; checkDone(); }).getDropdownOptions('reference');
+    callGAS('getDepartments', {}).then(function(d2) { ddData.departments=d2; checkDone(); }).catch(checkDone);
+    callGAS('getDropdownOptions', { column: 'position' }).then(function(d2) { ddData.positions=d2; checkDone(); }).catch(checkDone);
+    callGAS('getDropdownOptions', { column: 'type' }).then(function(d2) { ddData.types=d2; checkDone(); }).catch(checkDone);
+    callGAS('getDropdownOptions', { column: 'reference' }).then(function(d2) { ddData.references=d2; checkDone(); }).catch(checkDone);
   }
 }
 
@@ -1301,7 +1301,7 @@ document.getElementById('e_department').addEventListener('change', function() {
   const sel = document.getElementById('e_reporterName');
   sel.innerHTML = '<option value="">กำลังโหลด...</option>';
   if (!dept) { sel.innerHTML = '<option value="">เลือกชื่อผู้รายงาน</option>'; return; }
-  google.script.run.withSuccessHandler(function(names) { populateSelect('e_reporterName', names, ''); }).getNamesByDepartment(dept);
+  callGAS('getNamesByDepartment', { department: dept }).then(function(names) { populateSelect('e_reporterName', names, ''); }).catch(function(){});
 });
 
 document.getElementById('e_trainingStartDate').addEventListener('change', calcDays);
@@ -1407,8 +1407,8 @@ async function saveEdit() {
     if (input.files[0]) data.files[id.replace('e_','')] = await fileToBase64(input.files[0]);
   }
 
-  google.script.run
-    .withSuccessHandler(function(result) {
+  callGAS('saveEditedReport', { data: data, rowIndex: currentRowIndex })
+    .then(function(result) {
       hideLoading();
       if (result.success) {
         savedPdfLinks = {pdf1: result.pdfLink1, pdf2: result.pdfLink2};
@@ -1419,12 +1419,11 @@ async function saveEdit() {
         document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
       }
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e) {
       hideLoading();
       document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
       document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
-    })
-    .saveEditedReport(data, currentRowIndex);
+    });
 }
 
 function fileToBase64(file) {
