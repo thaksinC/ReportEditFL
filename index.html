@@ -612,7 +612,7 @@ let savedPdfLinks = {};
 let existingFiles = {};
 let dropdownsLoaded = false;
 
-// ===== GAS API URL (สำหรับ GitHub Pages) =====
+// ===== GAS API URL =====
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
 async function callGAS(action, params) {
@@ -625,6 +625,11 @@ async function callGAS(action, params) {
   return await response.json();
 }
 
+// ===== FACE LOGIN CONSTANTS (ปรับ logic ให้เข้มขึ้น) =====
+const FACE_MODEL_URL  = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+const STRICT          = 0.97;  // score ขั้นต่ำที่ต้องผ่าน
+const MATCH           = 0.95;  // threshold นับ matchCount ต่อ embedding
+const GAP             = 0.05;  // ห่างจาก 2nd best (กรณีหลายคน)
 
 // Face login state
 let faceModelsLoaded = false;
@@ -646,12 +651,6 @@ let regPhotos = ['', '', ''];
 let regEmbeddings = ['', '', ''];
 let regVideoStream = null;
 let regCamInterval = null;
-
-const FACE_MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-const SCAN_THRESHOLD_SINGLE = 0.93;
-const SCAN_THRESHOLD_MULTI = 0.90;
-const SCAN_GAP = 0.05;
-const SCAN_REJECT = 0.85;
 
 // ===== UTILS =====
 function showLoading(msg) {
@@ -760,7 +759,6 @@ async function startFaceLogin() {
     }
   }
 
-  // Load embeddings from server
   if (!embeddingsLoaded) {
     setFaceStatus('loading', '📥 กำลังโหลดข้อมูลใบหน้า...');
     callGAS('getAllFaceEmbeddings', {})
@@ -825,7 +823,6 @@ async function runFaceScan() {
       return;
     }
 
-    // Draw face box
     const det = detections[0];
     const box = det.detection.box;
     ctx.strokeStyle = '#14b8a6';
@@ -836,7 +833,6 @@ async function runFaceScan() {
 
     setFaceStatus('detected', '✅ พบใบหน้า กำลังตรวจสอบ...');
 
-    // Anti-spoofing: require real liveness (basic check - face size relative to frame)
     const faceArea = box.width * box.height;
     const frameArea = canvas.width * canvas.height;
     if (faceArea / frameArea < 0.04) {
@@ -844,7 +840,6 @@ async function runFaceScan() {
       return;
     }
 
-    // Match against stored embeddings
     const descriptor = det.descriptor;
     const matchResult = matchFaceDescriptor(descriptor);
 
@@ -855,54 +850,61 @@ async function runFaceScan() {
       document.getElementById('faceConfirmModal').classList.add('active');
       faceConfirmedName = matchResult.name;
       setFaceStatus('detected', '✅ ระบุตัวตนได้แล้ว');
-    } else if (matchResult.noRegistration) {
-      faceLoginPaused = true;
-      document.getElementById('notRegisteredModal').classList.add('active');
     }
+    // ไม่มีใบหน้าในระบบ = ไม่ทำอะไร สแกนต่อไปเรื่อยๆ
   }, 800);
 }
 
+// ===== FACE MATCHING LOGIC (แก้ไขแล้ว) =====
 function matchFaceDescriptor(descriptor) {
   if (!allFaceEmbeddings || allFaceEmbeddings.length === 0) {
-    return { success: false, noRegistration: true };
+    return { success: false };
   }
 
-  let bestScore = -1;
-  let bestName = '';
-  let secondBestScore = -1;
+  const users = [];
 
+  // คำนวณ best score และ matchCount ของแต่ละคน
   for (const user of allFaceEmbeddings) {
+    let best = 0;
+    let matchCount = 0;
+
     for (const embStr of user.embeddings) {
       try {
         const stored = JSON.parse(embStr);
         if (!stored || stored.length !== descriptor.length) continue;
         const storedF32 = new Float32Array(stored);
         const sim = cosineSimilarity(descriptor, storedF32);
-        if (sim > bestScore) {
-          secondBestScore = bestScore;
-          bestScore = sim;
-          bestName = user.name;
-        } else if (sim > secondBestScore) {
-          secondBestScore = sim;
-        }
+        if (sim > best) best = sim;
+        if (sim >= MATCH) matchCount++;  // นับว่า embedding นี้ "ผ่าน"
       } catch(e) { continue; }
     }
+
+    users.push({ name: user.name, best, matchCount });
   }
 
-  // Safety reject
-  if (bestScore < SCAN_REJECT) return { success: false };
+  if (users.length === 0) return { success: false };
 
-  const isSingle = allFaceEmbeddings.length === 1;
-  const threshold = isSingle ? SCAN_THRESHOLD_SINGLE : SCAN_THRESHOLD_MULTI;
+  // เรียงจาก best score สูงสุด
+  users.sort((a, b) => b.best - a.best);
 
-  if (bestScore < threshold) return { success: false };
+  const top    = users[0];
+  const second = users[1] || null;
 
-  // Gap check (only when multiple users)
-  if (!isSingle && secondBestScore >= 0) {
-    if ((bestScore - secondBestScore) < SCAN_GAP) return { success: false };
+  // บังคับ matchCount ≥ 2 เสมอ (ต้องผ่านอย่างน้อย 2 ใน 3 embedding)
+  if (top.matchCount < 2) return { success: false };
+
+  // กรณีมีคนเดียวในระบบ — ต้องได้ STRICT เท่านั้น
+  if (users.length === 1) {
+    if (top.best >= STRICT) return { success: true, name: top.name };
+    return { success: false };
   }
 
-  return { success: true, name: bestName, score: bestScore };
+  // กรณีหลายคน — ต้องห่างจาก 2nd best ด้วย GAP
+  const secondScore = second ? second.best : 0;
+  if ((top.best - secondScore) <= GAP) return { success: false };
+  if (top.best >= STRICT) return { success: true, name: top.name };
+
+  return { success: false };
 }
 
 function cosineSimilarity(a, b) {
@@ -946,7 +948,6 @@ function closeNotReg() {
 
 // ===== REGISTER FACE =====
 function openRegModal() {
-  // Reset
   regCaptureStep = 0;
   regPhotos = ['', '', ''];
   regEmbeddings = ['', '', ''];
@@ -962,11 +963,6 @@ function openRegModal() {
 function closeRegModal() {
   document.getElementById('regModal').classList.remove('active');
   stopRegCamera();
-}
-
-function closeNotReg() {
-  document.getElementById('notRegisteredModal').classList.remove('active');
-  faceLoginPaused = false;
 }
 
 function showRegStep(id) {
@@ -1046,7 +1042,6 @@ async function proceedToCapture() {
     video.srcObject = stream;
     await video.play();
 
-    // Load face models if not loaded yet
     if (!faceModelsLoaded) {
       await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL);
       await faceapi.nets.faceLandmark68TinyNet.loadFromUri(FACE_MODEL_URL);
@@ -1121,7 +1116,6 @@ async function captureRegPhoto() {
     return;
   }
 
-  // Capture image
   const cap = document.createElement('canvas');
   cap.width = video.videoWidth; cap.height = video.videoHeight;
   const ctx = cap.getContext('2d');
@@ -1147,7 +1141,7 @@ async function submitRegistration() {
     .then(function(result) {
       document.getElementById('regModal').classList.remove('active');
       if (result.success) {
-        embeddingsLoaded = false; // reload on next scan
+        embeddingsLoaded = false;
         alert('✅ ลงทะเบียนใบหน้าเรียบร้อยแล้ว!\nท่านสามารถใช้ Facial Login ได้แล้ว');
         if (document.getElementById('panel2').classList.contains('active')) {
           startFaceLogin();
