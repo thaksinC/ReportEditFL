@@ -625,17 +625,19 @@ async function callGAS(action, params) {
   return await response.json();
 }
 
-// ===== FACE LOGIN CONSTANTS (ปรับ logic ให้เข้มขึ้น) =====
+// ===== FACE LOGIN CONSTANTS =====
+// face-api.js@0.22.2 ให้ cosine similarity ต่ำกว่า vladmandic มาก (~0.6-0.8)
 const FACE_MODEL_URL  = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-const STRICT          = 0.97;  // score ขั้นต่ำที่ต้องผ่าน
-const MATCH           = 0.95;  // threshold นับ matchCount ต่อ embedding
-const GAP             = 0.05;  // ห่างจาก 2nd best (กรณีหลายคน)
+const STRICT          = 0.75;  // score ขั้นต่ำที่ต้องผ่าน
+const MATCH           = 0.70;  // threshold นับ matchCount ต่อ embedding
+const GAP             = 0.08;  // ห่างจาก 2nd best (กรณีหลายคน)
 
 // Face login state
 let faceModelsLoaded = false;
 let faceScanActive = false;
 let faceVideoStream = null;
 let faceDetectionInterval = null;
+let faceIsProcessing = false;
 let allFaceEmbeddings = [];
 let embeddingsLoaded = false;
 let faceConfirmedName = null;
@@ -804,55 +806,58 @@ async function runFaceScan() {
   const canvas = document.getElementById('faceCanvas');
 
   faceDetectionInterval = setInterval(async function() {
-    if (!faceScanActive || faceLoginPaused) return;
+    if (!faceScanActive || faceLoginPaused || faceIsProcessing) return;
     if (video.readyState < 2) return;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    faceIsProcessing = true;
+    try {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-    const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
-    const detections = await faceapi.detectAllFaces(video, options)
-      .withFaceLandmarks(true)
-      .withFaceDescriptors();
+      const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+      const det = await faceapi.detectSingleFace(video, options)
+        .withFaceLandmarks(true)
+        .withFaceDescriptor();
 
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (!detections || detections.length === 0) {
-      setFaceStatus('scanning', '🔍 กำลังมองหาใบหน้า...');
-      return;
+      if (!det) {
+        setFaceStatus('scanning', '🔍 กำลังมองหาใบหน้า...');
+        return;
+      }
+
+      const box = det.detection.box;
+      ctx.strokeStyle = '#14b8a6';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.rect(canvas.width - box.x - box.width, box.y, box.width, box.height);
+      ctx.stroke();
+
+      const faceArea = box.width * box.height;
+      const frameArea = canvas.width * canvas.height;
+      if (faceArea / frameArea < 0.04) {
+        setFaceStatus('scanning', '📸 กรุณาเข้าใกล้กล้องมากขึ้น');
+        return;
+      }
+
+      setFaceStatus('detected', '✅ พบใบหน้า กำลังตรวจสอบ...');
+      const matchResult = matchFaceDescriptor(det.descriptor);
+
+      if (matchResult.success) {
+        faceLoginPaused = true;
+        beep();
+        document.getElementById('faceConfirmName').textContent = matchResult.name;
+        document.getElementById('faceConfirmModal').classList.add('active');
+        faceConfirmedName = matchResult.name;
+        setFaceStatus('detected', '✅ ระบุตัวตนได้แล้ว');
+      } else {
+        setFaceStatus('scanning', '🔍 กำลังสแกนใบหน้า...');
+      }
+    } finally {
+      faceIsProcessing = false;
     }
-
-    const det = detections[0];
-    const box = det.detection.box;
-    ctx.strokeStyle = '#14b8a6';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.rect(canvas.width - box.x - box.width, box.y, box.width, box.height);
-    ctx.stroke();
-
-    setFaceStatus('detected', '✅ พบใบหน้า กำลังตรวจสอบ...');
-
-    const faceArea = box.width * box.height;
-    const frameArea = canvas.width * canvas.height;
-    if (faceArea / frameArea < 0.04) {
-      setFaceStatus('scanning', '📸 กรุณาเข้าใกล้กล้องมากขึ้น');
-      return;
-    }
-
-    const descriptor = det.descriptor;
-    const matchResult = matchFaceDescriptor(descriptor);
-
-    if (matchResult.success) {
-      faceLoginPaused = true;
-      beep();
-      document.getElementById('faceConfirmName').textContent = matchResult.name;
-      document.getElementById('faceConfirmModal').classList.add('active');
-      faceConfirmedName = matchResult.name;
-      setFaceStatus('detected', '✅ ระบุตัวตนได้แล้ว');
-    }
-    // ไม่มีใบหน้าในระบบ = ไม่ทำอะไร สแกนต่อไปเรื่อยๆ
-  }, 800);
+  }, 500);
 }
 
 // ===== FACE MATCHING LOGIC (แก้ไขแล้ว) =====
@@ -890,21 +895,22 @@ function matchFaceDescriptor(descriptor) {
   const top    = users[0];
   const second = users[1] || null;
 
-  // บังคับ matchCount ≥ 2 เสมอ (ต้องผ่านอย่างน้อย 2 ใน 3 embedding)
-  if (top.matchCount < 2) return { success: false };
+  // ต้องได้ STRICT score ขั้นต่ำ
+  if (top.best < STRICT) return { success: false };
 
-  // กรณีมีคนเดียวในระบบ — ต้องได้ STRICT เท่านั้น
+  // ต้องผ่าน matchCount ≥ 1 (อย่างน้อย 1 embedding ต้องได้ MATCH)
+  if (top.matchCount < 1) return { success: false };
+
+  // กรณีมีคนเดียวในระบบ — ผ่านได้เลย
   if (users.length === 1) {
-    if (top.best >= STRICT) return { success: true, name: top.name };
-    return { success: false };
+    return { success: true, name: top.name };
   }
 
   // กรณีหลายคน — ต้องห่างจาก 2nd best ด้วย GAP
   const secondScore = second ? second.best : 0;
-  if ((top.best - secondScore) <= GAP) return { success: false };
-  if (top.best >= STRICT) return { success: true, name: top.name };
+  if ((top.best - secondScore) < GAP) return { success: false };
 
-  return { success: false };
+  return { success: true, name: top.name };
 }
 
 function cosineSimilarity(a, b) {
