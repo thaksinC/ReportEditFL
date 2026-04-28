@@ -2,11 +2,11 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แก้ไขรายงานการไปราชการ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>แก้ไขรายงานการไปราชการ - Facial Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     :root {
       --primary: #0f766e;
@@ -25,249 +25,709 @@
       --radius: 16px;
       --radius-sm: 10px;
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: 'Sarabun', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+    }
 
     /* ========== TOP BAR ========== */
     .topbar {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      padding: 0 32px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       box-shadow: 0 2px 16px rgba(15,118,110,0.25);
-      position: sticky; top: 0; z-index: 100;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .topbar-brand { display: flex; align-items: center; gap: 14px; color: white; }
-    .topbar-brand img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); }
-    .topbar-brand span { font-size: 17px; font-weight: 600; letter-spacing: 0.02em; }
-    .topbar-user { display: flex; align-items: center; gap: 12px; color: white; font-size: 14px; }
-    .user-badge { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 20px; font-weight: 500; }
-    .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.2s; }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: white;
+    }
+    .topbar-brand img {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .topbar-brand span {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 14px;
+    }
+    .user-badge {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .btn-logout {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
     .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
     /* ========== PAGES ========== */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ========== LOGIN PAGE ========== */
+    /* ========== LOGIN PAGE WITH TOGGLE ========== */
     .login-wrap {
       min-height: calc(100vh - 64px);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 40px 20px;
       background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 60%, #a7f3d0 100%);
     }
     .login-card {
-      background: white; border-radius: 24px;
+      background: white;
+      border-radius: 24px;
       box-shadow: var(--shadow-lg);
-      padding: 44px 44px 36px;
-      width: 100%; max-width: 460px;
+      padding: 40px 42px;
+      width: 100%;
+      max-width: 480px;
       border-top: 5px solid var(--primary);
     }
-    .login-logo { text-align: center; margin-bottom: 28px; }
-    .login-logo img { width: 76px; height: 76px; border-radius: 50%; box-shadow: 0 8px 24px rgba(15,118,110,0.2); border: 3px solid var(--primary-light); }
-    .login-logo h1 { font-size: 19px; font-weight: 700; color: var(--primary); margin-top: 14px; line-height: 1.4; }
-    .login-logo p { font-size: 13px; color: #999; margin-top: 5px; }
-
-    /* ---- iPhone-style Toggle ---- */
-    .login-toggle-wrap {
-      background: #f1f5f9;
-      border-radius: 14px;
-      padding: 4px;
+    
+    /* iOS Style Toggle */
+    .login-toggle {
+      background: #e8e8e8;
+      border-radius: 40px;
+      padding: 5px;
       display: flex;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
+      cursor: pointer;
       position: relative;
+      transition: all 0.3s ease;
     }
-    .login-toggle-bg {
-      position: absolute;
-      top: 4px; left: 4px;
-      width: calc(50% - 4px); height: calc(100% - 8px);
-      background: white;
-      border-radius: 11px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      transition: transform 0.28s cubic-bezier(.4,0,.2,1);
-      z-index: 0;
-    }
-    .login-toggle-bg.right { transform: translateX(100%); }
-    .toggle-btn {
-      flex: 1; padding: 10px 8px;
-      border: none; background: transparent;
-      font-family: inherit; font-size: 14px; font-weight: 600;
-      color: #94a3b8; cursor: pointer;
-      border-radius: 11px; z-index: 1; position: relative;
-      transition: color 0.2s;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .toggle-btn.active { color: var(--primary); }
-
-    /* ---- Login Method Panels ---- */
-    .login-panel { display: none; }
-    .login-panel.active { display: block; }
-
-    .login-field { margin-bottom: 18px; }
-    .login-field label { display: block; font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 7px; }
-    .login-field input { width: 100%; padding: 13px 16px; border: 2px solid #e0e0e0; border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; transition: all 0.2s; letter-spacing: 0.04em; }
-    .login-field input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px var(--primary-glow); }
-    .btn-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 4px; box-shadow: 0 4px 16px rgba(15,118,110,0.3); transition: all 0.2s; letter-spacing: 0.03em; }
-    .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(15,118,110,0.4); }
-    .login-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-top: 14px; display: none; }
-
-    /* ---- FACE LOGIN ---- */
-    .face-panel { }
-    .face-video-wrap {
-      position: relative;
-      width: 100%; max-width: 360px;
-      margin: 0 auto 14px;
-      border-radius: 16px; overflow: hidden;
-      background: #0f172a;
-      box-shadow: 0 4px 24px rgba(15,118,110,0.18);
-    }
-    #faceVideo {
-      width: 100%; display: block;
-      border-radius: 16px;
-      transform: scaleX(-1);
-    }
-    #faceCanvas {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      border-radius: 16px;
-      transform: scaleX(-1);
-    }
-    .face-status-bar {
+    .toggle-option {
+      flex: 1;
       text-align: center;
-      font-size: 13px; font-weight: 600;
-      padding: 8px 14px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      transition: all 0.3s;
+      padding: 12px 20px;
+      border-radius: 35px;
+      font-weight: 600;
+      font-size: 15px;
+      z-index: 2;
+      transition: color 0.3s ease;
+      color: #666;
+      cursor: pointer;
     }
-    .face-status-bar.scanning { background: #f0fdfa; color: #0f766e; }
-    .face-status-bar.detected { background: #dcfce7; color: #15803d; }
-    .face-status-bar.error { background: #fef2f2; color: #dc2626; }
-    .face-status-bar.loading { background: #fefce8; color: #a16207; }
-
+    .toggle-option.active {
+      color: white;
+    }
+    .toggle-slider {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: calc(50% - 5px);
+      height: calc(100% - 10px);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 35px;
+      transition: transform 0.3s ease;
+      z-index: 1;
+    }
+    .toggle-slider.move-right {
+      transform: translateX(100%);
+    }
+    
+    /* Login Methods Container */
+    .login-method {
+      transition: all 0.3s ease;
+    }
+    .login-method.hidden {
+      display: none;
+    }
+    
+    /* ID Login Form */
+    .login-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-logo img {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(15,118,110,0.2);
+      border: 3px solid var(--primary-light);
+    }
+    .login-logo h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 12px;
+      line-height: 1.3;
+    }
+    .login-field {
+      margin-bottom: 20px;
+    }
+    .login-field label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .login-field input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .login-field input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(15,118,110,0.3);
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(15,118,110,0.4);
+    }
+    .login-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 16px;
+      display: none;
+    }
+    
+    /* Facial Login Section */
+    .facial-container {
+      text-align: center;
+    }
+    .camera-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      border: 3px solid var(--primary-light);
+    }
+    video, #facialCanvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .face-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .scan-status {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .scan-status.scanning {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .scan-status.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .scan-status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
     .btn-register-face {
-      width: 100%; padding: 11px;
-      background: transparent;
-      border: 2px solid var(--border);
+      width: 100%;
+      padding: 12px;
+      background: white;
+      border: 2px solid var(--primary);
       color: var(--primary);
       border-radius: var(--radius-sm);
-      font-size: 14px; font-weight: 600; font-family: inherit;
-      cursor: pointer; margin-top: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 16px;
       transition: all 0.2s;
     }
-    .btn-register-face:hover { border-color: var(--primary-light); background: var(--bg); }
+    .btn-register-face:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-confirm-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .btn-confirm-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-    /* ========== FACE CONFIRM POPUP ========== */
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9997; justify-content: center; align-items: center; padding: 20px; }
-    .modal-backdrop.active { display: flex; }
-    .modal-card { background: white; border-radius: 24px; box-shadow: var(--shadow-lg); padding: 40px 36px; max-width: 420px; width: 100%; text-align: center; border-top: 5px solid var(--primary); }
-    .modal-icon { font-size: 48px; margin-bottom: 12px; }
-    .modal-card h3 { font-size: 21px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-    .modal-card p { color: #666; font-size: 14px; margin-bottom: 6px; }
-    .modal-name { font-size: 22px; font-weight: 700; color: var(--text); margin: 14px 0; background: var(--bg); border: 2px solid var(--border); border-radius: 12px; padding: 12px 20px; display: inline-block; width: 100%; }
-    .modal-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-    .modal-btn { padding: 13px 20px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; border: none; transition: all 0.2s; }
-    .modal-btn.primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; box-shadow: 0 4px 14px rgba(15,118,110,0.3); }
-    .modal-btn.secondary { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; }
-    .modal-btn.outline { background: white; border: 2px solid var(--border); color: var(--primary); }
-    .modal-btn:hover { transform: translateY(-1px); }
-    .modal-report-num { font-size: 15px; font-weight: 700; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin: 16px 0; display: inline-block; }
-
-    /* ========== REGISTER POPUP ========== */
-    #regModal .modal-card { max-width: 500px; text-align: left; padding: 36px 32px; }
-    #regModal h3 { text-align: center; }
-    .reg-step { display: none; }
-    .reg-step.active { display: block; }
-    .reg-field { margin-bottom: 16px; }
-    .reg-field label { display: block; font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 7px; }
-    .reg-field input { width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; transition: all 0.2s; }
-    .reg-field input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px var(--primary-glow); }
-    .reg-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: none; }
-    .reg-info { background: #f0fdfa; border: 1px solid #b2f5ea; color: #0f766e; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
-    .reg-steps-desc { margin-bottom: 20px; }
-    .reg-steps-desc .step-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: #f8fffe; }
-    .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
-    .step-text { font-size: 14px; line-height: 1.5; }
-    .step-text strong { color: var(--primary); }
-
-    /* Camera for registration */
-    .reg-cam-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: #0f172a; margin-bottom: 16px; }
-    #regVideo { width: 100%; display: block; border-radius: 14px; transform: scaleX(-1); }
-    #regCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
-    .reg-previews { display: flex; gap: 10px; margin-bottom: 14px; }
-    .reg-preview-item { flex: 1; text-align: center; }
-    .reg-preview-item img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; border: 2px solid #e0e0e0; background: #f5f5f5; display: block; }
-    .reg-preview-item img.captured { border-color: var(--primary); }
-    .reg-preview-label { font-size: 12px; font-weight: 600; color: #666; margin-top: 5px; }
-    .capture-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px; }
-    .cap-dot { width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s; }
-    .cap-dot.done { background: var(--primary); box-shadow: 0 0 6px var(--primary-light); }
-    .cap-dot.active { background: var(--accent); animation: pulse 0.8s infinite; }
-    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
-    .reg-cam-instruction { text-align: center; font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 10px; padding: 8px; background: #f0fdfa; border-radius: 8px; }
-
-    /* ========== HISTORY / EDIT PAGES ========== */
-    .history-wrap { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
-    .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-    .history-title { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-    .history-subtitle { font-size: 14px; color: #888; margin-top: 3px; font-weight: 400; }
-    .count-badge { background: var(--primary); color: white; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
-    .report-table-wrap { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
-    .report-table { width: 100%; border-collapse: collapse; }
-    .report-table thead tr { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
-    .report-table thead th { padding: 14px 18px; text-align: left; color: white; font-size: 14px; font-weight: 600; white-space: nowrap; }
-    .report-table tbody tr { border-bottom: 1px solid #f0fdf4; transition: background 0.15s; }
+    /* History Page Styles */
+    .history-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .history-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .history-title span.icon {
+      font-size: 26px;
+    }
+    .history-subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-top: 3px;
+      font-weight: 400;
+    }
+    .count-badge {
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+    .report-table-wrap {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .report-table thead tr {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    }
+    .report-table thead th {
+      padding: 14px 18px;
+      text-align: left;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .report-table tbody tr {
+      border-bottom: 1px solid #f0fdf4;
+      transition: background 0.15s;
+    }
     .report-table tbody tr:last-child { border-bottom: none; }
     .report-table tbody tr:hover { background: #f0fdfa; }
-    .report-table td { padding: 14px 18px; font-size: 14px; color: var(--text); vertical-align: middle; }
-    .type-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #ccfbf1; color: var(--primary); }
-    .report-table td.date-cell { white-space: nowrap; font-weight: 500; color: #0f766e; }
-    .btn-edit { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; transition: all 0.2s; box-shadow: 0 2px 8px rgba(15,118,110,0.25); }
-    .btn-edit:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,118,110,0.35); }
-    .empty-state { padding: 60px 20px; text-align: center; color: #999; }
-    .empty-state span { font-size: 48px; display: block; margin-bottom: 16px; }
-
-    /* ========== EDIT FORM ========== */
-    .edit-wrap { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
-    .edit-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-    .btn-back { display: inline-flex; align-items: center; gap: 8px; background: white; border: 2px solid var(--border); color: var(--primary); padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
-    .btn-back:hover { background: var(--bg); border-color: var(--primary-light); }
-    .edit-title { font-size: 22px; font-weight: 700; color: var(--primary); }
-    .edit-report-num { font-size: 13px; color: #888; font-weight: 400; }
-    .form-section { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 32px; margin-bottom: 20px; border: 1px solid var(--border); border-left: 5px solid var(--primary); }
-    .form-section h2 { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media(max-width:600px) { .form-row { grid-template-columns: 1fr; } }
+    .report-table td {
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .type-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ccfbf1;
+      color: var(--primary);
+    }
+    .btn-edit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(15,118,110,0.25);
+    }
+    .btn-edit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(15,118,110,0.35);
+    }
+    
+    /* Edit Form Styles */
+    .edit-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .edit-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 2px solid var(--border);
+      color: var(--primary);
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-back:hover {
+      background: var(--bg);
+      border-color: var(--primary-light);
+    }
+    .edit-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .edit-report-num {
+      font-size: 13px;
+      color: #888;
+      font-weight: 400;
+    }
+    .form-section {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+    }
+    .form-section h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media(max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 18px; }
-    .form-group:last-child { margin-bottom: 0; }
-    label { display: block; font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 7px; }
-    label .req { color: var(--danger); margin-left: 2px; }
-    input[type=text], input[type=number], input[type=date], select, textarea { width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; transition: all 0.2s; background: #fff; color: var(--text); }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px var(--primary-glow); }
-    input[readonly] { background: #f5f5f5; color: #888; cursor: not-allowed; }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+    input[type=text], input[type=number], input[type=date],
+    select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    input[readonly] { background: #f5f5f5; color: #888; }
     textarea { resize: vertical; min-height: 100px; }
-    .char-counter { text-align: right; font-size: 12px; color: #aaa; margin-top: 4px; }
-    .file-upload-box { position: relative; border: 2px dashed #b2dfdb; border-radius: var(--radius-sm); padding: 18px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: #f0fdfa; }
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    .file-upload-box {
+      position: relative;
+      border: 2px dashed #b2dfdb;
+      border-radius: var(--radius-sm);
+      padding: 18px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f0fdfa;
+    }
     .file-upload-box:hover { border-color: var(--primary); background: #e6fffa; }
-    .file-upload-box input[type=file] { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; padding: 0; border: none; }
+    .file-upload-box input[type=file] {
+      position: absolute;
+      opacity: 0;
+      width: 100%; height: 100%;
+      top: 0; left: 0;
+      cursor: pointer;
+    }
     .file-upload-box p { font-size: 13px; color: #777; pointer-events: none; }
     .file-preview { margin-top: 10px; display: flex; align-items: center; gap: 10px; justify-content: center; }
     .file-preview img { max-width: 90px; max-height: 90px; border-radius: 8px; border: 2px solid var(--border); }
-    .existing-file-note { font-size: 12px; color: #0f766e; margin-top: 6px; background: #f0fdfa; border: 1px solid #b2f5ea; border-radius: 6px; padding: 5px 10px; display: inline-block; }
-    .save-bar { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px 32px; display: flex; justify-content: flex-end; gap: 14px; border: 1px solid var(--border); margin-bottom: 40px; }
-    .btn-save { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border: none; padding: 13px 36px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 0 4px 16px rgba(15,118,110,0.3); transition: all 0.2s; }
-    .btn-save:hover { transform: translateY(-1px); }
-    .btn-cancel { background: white; border: 2px solid #e0e0e0; color: #666; padding: 13px 28px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
-
-    /* ========== LOADING ========== */
-    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
-    .loading-overlay.active { display: flex; }
-    .loading-overlay img { width: 120px; height: 120px; }
-    .loading-text { color: white; margin-top: 20px; font-size: 17px; font-weight: 500; }
-    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .alert { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; display: none; }
+    .existing-file-note {
+      font-size: 12px;
+      color: #0f766e;
+      margin-top: 6px;
+      background: #f0fdfa;
+      border: 1px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 5px 10px;
+      display: inline-block;
+    }
+    .save-bar {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .btn-save {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 13px 36px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(15,118,110,0.3);
+      transition: all 0.2s;
+    }
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(15,118,110,0.4);
+    }
+    .btn-cancel {
+      background: white;
+      border: 2px solid #e0e0e0;
+      color: #666;
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: #bbb; background: #f5f5f5; }
+    
+    /* Modal Styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 9998;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      padding: 32px 28px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-icon { font-size: 52px; margin-bottom: 16px; }
+    .modal-card h3 { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .modal-card p { color: #666; font-size: 14px; margin-bottom: 6px; }
+    .modal-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .modal-btn {
+      padding: 13px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .modal-btn.primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+    }
+    .modal-btn.secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .photo-steps {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .photo-step {
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    .photo-preview {
+      width: 100%;
+      height: 120px;
+      background: #f0fdfa;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .photo-preview img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .photo-step-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .reg-camera-container {
+      margin: 20px 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .detected-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
     .alert.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; display: block; }
     .alert.info { background: #f0fdfa; border: 1px solid #b2f5ea; color: #0f766e; display: block; }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .loading-overlay.active { display: flex; }
+    .loading-overlay img { width: 80px; height: 80px; }
+    .loading-text { color: white; margin-top: 20px; font-size: 17px; font-weight: 500; }
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: #999;
+    }
   </style>
 </head>
 <body>
@@ -276,123 +736,6 @@
 <div class="loading-overlay" id="loadingOverlay">
   <img src="https://img2.pic.in.th/pic/Untitled-designa252d1a12dd2af5b.gif" alt="Loading...">
   <div class="loading-text" id="loadingText">กำลังประมวลผล กรุณารอสักครู่...</div>
-</div>
-
-<!-- FACE CONFIRM MODAL -->
-<div class="modal-backdrop" id="faceConfirmModal">
-  <div class="modal-card">
-    <div class="modal-icon">🫆</div>
-    <h3>พบใบหน้าของท่าน</h3>
-    <p></p>
-    <div class="modal-name" id="faceConfirmName"></div>
-    <div class="modal-buttons">
-      <button class="modal-btn primary" onclick="confirmFaceLogin()">✅ ยืนยันเข้าสู่ระบบ</button>
-      <button class="modal-btn outline" onclick="cancelFaceConfirm()">❌ มีข้อผิดพลาด ลองใหม่</button>
-    </div>
-  </div>
-</div>
-
-<!-- NOT REGISTERED MODAL -->
-<div class="modal-backdrop" id="notRegisteredModal">
-  <div class="modal-card" style="text-align:center;">
-    <div class="modal-icon">❌</div>
-    <h3>ไม่พบข้อมูลใบหน้า</h3>
-    <p style="margin-bottom:18px;">ท่านยังไม่ได้ลงทะเบียน Facial Login<br>กรุณาลงทะเบียนก่อนใช้งาน</p>
-    <div class="modal-buttons">
-      <button class="modal-btn primary" onclick="openRegModal(); closeNotReg();">📷 ลงทะเบียนใบหน้าเพื่อใช้ Facial Login</button>
-      <button class="modal-btn outline" onclick="closeNotReg()">ปิด</button>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTER MODAL -->
-<div class="modal-backdrop" id="regModal">
-  <div class="modal-card">
-    <h3 style="margin-bottom:4px;">📷 ลงทะเบียน Facial Login</h3>
-
-    <!-- Step 1: ID + Phone -->
-    <div class="reg-step active" id="regStep1">
-      <p style="color:#888;font-size:13px;margin-bottom:18px;text-align:center;">กรอกข้อมูลเพื่อยืนยันตัวตนก่อนลงทะเบียน</p>
-      <div class="reg-field">
-        <label>เลขประจำตัว 13 หลัก</label>
-        <input type="text" id="regId" maxlength="13" placeholder="กรอกเลขประจำตัว 13 หลัก" inputmode="numeric">
-      </div>
-      <div class="reg-field">
-        <label>เบอร์โทรศัพท์</label>
-        <input type="text" id="regPhone" maxlength="20" placeholder="กรอกเบอร์โทรศัพท์" inputmode="tel">
-      </div>
-      <div class="reg-error" id="regStep1Error"></div>
-      <div class="modal-buttons" style="margin-top:18px;">
-        <button class="modal-btn primary" id="btnRegStep1" onclick="doRegStep1()">ถัดไป →</button>
-        <button class="modal-btn outline" onclick="closeRegModal()">ยกเลิก</button>
-      </div>
-    </div>
-
-    <!-- Step 2: Info / Already registered notice -->
-    <div class="reg-step" id="regStep2">
-      <div id="regStep2Content"></div>
-      <div class="modal-buttons" style="margin-top:16px;">
-        <button class="modal-btn primary" id="btnRegProceed" onclick="proceedToCapture()">ตกลง เริ่มลงทะเบียน</button>
-        <button class="modal-btn outline" onclick="closeRegModal()">ปิด</button>
-      </div>
-    </div>
-
-    <!-- Step 3: Camera Capture -->
-    <div class="reg-step" id="regStep3">
-      <div class="reg-cam-instruction" id="regInstruction">📸 เตรียมพร้อม – หน้าตรง</div>
-      <div class="capture-indicator">
-        <div class="cap-dot active" id="dot0"></div>
-        <div class="cap-dot" id="dot1"></div>
-        <div class="cap-dot" id="dot2"></div>
-      </div>
-      <div class="reg-cam-wrap" style="height:220px;">
-        <video id="regVideo" autoplay playsinline muted></video>
-        <canvas id="regCanvas"></canvas>
-      </div>
-      <div class="reg-previews">
-        <div class="reg-preview-item">
-          <img id="regPrev0" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-          <div class="reg-preview-label">หน้าตรง</div>
-        </div>
-        <div class="reg-preview-item">
-          <img id="regPrev1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-          <div class="reg-preview-label">หันซ้าย</div>
-        </div>
-        <div class="reg-preview-item">
-          <img id="regPrev2" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-          <div class="reg-preview-label">หันขวา</div>
-        </div>
-      </div>
-      <div class="modal-buttons">
-        <button class="modal-btn primary" id="btnCapture" onclick="captureRegPhoto()">📸 ถ่ายภาพ</button>
-        <button class="modal-btn outline" onclick="closeRegModal()">ยกเลิก</button>
-      </div>
-    </div>
-
-    <!-- Step 4: Saving -->
-    <div class="reg-step" id="regStep4">
-      <div style="text-align:center;padding:20px 0;">
-        <div style="font-size:48px;margin-bottom:16px;">⏳</div>
-        <p style="font-size:16px;font-weight:600;color:var(--primary);">กำลังบันทึกข้อมูลใบหน้า...</p>
-        <p style="font-size:13px;color:#888;margin-top:8px;">กรุณารอสักครู่</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- RESULT MODAL (after save report) -->
-<div class="modal-backdrop" id="resultModal">
-  <div class="modal-card">
-    <div class="modal-icon">✅</div>
-    <h3>บันทึกรายงานสำเร็จ!</h3>
-    <p>อัปเดตข้อมูลและสร้างเอกสารใหม่เรียบร้อยแล้ว</p>
-    <div class="modal-report-num" id="resultReportNum"></div>
-    <div class="modal-buttons">
-      <button class="modal-btn primary" onclick="openPDF(1)">📄 พิมพ์บันทึกข้อความ</button>
-      <button class="modal-btn secondary" onclick="openPDF(2)">📋 พิมพ์รายงานการอบรม</button>
-      <button class="modal-btn outline" onclick="closeModal()">🔙 กลับรายการรายงาน</button>
-    </div>
-  </div>
 </div>
 
 <!-- TOP BAR -->
@@ -407,25 +750,22 @@
   </div>
 </div>
 
-<!-- ====== PAGE: LOGIN ====== -->
+<!-- MAIN LOGIN PAGE -->
 <div class="page active" id="pageLogin">
   <div class="login-wrap">
     <div class="login-card">
-      <div class="login-logo">
-        <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
-        <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
-        <p>โรงเรียนสิงห์บุรี</p>
+      <div class="login-toggle" id="toggleContainer">
+        <div class="toggle-slider" id="toggleSlider"></div>
+        <div class="toggle-option active" data-method="id" id="toggleIdOption">📝 เลข 13 หลัก</div>
+        <div class="toggle-option" data-method="facial" id="toggleFacialOption">😊 Facial Login</div>
       </div>
-
-      <!-- iPhone Toggle -->
-      <div class="login-toggle-wrap">
-        <div class="login-toggle-bg" id="toggleBg"></div>
-        <button class="toggle-btn active" id="tab1" onclick="switchLoginTab(1)"> เลข 13 หลัก</button>
-        <button class="toggle-btn" id="tab2" onclick="switchLoginTab(2)">📷 Facial Login</button>
-      </div>
-
-      <!-- Panel 1: ID + Phone -->
-      <div class="login-panel active" id="panel1">
+      
+      <div id="idLoginMethod" class="login-method">
+        <div class="login-logo">
+          <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
+          <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
+          <p>โรงเรียนสิงห์บุรี</p>
+        </div>
         <div class="login-field">
           <label>เลขประจำตัว 13 หลัก</label>
           <input type="text" id="loginId" maxlength="13" placeholder="กรอกเลขประจำตัว 13 หลัก" inputmode="numeric">
@@ -437,29 +777,34 @@
         <button class="btn-login" id="btnLogin" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
         <div class="login-error" id="loginError"></div>
       </div>
-
-      <!-- Panel 2: Facial Login -->
-      <div class="login-panel" id="panel2">
-        <div class="face-video-wrap" id="faceVideoWrap">
-          <video id="faceVideo" autoplay playsinline muted></video>
-          <canvas id="faceCanvas"></canvas>
+      
+      <div id="facialLoginMethod" class="login-method hidden">
+        <div class="login-logo">
+          <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
+          <h1>สแกนใบหน้าเพื่อเข้าสู่ระบบ</h1>
+          <p>กรุณามองที่กล้อง</p>
         </div>
-        <div class="face-status-bar loading" id="faceStatus">⏳ กำลังโหลดโมเดลใบหน้า...</div>
-        <button class="btn-register-face" onclick="openRegModal()">📷 ลงทะเบียนใบหน้าเพื่อใช้ Facial Login</button>
+        <div class="camera-container">
+          <video id="facialVideo" width="400" height="300" autoplay playsinline muted></video>
+          <canvas id="faceOverlay" class="face-overlay"></canvas>
+        </div>
+        <div class="scan-status scanning" id="scanStatus">🔍 กำลังสแกนใบหน้า...</div>
+        <div id="detectedUserInfo" style="display:none;">
+          <div class="detected-name" id="detectedName"></div>
+        </div>
+        <button class="btn-confirm-login" id="confirmLoginBtn" onclick="confirmFacialLogin()" disabled>ยืนยันการล็อกอิน</button>
+        <button class="btn-register-face" onclick="openRegistrationModal()">📝 ลงทะเบียนใบหน้าเพื่อใช้ระบบการล็อกอินแบบ Facial Login</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ====== PAGE: HISTORY ====== -->
+<!-- HISTORY PAGE -->
 <div class="page" id="pageHistory">
   <div class="history-wrap">
     <div class="history-header">
       <div>
-        <div class="history-title">
-          <span>📋</span>
-          <div>ประวัติการรายงาน<div class="history-subtitle" id="historySubtitle"></div></div>
-        </div>
+        <div class="history-title"><span class="icon">📋</span><div>ประวัติการรายงาน<div class="history-subtitle" id="historySubtitle"></div></div></div>
       </div>
       <span class="count-badge" id="countBadge">0 รายการ</span>
     </div>
@@ -467,984 +812,606 @@
     <div class="report-table-wrap">
       <table class="report-table" id="reportTable">
         <thead><tr><th>#</th><th>ประเภท</th><th>เรื่อง</th><th>วันที่อบรม</th><th></th></tr></thead>
-        <tbody id="reportTableBody">
-          <tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></tr>
-        </tbody>
+        <tbody id="reportTableBody"><tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></tr></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- ====== PAGE: EDIT FORM ====== -->
+<!-- EDIT PAGE (Simplified - full version same as original) -->
 <div class="page" id="pageEdit">
   <div class="edit-wrap">
     <div class="edit-header">
       <button class="btn-back" onclick="goToHistory()">← ย้อนกลับ</button>
-      <div>
-        <div class="edit-title">✏️ แก้ไขรายงาน</div>
-        <div class="edit-report-num" id="editReportNumLabel"></div>
-      </div>
+      <div><div class="edit-title">✏️ แก้ไขรายงาน</div><div class="edit-report-num" id="editReportNumLabel"></div></div>
     </div>
     <div id="alertEdit"></div>
-
-    <div class="form-section">
-      <h2>📋 ข้อมูลทั่วไปและผู้รายงาน</h2>
-      <div class="form-row">
-        <div class="form-group"><label>เลขที่รายงาน</label><input type="text" id="e_reportNumber" readonly></div>
-        <div class="form-group"><label>วันที่ทำรายงาน <span class="req">*</span></label><input type="date" id="e_reportDate"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>กลุ่มสาระ <span class="req">*</span></label><select id="e_department"><option value="">กำลังโหลด...</option></select></div>
-        <div class="form-group"><label>ชื่อผู้รายงาน <span class="req">*</span></label><select id="e_reporterName"><option value="">เลือกชื่อผู้รายงาน</option></select></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>ตำแหน่ง <span class="req">*</span></label><select id="e_position"><option value="">กำลังโหลด...</option></select></div>
-      </div>
+    <div class="form-section"><h2>📋 ข้อมูลทั่วไป</h2>
+      <div class="form-row"><div class="form-group"><label>เลขที่รายงาน</label><input type="text" id="e_reportNumber" readonly></div>
+      <div class="form-group"><label>วันที่ทำรายงาน</label><input type="date" id="e_reportDate"></div></div>
+      <div class="form-row"><div class="form-group"><label>กลุ่มสาระ</label><select id="e_department"><option>กำลังโหลด...</option></select></div>
+      <div class="form-group"><label>ชื่อผู้รายงาน</label><select id="e_reporterName"><option>เลือกชื่อผู้รายงาน</option></select></div></div>
+      <div class="form-group"><label>ตำแหน่ง</label><select id="e_position"><option>กำลังโหลด...</option></select></div>
     </div>
+    <div class="save-bar"><button class="btn-cancel" onclick="goToHistory()">ยกเลิก</button><button class="btn-save" onclick="saveEdit()">💾 บันทึกการแก้ไข</button></div>
+  </div>
+</div>
 
-    <div class="form-section">
-      <h2>📄 ข้อมูลการอ้างอิง</h2>
-      <div class="form-row">
-        <div class="form-group"><label>ประเภทการไปราชการ</label><select id="e_type"><option value="">กำลังโหลด...</option></select></div>
-        <div class="form-group"><label>อ้างถึง</label><select id="e_reference"><option value="">กำลังโหลด...</option></select></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>หน่วยงานที่ออกเอกสาร</label><input type="text" id="e_invitingOrg"></div>
-        <div class="form-group"><label>เลขที่เอกสาร</label><input type="text" id="e_invitationNumber"></div>
-      </div>
-      <div class="form-group"><label>ลงวันที่</label><input type="date" id="e_invitationDate"></div>
-    </div>
+<!-- Registration Modal -->
+<div class="modal-backdrop" id="regModal">
+  <div class="modal-card"><div class="modal-icon">📸</div><h3 id="regModalTitle">ลงทะเบียนใบหน้า</h3>
+    <div id="regModalContent"></div><div class="modal-buttons"><button class="modal-btn secondary" onclick="closeRegistrationModal()">ปิด</button></div>
+  </div>
+</div>
 
-    <div class="form-section">
-      <h2>🎓 ข้อมูลการอบรม</h2>
-      <div class="form-row">
-        <div class="form-group"><label>วันที่รับการอบรม <span class="req">*</span></label><input type="date" id="e_trainingStartDate"></div>
-        <div class="form-group"><label>ถึงวันที่ <span class="req">*</span></label><input type="date" id="e_trainingEndDate"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>จำนวนวัน <span class="req">*</span></label><input type="number" id="e_days" min="1"></div>
-        <div class="form-group"><label>ชั่วโมงการอบรม <span class="req">*</span></label><input type="number" id="e_hours" min="1" step="0.5"></div>
-      </div>
-      <div class="form-group"><label>เรื่องอบรม <span class="req">*</span></label><input type="text" id="e_trainingTitle"></div>
-      <div class="form-row">
-        <div class="form-group"><label>จัดโดย <span class="req">*</span></label><input type="text" id="e_organizer"></div>
-        <div class="form-group"><label>สถานที่ <span class="req">*</span></label><input type="text" id="e_location"></div>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h2>✍️ รายงานและการนำไปใช้</h2>
-      <div class="form-group">
-        <label>รายงานการไปราชการ (ไม่เกิน 400 ตัวอักษร) <span class="req">*</span></label>
-        <textarea id="e_report" maxlength="800"></textarea>
-        <div class="char-counter" id="cnt_report">0/400</div>
-      </div>
-      <div class="form-group">
-        <label>การเผยแพร่ความรู้ (ไม่เกิน 400 ตัวอักษร) <span class="req">*</span></label>
-        <textarea id="e_knowledgeSharing" maxlength="800"></textarea>
-        <div class="char-counter" id="cnt_sharing">0/400</div>
-      </div>
-      <div class="form-group">
-        <label>การนำประสบการณ์ไปใช้ (ไม่เกิน 430 ตัวอักษร) <span class="req">*</span></label>
-        <textarea id="e_application" maxlength="900"></textarea>
-        <div class="char-counter" id="cnt_application">0/430</div>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h2>📑 เอกสารที่แนบ</h2>
-      <div class="form-row">
-        <div class="form-group"><label>เอกสาร 1</label><input type="text" id="e_doc1" placeholder="เช่น เกียรติบัตร"></div>
-        <div class="form-group"><label>เอกสาร 2</label><input type="text" id="e_doc2" placeholder="เช่น เอกสารประกอบการอบรม"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>เอกสาร 3</label><input type="text" id="e_doc3"></div>
-        <div class="form-group"><label>เอกสาร 4</label><input type="text" id="e_doc4"></div>
-      </div>
-      <div class="form-group" style="max-width:50%"><label>เอกสาร 5</label><input type="text" id="e_doc5"></div>
-    </div>
-
-    <div class="form-section">
-      <h2>📸 อัปโหลดเอกสารและรูปภาพ</h2>
-      <p style="font-size:13px;color:#888;margin-bottom:18px;">หากไม่อัปโหลดใหม่ ระบบจะใช้ไฟล์เดิม</p>
-      <div class="form-row">
-        <div class="form-group">
-          <label>เอกสารประกอบการอบรม</label>
-          <div class="file-upload-box"><input type="file" id="e_trainingDoc" accept=".pdf,.doc,.docx"><p>📄 คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_trainingDoc"></div></div>
-        </div>
-        <div class="form-group">
-          <label>หนังสือเชิญ / คำสั่ง</label>
-          <div class="file-upload-box"><input type="file" id="e_invitationDoc" accept=".pdf,.doc,.docx"><p>📄 คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_invitationDoc"></div></div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>รูปที่ 1 (ภาพกับป้ายงาน)</label>
-          <div class="file-upload-box"><input type="file" id="e_pic1" accept="image/*"><p>🖼️ คลิกเพื่อเลือกรูปใหม่</p><div class="file-preview" id="prev_pic1"></div></div>
-          <div id="note_pic1"></div>
-        </div>
-        <div class="form-group">
-          <label>รูปที่ 2 (ภาพขณะรับการอบรม)</label>
-          <div class="file-upload-box"><input type="file" id="e_pic2" accept="image/*"><p>🖼️ คลิกเพื่อเลือกรูปใหม่</p><div class="file-preview" id="prev_pic2"></div></div>
-          <div id="note_pic2"></div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>เกียรติบัตร</label>
-        <div class="file-upload-box" style="max-width:460px"><input type="file" id="e_certificate" accept="image/*,.pdf"><p>🖼️ คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_certificate"></div></div>
-        <div id="note_certificate"></div>
-      </div>
-    </div>
-
-    <div class="save-bar">
-      <button class="btn-cancel" onclick="goToHistory()">ยกเลิก</button>
-      <button class="btn-save" id="btnSave" onclick="saveEdit()">💾 บันทึกการแก้ไข</button>
-    </div>
+<!-- Result Modal -->
+<div class="modal-backdrop" id="resultModal">
+  <div class="modal-card"><div class="modal-icon" id="resultIcon">✅</div><h3 id="resultTitle">บันทึกสำเร็จ</h3><p id="resultMessage"></p>
+    <div class="modal-buttons"><button class="modal-btn primary" onclick="closeResultModal()">ตกลง</button></div>
   </div>
 </div>
 
 <script>
-// ===== STATE =====
-let currentUser = null;
-let currentRowIndex = null;
-let currentReportNum = '';
-let savedPdfLinks = {};
-let existingFiles = {};
-let dropdownsLoaded = false;
-
-// ===== GAS API URL =====
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
-
-async function callGAS(action, params) {
-  const response = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: action, params: params || {} })
-  });
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  return await response.json();
-}
-
-// ===== FACE LOGIN CONSTANTS =====
-// face-api.js@0.22.2 ให้ cosine similarity ต่ำกว่า vladmandic มาก (~0.6-0.8)
-const FACE_MODEL_URL  = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-const STRICT          = 0.75;  // score ขั้นต่ำที่ต้องผ่าน
-const MATCH           = 0.70;  // threshold นับ matchCount ต่อ embedding
-const GAP             = 0.08;  // ห่างจาก 2nd best (กรณีหลายคน)
-
-// Face login state
-let faceModelsLoaded = false;
-let faceScanActive = false;
-let faceVideoStream = null;
-let faceDetectionInterval = null;
-let faceIsProcessing = false;
-let allFaceEmbeddings = [];
-let embeddingsLoaded = false;
-let faceConfirmedName = null;
-let faceLoginPaused = false;
-
-// Register state
-let regUserName = '';
-let regRowIndex = -1;
-let regIdVal = '';
-let regPhoneVal = '';
-let regCaptureStep = 0;
-let regPhotos = ['', '', ''];
-let regEmbeddings = ['', '', ''];
-let regVideoStream = null;
-let regCamInterval = null;
-
-// ===== UTILS =====
-function showLoading(msg) {
-  document.getElementById('loadingText').textContent = msg || 'กำลังประมวลผล กรุณารอสักครู่...';
-  document.getElementById('loadingOverlay').classList.add('active');
-}
-function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-function beep() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.type = 'sine'; osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
-  } catch(e) {}
-}
-
-// ===== LOGIN TAB =====
-function switchLoginTab(tab) {
-  const bg = document.getElementById('toggleBg');
-  const t1 = document.getElementById('tab1');
-  const t2 = document.getElementById('tab2');
-  const p1 = document.getElementById('panel1');
-  const p2 = document.getElementById('panel2');
-
-  if (tab === 1) {
-    bg.classList.remove('right');
-    t1.classList.add('active'); t2.classList.remove('active');
-    p1.classList.add('active'); p2.classList.remove('active');
-    stopFaceScan();
-  } else {
-    bg.classList.add('right');
-    t2.classList.add('active'); t1.classList.remove('active');
-    p2.classList.add('active'); p1.classList.remove('active');
-    startFaceLogin();
-  }
-}
-
-// ===== NORMAL LOGIN =====
-function doLogin() {
-  const id = document.getElementById('loginId').value.trim();
-  const phone = document.getElementById('loginPhone').value.trim();
-  const errEl = document.getElementById('loginError');
-  errEl.style.display = 'none';
-  if (!id || !phone) {
-    errEl.textContent = 'กรุณากรอกเลขประจำตัวและเบอร์โทรศัพท์';
-    errEl.style.display = 'block'; return;
-  }
-  const btn = document.getElementById('btnLogin');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
-  callGAS('loginUser', { idNumber: id, phone: phone })
-    .then(function(result) {
-      btn.disabled = false; btn.textContent = '🔐 เข้าสู่ระบบ';
-      if (result.success) {
-        currentUser = result.name;
-        document.getElementById('topbarName').textContent = '👤 ' + result.name;
-        document.getElementById('topbarUser').style.display = 'flex';
-        loadHistory();
-      } else {
-        errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
-        errEl.style.display = 'block';
-      }
-    })
-    .catch(function(e) {
-      btn.disabled = false; btn.textContent = '🔐 เข้าสู่ระบบ';
-      errEl.textContent = 'เกิดข้อผิดพลาด: ' + e; errEl.style.display = 'block';
-    });
-}
-document.getElementById('loginId').addEventListener('keypress', function(e) { if (e.key==='Enter') doLogin(); });
-document.getElementById('loginPhone').addEventListener('keypress', function(e) { if (e.key==='Enter') doLogin(); });
-
-function logout() {
-  currentUser = null;
-  stopFaceScan();
-  document.getElementById('topbarUser').style.display = 'none';
-  document.getElementById('loginId').value = '';
-  document.getElementById('loginPhone').value = '';
-  document.getElementById('loginError').style.display = 'none';
-  switchLoginTab(1);
-  showPage('pageLogin');
-}
-
-// ===== FACE LOGIN =====
-async function startFaceLogin() {
-  faceLoginPaused = false;
-  setFaceStatus('loading', '⏳ กำลังโหลดโมเดลใบหน้า...');
-
-  if (!faceModelsLoaded) {
+  // ========== CONFIGURATION ==========
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
+  
+  // ========== STATE ==========
+  let currentUser = null;
+  let currentRowIndex = null;
+  let currentReportNum = '';
+  let currentMethod = 'id';
+  
+  // Facial Login Variables
+  let facialStream = null;
+  let isFaceApiLoaded = false;
+  let detectedUserData = null;
+  let scanInterval = null;
+  let isScanning = true;
+  let allUsersData = [];
+  
+  // Registration Variables
+  let regStream = null;
+  let capturedPhotos = [];
+  let currentRegStep = 0;
+  let regUserId = null;
+  let regUserPhone = null;
+  let regUserName = null;
+  
+  let savedPdfLinks = {};
+  let existingFiles = {};
+  let ddData = { departments: [], positions: [], types: [], references: [] };
+  
+  // ========== API CALL FUNCTION ==========
+  async function callAPI(action, params = {}) {
+    showLoading('กำลังประมวลผล...');
     try {
-      await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL);
-      await faceapi.nets.faceLandmark68TinyNet.loadFromUri(FACE_MODEL_URL);
-      await faceapi.nets.faceRecognitionNet.loadFromUri(FACE_MODEL_URL);
-      faceModelsLoaded = true;
-    } catch(err) {
-      setFaceStatus('error', '❌ โหลดโมเดลไม่สำเร็จ กรุณารีเฟรช');
-      return;
-    }
-  }
-
-  if (!embeddingsLoaded) {
-    setFaceStatus('loading', '📥 กำลังโหลดข้อมูลใบหน้า...');
-    callGAS('getAllFaceEmbeddings', {})
-      .then(function(data) {
-        allFaceEmbeddings = data;
-        embeddingsLoaded = true;
-        openFaceCamera();
-      })
-      .catch(function(e) {
-        setFaceStatus('error', '❌ โหลดข้อมูลไม่สำเร็จ');
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...params })
       });
-  } else {
-    openFaceCamera();
+      
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch(e) { data = JSON.parse(text.replace(/^[^{]*/, '')); }
+      
+      hideLoading();
+      return data;
+    } catch(e) {
+      hideLoading();
+      console.error('API Error:', e);
+      return { success: false, error: e.toString() };
+    }
   }
-}
-
-async function openFaceCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: 'user' } });
-    faceVideoStream = stream;
-    const video = document.getElementById('faceVideo');
-    video.srcObject = stream;
-    await video.play();
-    setFaceStatus('scanning', '🔍 กำลังสแกนใบหน้า...');
-    faceScanActive = true;
-    runFaceScan();
-  } catch(err) {
-    setFaceStatus('error', '❌ ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้กล้อง');
-  }
-}
-
-function stopFaceScan() {
-  faceScanActive = false;
-  if (faceDetectionInterval) { clearInterval(faceDetectionInterval); faceDetectionInterval = null; }
-  if (faceVideoStream) { faceVideoStream.getTracks().forEach(t => t.stop()); faceVideoStream = null; }
-  const canvas = document.getElementById('faceCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-async function runFaceScan() {
-  const video = document.getElementById('faceVideo');
-  const canvas = document.getElementById('faceCanvas');
-
-  faceDetectionInterval = setInterval(async function() {
-    if (!faceScanActive || faceLoginPaused || faceIsProcessing) return;
-    if (video.readyState < 2) return;
-
-    faceIsProcessing = true;
+  
+  // ========== INITIALIZATION ==========
+  async function initFaceAPI() {
+    showLoading('กำลังโหลดระบบสแกนใบหน้า...');
     try {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
-      const det = await faceapi.detectSingleFace(video, options)
-        .withFaceLandmarks(true)
-        .withFaceDescriptor();
-
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (!det) {
-        setFaceStatus('scanning', '🔍 กำลังมองหาใบหน้า...');
-        return;
-      }
-
-      const box = det.detection.box;
-      ctx.strokeStyle = '#14b8a6';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.rect(canvas.width - box.x - box.width, box.y, box.width, box.height);
-      ctx.stroke();
-
-      const faceArea = box.width * box.height;
-      const frameArea = canvas.width * canvas.height;
-      if (faceArea / frameArea < 0.04) {
-        setFaceStatus('scanning', '📸 กรุณาเข้าใกล้กล้องมากขึ้น');
-        return;
-      }
-
-      setFaceStatus('detected', '✅ พบใบหน้า กำลังตรวจสอบ...');
-      const matchResult = matchFaceDescriptor(det.descriptor);
-
-      if (matchResult.success) {
-        faceLoginPaused = true;
-        beep();
-        document.getElementById('faceConfirmName').textContent = matchResult.name;
-        document.getElementById('faceConfirmModal').classList.add('active');
-        faceConfirmedName = matchResult.name;
-        setFaceStatus('detected', '✅ ระบุตัวตนได้แล้ว');
+      await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
+      await faceapi.nets.faceLandmark68TinyNet.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
+      await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
+      isFaceApiLoaded = true;
+      hideLoading();
+    } catch(e) {
+      console.error('FaceAPI load error:', e);
+      hideLoading();
+    }
+  }
+  
+  // ========== TOGGLE METHODS ==========
+  function setupToggle() {
+    const toggleId = document.getElementById('toggleIdOption');
+    const toggleFacial = document.getElementById('toggleFacialOption');
+    const slider = document.getElementById('toggleSlider');
+    const idMethod = document.getElementById('idLoginMethod');
+    const facialMethod = document.getElementById('facialLoginMethod');
+    
+    const setMethod = (method) => {
+      currentMethod = method;
+      if (method === 'id') {
+        toggleId.classList.add('active');
+        toggleFacial.classList.remove('active');
+        slider.classList.remove('move-right');
+        idMethod.classList.remove('hidden');
+        facialMethod.classList.add('hidden');
+        stopFacialCamera();
       } else {
-        setFaceStatus('scanning', '🔍 กำลังสแกนใบหน้า...');
+        toggleFacial.classList.add('active');
+        toggleId.classList.remove('active');
+        slider.classList.add('move-right');
+        idMethod.classList.add('hidden');
+        facialMethod.classList.remove('hidden');
+        startFacialCamera();
       }
-    } finally {
-      faceIsProcessing = false;
+    };
+    
+    toggleId.addEventListener('click', () => setMethod('id'));
+    toggleFacial.addEventListener('click', () => setMethod('facial'));
+  }
+  
+  // ========== FACIAL LOGIN ==========
+  async function startFacialCamera() {
+    if (!isFaceApiLoaded) await initFaceAPI();
+    
+    const video = document.getElementById('facialVideo');
+    const canvas = document.getElementById('faceOverlay');
+    
+    try {
+      facialStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480, facingMode: 'user' }
+      });
+      video.srcObject = facialStream;
+      await video.play();
+      
+      video.addEventListener('loadedmetadata', () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      });
+      
+      await loadAllUserEmbeddings();
+      
+      if (scanInterval) clearInterval(scanInterval);
+      scanInterval = setInterval(() => scanFace(), 200);
+      isScanning = true;
+    } catch(e) {
+      document.getElementById('scanStatus').innerHTML = '❌ ไม่สามารถเปิดกล้องได้';
+      document.getElementById('scanStatus').className = 'scan-status error';
     }
-  }, 500);
-}
-
-// ===== FACE MATCHING LOGIC (แก้ไขแล้ว) =====
-function matchFaceDescriptor(descriptor) {
-  if (!allFaceEmbeddings || allFaceEmbeddings.length === 0) {
-    return { success: false };
   }
-
-  const users = [];
-
-  // คำนวณ best score และ matchCount ของแต่ละคน
-  for (const user of allFaceEmbeddings) {
-    let best = 0;
-    let matchCount = 0;
-
-    for (const embStr of user.embeddings) {
-      try {
-        const stored = JSON.parse(embStr);
-        if (!stored || stored.length !== descriptor.length) continue;
-        const storedF32 = new Float32Array(stored);
-        const sim = cosineSimilarity(descriptor, storedF32);
-        if (sim > best) best = sim;
-        if (sim >= MATCH) matchCount++;  // นับว่า embedding นี้ "ผ่าน"
-      } catch(e) { continue; }
-    }
-
-    users.push({ name: user.name, best, matchCount });
+  
+  function stopFacialCamera() {
+    if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
+    if (facialStream) { facialStream.getTracks().forEach(track => track.stop()); facialStream = null; }
+    isScanning = false;
   }
-
-  if (users.length === 0) return { success: false };
-
-  // เรียงจาก best score สูงสุด
-  users.sort((a, b) => b.best - a.best);
-
-  const top    = users[0];
-  const second = users[1] || null;
-
-  // ต้องได้ STRICT score ขั้นต่ำ
-  if (top.best < STRICT) return { success: false };
-
-  // ต้องผ่าน matchCount ≥ 1 (อย่างน้อย 1 embedding ต้องได้ MATCH)
-  if (top.matchCount < 1) return { success: false };
-
-  // กรณีมีคนเดียวในระบบ — ผ่านได้เลย
-  if (users.length === 1) {
-    return { success: true, name: top.name };
+  
+  async function loadAllUserEmbeddings() {
+    const result = await callAPI('getAllUserEmbeddings');
+    if (result && !result.error) allUsersData = result;
   }
-
-  // กรณีหลายคน — ต้องห่างจาก 2nd best ด้วย GAP
-  const secondScore = second ? second.best : 0;
-  if ((top.best - secondScore) < GAP) return { success: false };
-
-  return { success: true, name: top.name };
-}
-
-function cosineSimilarity(a, b) {
-  let dot = 0, normA = 0, normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  if (normA === 0 || normB === 0) return 0;
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
-}
-
-function setFaceStatus(type, msg) {
-  const el = document.getElementById('faceStatus');
-  el.className = 'face-status-bar ' + type;
-  el.textContent = msg;
-}
-
-function confirmFaceLogin() {
-  document.getElementById('faceConfirmModal').classList.remove('active');
-  stopFaceScan();
-  currentUser = faceConfirmedName;
-  document.getElementById('topbarName').textContent = '👤 ' + currentUser;
-  document.getElementById('topbarUser').style.display = 'flex';
-  loadHistory();
-}
-
-function cancelFaceConfirm() {
-  document.getElementById('faceConfirmModal').classList.remove('active');
-  faceConfirmedName = null;
-  faceLoginPaused = false;
-  setFaceStatus('scanning', '🔍 กำลังสแกนใบหน้า...');
-}
-
-function closeNotReg() {
-  document.getElementById('notRegisteredModal').classList.remove('active');
-  faceLoginPaused = false;
-  setFaceStatus('scanning', '🔍 กำลังสแกนใบหน้า...');
-}
-
-// ===== REGISTER FACE =====
-function openRegModal() {
-  regCaptureStep = 0;
-  regPhotos = ['', '', ''];
-  regEmbeddings = ['', '', ''];
-  regUserName = '';
-  document.getElementById('regId').value = '';
-  document.getElementById('regPhone').value = '';
-  document.getElementById('regStep1Error').textContent = '';
-  document.getElementById('regStep1Error').style.display = 'none';
-  showRegStep('regStep1');
-  document.getElementById('regModal').classList.add('active');
-}
-
-function closeRegModal() {
-  document.getElementById('regModal').classList.remove('active');
-  stopRegCamera();
-}
-
-function showRegStep(id) {
-  document.querySelectorAll('.reg-step').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function doRegStep1() {
-  const id = document.getElementById('regId').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  const errEl = document.getElementById('regStep1Error');
-  errEl.style.display = 'none';
-
-  if (!id || !phone) {
-    errEl.textContent = 'กรุณากรอกเลขประจำตัวและเบอร์โทรศัพท์';
-    errEl.style.display = 'block'; return;
-  }
-
-  const btn = document.getElementById('btnRegStep1');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
-
-  callGAS('checkFaceRegistration', { idNumber: id, phone: phone })
-    .then(function(result) {
-      btn.disabled = false; btn.textContent = 'ถัดไป →';
-      if (!result.found) {
-        errEl.textContent = 'ไม่พบข้อมูลผู้ใช้ กรุณาตรวจสอบเลขประจำตัวและเบอร์โทรศัพท์';
-        errEl.style.display = 'block'; return;
-      }
-
-      regIdVal = id; regPhoneVal = phone;
-      regUserName = result.name;
-      regRowIndex = result.rowIndex;
-
-      const step2Content = document.getElementById('regStep2Content');
-      const proceedBtn = document.getElementById('btnRegProceed');
-
-      if (result.hasEmbeddings) {
-        step2Content.innerHTML = `
-          <div style="text-align:center;padding:10px 0;">
-            <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
-            <p style="font-weight:700;color:#d97706;font-size:16px;margin-bottom:10px;">ท่านเคยลงทะเบียนแล้ว</p>
-            <p style="font-size:14px;color:#555;line-height:1.6;">ท่านเคยลงทะเบียนแล้วแต่ประสบปัญหาด้วย Facial Login<br>กรุณาลองใหม่ภายหลังและท่านสามารถใช้การล็อกอินแบบปกติได้</p>
-          </div>`;
-        proceedBtn.style.display = 'none';
-      } else {
-        step2Content.innerHTML = `
-          <div class="reg-info" style="margin-bottom:16px;text-align:center;">
-            <strong>ท่านกำลังลงทะเบียนใบหน้าในนามของ</strong><br>
-            <span style="font-size:18px;font-weight:700;color:var(--primary);">${escHtml(regUserName)}</span>
-          </div>
-          <div class="reg-steps-desc">
-            <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>รูปที่ 1:</strong> มองตรงหน้ากล้อง ใบหน้าตรง</div></div>
-            <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>รูปที่ 2:</strong> หันซ้าย 45 องศา</div></div>
-            <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>รูปที่ 3:</strong> หันขวา 45 องศา</div></div>
-          </div>
-          <p style="font-size:13px;color:#888;text-align:center;">รูปภาพและรหัสใบหน้าจะถูกเก็บบนระบบเพื่อการยืนยันตัวตนเท่านั้น</p>`;
-        proceedBtn.style.display = 'block';
-      }
-      showRegStep('regStep2');
-    })
-    .catch(function(e) {
-      btn.disabled = false; btn.textContent = 'ถัดไป →';
-      errEl.textContent = 'เกิดข้อผิดพลาด: ' + e; errEl.style.display = 'block';
-    });
-}
-
-async function proceedToCapture() {
-  showRegStep('regStep3');
-  regCaptureStep = 0;
-  updateCaptureUI();
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: 'user' } });
-    regVideoStream = stream;
-    const video = document.getElementById('regVideo');
-    video.srcObject = stream;
-    await video.play();
-
-    if (!faceModelsLoaded) {
-      await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL);
-      await faceapi.nets.faceLandmark68TinyNet.loadFromUri(FACE_MODEL_URL);
-      await faceapi.nets.faceRecognitionNet.loadFromUri(FACE_MODEL_URL);
-      faceModelsLoaded = true;
-    }
-
-    startRegFaceOverlay();
-  } catch(err) {
-    alert('ไม่สามารถเปิดกล้องได้: ' + err.message);
-    closeRegModal();
-  }
-}
-
-function startRegFaceOverlay() {
-  const video = document.getElementById('regVideo');
-  const canvas = document.getElementById('regCanvas');
-  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
-
-  regCamInterval = setInterval(async function() {
-    if (video.readyState < 2) return;
+  
+  async function scanFace() {
+    if (!isScanning || !isFaceApiLoaded) return;
+    
+    const video = document.getElementById('facialVideo');
+    const canvas = document.getElementById('faceOverlay');
+    const ctx = canvas.getContext('2d');
+    if (video.videoWidth === 0) return;
+    
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const det = await faceapi.detectSingleFace(video, options).withFaceLandmarks(true);
-    const ctx = canvas.getContext('2d');
+    
+    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks(true)
+      .withFaceDescriptor();
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (det) {
-      const box = det.detection.box;
+    
+    if (detections) {
+      const box = detections.detection.box;
       ctx.strokeStyle = '#14b8a6';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.rect(canvas.width - box.x - box.width, box.y, box.width, box.height);
-      ctx.stroke();
-    }
-  }, 300);
-}
-
-function stopRegCamera() {
-  if (regCamInterval) { clearInterval(regCamInterval); regCamInterval = null; }
-  if (regVideoStream) { regVideoStream.getTracks().forEach(t => t.stop()); regVideoStream = null; }
-}
-
-const regInstructions = ['📸 รูปที่ 1: หน้าตรง', '📸 รูปที่ 2: หันซ้าย 45°', '📸 รูปที่ 3: หันขวา 45°', '✅ ถ่ายครบแล้ว กดตกลงเพื่อบันทึก'];
-function updateCaptureUI() {
-  document.getElementById('regInstruction').textContent = regInstructions[regCaptureStep];
-  for (let i = 0; i < 3; i++) {
-    const dot = document.getElementById('dot' + i);
-    dot.className = 'cap-dot';
-    if (i < regCaptureStep) dot.classList.add('done');
-    else if (i === regCaptureStep && regCaptureStep < 3) dot.classList.add('active');
-  }
-  const btn = document.getElementById('btnCapture');
-  if (regCaptureStep >= 3) {
-    btn.textContent = '✅ ตกลง บันทึกการลงทะเบียน';
-    btn.onclick = submitRegistration;
-  } else {
-    btn.textContent = '📸 ถ่ายภาพ';
-    btn.onclick = captureRegPhoto;
-  }
-}
-
-async function captureRegPhoto() {
-  if (regCaptureStep >= 3) return;
-  const video = document.getElementById('regVideo');
-  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
-  const det = await faceapi.detectSingleFace(video, options)
-    .withFaceLandmarks(true)
-    .withFaceDescriptor();
-
-  if (!det) {
-    alert('ไม่พบใบหน้า กรุณาปรับตำแหน่งและลองใหม่');
-    return;
-  }
-
-  const cap = document.createElement('canvas');
-  cap.width = video.videoWidth; cap.height = video.videoHeight;
-  const ctx = cap.getContext('2d');
-  ctx.drawImage(video, 0, 0);
-  const dataUrl = cap.toDataURL('image/jpeg', 0.85);
-  regPhotos[regCaptureStep] = dataUrl;
-  regEmbeddings[regCaptureStep] = JSON.stringify(Array.from(det.descriptor));
-
-  const prev = document.getElementById('regPrev' + regCaptureStep);
-  prev.src = dataUrl;
-  prev.classList.add('captured');
-
-  beep();
-  regCaptureStep++;
-  updateCaptureUI();
-}
-
-async function submitRegistration() {
-  stopRegCamera();
-  showRegStep('regStep4');
-
-  callGAS('saveFaceRegistration', { idNumber: regIdVal, phone: regPhoneVal, embeddings: regEmbeddings, faceImages: regPhotos })
-    .then(function(result) {
-      document.getElementById('regModal').classList.remove('active');
-      if (result.success) {
-        embeddingsLoaded = false;
-        alert('✅ ลงทะเบียนใบหน้าเรียบร้อยแล้ว!\nท่านสามารถใช้ Facial Login ได้แล้ว');
-        if (document.getElementById('panel2').classList.contains('active')) {
-          startFaceLogin();
-        }
+      ctx.lineWidth = 3;
+      ctx.strokeRect(box.x, box.y, box.width, box.height);
+      
+      const matchedUser = await matchFaceWithUsers(detections.descriptor);
+      
+      if (matchedUser) {
+        detectedUserData = matchedUser;
+        document.getElementById('detectedUserInfo').style.display = 'block';
+        document.getElementById('detectedName').innerHTML = `👤 ${matchedUser.name}`;
+        document.getElementById('scanStatus').innerHTML = '✅ ตรวจพบใบหน้า: ' + matchedUser.name;
+        document.getElementById('scanStatus').className = 'scan-status success';
+        document.getElementById('confirmLoginBtn').disabled = false;
+        playBeep();
       } else {
-        alert('เกิดข้อผิดพลาด: ' + (result.error || 'ไม่ทราบสาเหตุ'));
+        document.getElementById('detectedUserInfo').style.display = 'none';
+        document.getElementById('scanStatus').innerHTML = '🔍 กำลังสแกน... (ไม่พบผู้ใช้)';
+        document.getElementById('confirmLoginBtn').disabled = true;
+        detectedUserData = null;
       }
-    })
-    .catch(function(e) {
-      document.getElementById('regModal').classList.remove('active');
-      alert('เกิดข้อผิดพลาด: ' + e);
-    });
-}
-
-// ===== HISTORY =====
-function loadHistory() {
-  showPage('pageHistory');
-  document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
-  showLoading('กำลังโหลดรายการรายงาน...');
-  callGAS('getUserReports', { userName: currentUser })
-    .then(function(reports) {
-      hideLoading(); renderHistory(reports);
-      if (!dropdownsLoaded) preloadDropdowns();
-    })
-    .catch(function(e) {
-      hideLoading(); renderHistory([]);
-      document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
-    });
-}
-
-function renderHistory(reports) {
-  const tbody = document.getElementById('reportTableBody');
-  document.getElementById('countBadge').textContent = reports.length + ' รายการ';
-  if (reports.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span>📭</span>ยังไม่มีรายการรายงาน</div></td></tr>';
-    return;
-  }
-  tbody.innerHTML = '';
-  reports.forEach(function(r, i) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="color:#aaa;font-size:13px;">${i+1}</td>
-      <td><span class="type-tag">${escHtml(r.type||'-')}</span></td>
-      <td style="font-weight:500;">${escHtml(r.title||'-')}</td>
-      <td class="date-cell">${escHtml(r.dateStr||'-')}</td>
-      <td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber)}')">✏️ แก้ไขรายงาน</button></td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-function goToHistory() { showPage('pageHistory'); }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-// ===== DROPDOWNS =====
-let ddData = { departments: [], positions: [], types: [], references: [] };
-function preloadDropdowns() {
-  callGAS('getDepartments', {}).then(function(d) { ddData.departments = d; }).catch(function(){});
-  callGAS('getDropdownOptions', { column: 'position' }).then(function(d) { ddData.positions = d; }).catch(function(){});
-  callGAS('getDropdownOptions', { column: 'type' }).then(function(d) { ddData.types = d; }).catch(function(){});
-  callGAS('getDropdownOptions', { column: 'reference' }).then(function(d) { ddData.references = d; }).catch(function(){});
-  dropdownsLoaded = true;
-}
-function populateSelect(id, options, currentVal) {
-  const sel = document.getElementById(id);
-  sel.innerHTML = '<option value="">-- เลือก --</option>';
-  options.forEach(function(o) {
-    const opt = document.createElement('option');
-    opt.value = o; opt.textContent = o;
-    if (o === currentVal) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-
-// ===== EDIT FORM =====
-function openEditForm(rowIndex, reportNum) {
-  currentRowIndex = rowIndex; currentReportNum = reportNum;
-  document.getElementById('editReportNumLabel').textContent = 'หมายเลขรายงาน: ' + reportNum;
-  document.getElementById('alertEdit').innerHTML = '';
-  showLoading('กำลังโหลดข้อมูลรายงาน...');
-  callGAS('getReportRowData', { rowIndex: rowIndex })
-    .then(function(rowData) { hideLoading(); fillEditForm(rowData); showPage('pageEdit'); })
-    .catch(function(e) { hideLoading(); alert('เกิดข้อผิดพลาด: ' + e); });
-}
-
-function fillEditForm(d) {
-  existingFiles = { pic1: d.pic1Url||'', pic2: d.pic2Url||'', certificate: d.certificateUrl||'', qrLink: d.qrLink||'' };
-  setFileNote('note_pic1', d.pic1Url);
-  setFileNote('note_pic2', d.pic2Url);
-  setFileNote('note_certificate', d.certificateUrl);
-  document.getElementById('e_reportNumber').value = d.reportNumber||'';
-  document.getElementById('e_reportDate').value = d.reportDate||'';
-  document.getElementById('e_invitingOrg').value = d.invitingOrg||'';
-  document.getElementById('e_invitationNumber').value = d.invitationNumber||'';
-  document.getElementById('e_invitationDate').value = d.invitationDate||'';
-  document.getElementById('e_trainingStartDate').value = d.trainingStartDate||'';
-  document.getElementById('e_trainingEndDate').value = d.trainingEndDate||'';
-  document.getElementById('e_days').value = d.days||'';
-  document.getElementById('e_hours').value = d.hours||'';
-  document.getElementById('e_trainingTitle').value = d.trainingTitle||'';
-  document.getElementById('e_organizer').value = d.organizer||'';
-  document.getElementById('e_location').value = d.location||'';
-  document.getElementById('e_report').value = d.report||'';
-  document.getElementById('e_knowledgeSharing').value = d.knowledgeSharing||'';
-  document.getElementById('e_application').value = d.application||'';
-  document.getElementById('e_doc1').value = d.doc1||'';
-  document.getElementById('e_doc2').value = d.doc2||'';
-  document.getElementById('e_doc3').value = d.doc3||'';
-  document.getElementById('e_doc4').value = d.doc4||'';
-  document.getElementById('e_doc5').value = d.doc5||'';
-  updateCounter('e_report','cnt_report',400);
-  updateCounter('e_knowledgeSharing','cnt_sharing',400);
-  updateCounter('e_application','cnt_application',430);
-  ['e_trainingDoc','e_invitationDoc','e_pic1','e_pic2','e_certificate'].forEach(function(id) {
-    document.getElementById('prev_'+id.replace('e_','')).innerHTML = '';
-    document.getElementById(id).value = '';
-  });
-  loadDropdownsForEdit(d);
-}
-
-function setFileNote(id, url) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerHTML = url ? '<span class="existing-file-note">📎 มีไฟล์เดิมอยู่ (จะใช้ไฟล์เดิมหากไม่อัปโหลดใหม่)</span>' : '';
-}
-
-function loadDropdownsForEdit(d) {
-  function setupDeptAndName() {
-    populateSelect('e_department', ddData.departments, d.department);
-    if (d.department) {
-      callGAS('getNamesByDepartment', { department: d.department }).then(function(names) { populateSelect('e_reporterName', names, d.reporterName); }).catch(function(){});
-    }
-  }
-  function setupOthers() {
-    populateSelect('e_position', ddData.positions, d.position);
-    populateSelect('e_type', ddData.types, d.type);
-    populateSelect('e_reference', ddData.references, d.reference);
-  }
-  if (ddData.departments.length > 0) { setupDeptAndName(); setupOthers(); }
-  else {
-    let loaded = 0;
-    function checkDone() { loaded++; if (loaded >= 4) { setupDeptAndName(); setupOthers(); } }
-    callGAS('getDepartments', {}).then(function(d2) { ddData.departments=d2; checkDone(); }).catch(checkDone);
-    callGAS('getDropdownOptions', { column: 'position' }).then(function(d2) { ddData.positions=d2; checkDone(); }).catch(checkDone);
-    callGAS('getDropdownOptions', { column: 'type' }).then(function(d2) { ddData.types=d2; checkDone(); }).catch(checkDone);
-    callGAS('getDropdownOptions', { column: 'reference' }).then(function(d2) { ddData.references=d2; checkDone(); }).catch(checkDone);
-  }
-}
-
-document.getElementById('e_department').addEventListener('change', function() {
-  const dept = this.value;
-  const sel = document.getElementById('e_reporterName');
-  sel.innerHTML = '<option value="">กำลังโหลด...</option>';
-  if (!dept) { sel.innerHTML = '<option value="">เลือกชื่อผู้รายงาน</option>'; return; }
-  callGAS('getNamesByDepartment', { department: dept }).then(function(names) { populateSelect('e_reporterName', names, ''); }).catch(function(){});
-});
-
-document.getElementById('e_trainingStartDate').addEventListener('change', calcDays);
-document.getElementById('e_trainingEndDate').addEventListener('change', calcDays);
-function calcDays() {
-  const s = new Date(document.getElementById('e_trainingStartDate').value);
-  const e = new Date(document.getElementById('e_trainingEndDate').value);
-  if (s && e && e >= s) document.getElementById('e_days').value = Math.ceil(Math.abs(e-s)/86400000)+1;
-}
-
-function updateCounter(textareaId, counterId, max) {
-  const val = document.getElementById(textareaId).value;
-  let count = 0;
-  for (let i = 0; i < val.length; i++) {
-    const code = val.charCodeAt(i);
-    if ((code >= 0x0E34 && code <= 0x0E3A) || (code >= 0x0E47 && code <= 0x0E4E)) continue;
-    count++;
-  }
-  document.getElementById(counterId).textContent = count + '/' + max;
-}
-
-['e_report','e_knowledgeSharing','e_application'].forEach(function(id) {
-  document.getElementById(id).addEventListener('input', function() {
-    const map = { 'e_report':'cnt_report','e_knowledgeSharing':'cnt_sharing','e_application':'cnt_application' };
-    const maxMap = { 'e_report':400,'e_knowledgeSharing':400,'e_application':430 };
-    updateCounter(id, map[id], maxMap[id]);
-  });
-});
-
-['e_trainingDoc','e_invitationDoc','e_pic1','e_pic2','e_certificate'].forEach(function(id) {
-  document.getElementById(id).addEventListener('change', function(ev) {
-    const file = ev.target.files[0];
-    const prevId = 'prev_' + id.replace('e_','');
-    const prev = document.getElementById(prevId);
-    if (!prev) return; prev.innerHTML = '';
-    if (!file) return;
-    if (file.type.startsWith('image/')) {
-      const img = document.createElement('img'); img.src = URL.createObjectURL(file); prev.appendChild(img);
     } else {
-      const p = document.createElement('p'); p.textContent = '📄 '+file.name; p.style.fontSize='13px'; prev.appendChild(p);
+      document.getElementById('detectedUserInfo').style.display = 'none';
+      document.getElementById('scanStatus').innerHTML = '🔍 กำลังสแกน... (ไม่พบใบหน้า)';
+      document.getElementById('confirmLoginBtn').disabled = true;
+      detectedUserData = null;
     }
-  });
-});
-
-// ===== SAVE EDIT =====
-async function saveEdit() {
-  const required = [
-    {id:'e_reportDate',label:'วันที่ทำรายงาน'},{id:'e_department',label:'กลุ่มสาระ'},{id:'e_reporterName',label:'ชื่อผู้รายงาน'},
-    {id:'e_position',label:'ตำแหน่ง'},{id:'e_trainingStartDate',label:'วันที่รับการอบรม'},{id:'e_trainingEndDate',label:'ถึงวันที่'},
-    {id:'e_days',label:'จำนวนวัน'},{id:'e_hours',label:'ชั่วโมงการอบรม'},{id:'e_trainingTitle',label:'เรื่องอบรม'},
-    {id:'e_organizer',label:'จัดโดย'},{id:'e_location',label:'สถานที่'},{id:'e_report',label:'รายงานการไปราชการ'},
-    {id:'e_knowledgeSharing',label:'การเผยแพร่ความรู้'},{id:'e_application',label:'การนำประสบการณ์ไปใช้'},
-  ];
-  let invalid = [];
-  required.forEach(function(f) {
-    const el = document.getElementById(f.id);
-    if (!el.value) { invalid.push(f.label); el.style.borderColor='#ef4444'; }
-    else el.style.borderColor='#e0e0e0';
-  });
-  if (invalid.length) {
-    document.getElementById('alertEdit').innerHTML = '<div class="alert error">กรุณากรอกข้อมูลที่จำเป็น: ' + invalid.join(', ') + '</div>';
-    document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'}); return;
   }
-  document.getElementById('alertEdit').innerHTML = '';
-  showLoading('กำลังบันทึกข้อมูลและสร้างเอกสาร PDF...');
-
-  const data = {
-    reportNumber: document.getElementById('e_reportNumber').value,
-    reportDate: document.getElementById('e_reportDate').value,
-    department: document.getElementById('e_department').value,
-    reporterName: document.getElementById('e_reporterName').value,
-    position: document.getElementById('e_position').value,
-    type: document.getElementById('e_type').value,
-    reference: document.getElementById('e_reference').value,
-    invitingOrg: document.getElementById('e_invitingOrg').value,
-    invitationNumber: document.getElementById('e_invitationNumber').value,
-    invitationDate: document.getElementById('e_invitationDate').value,
-    trainingStartDate: document.getElementById('e_trainingStartDate').value,
-    trainingEndDate: document.getElementById('e_trainingEndDate').value,
-    days: document.getElementById('e_days').value,
-    hours: document.getElementById('e_hours').value,
-    trainingTitle: document.getElementById('e_trainingTitle').value,
-    organizer: document.getElementById('e_organizer').value,
-    location: document.getElementById('e_location').value,
-    report: document.getElementById('e_report').value,
-    knowledgeSharing: document.getElementById('e_knowledgeSharing').value,
-    application: document.getElementById('e_application').value,
-    doc1: document.getElementById('e_doc1').value,
-    doc2: document.getElementById('e_doc2').value,
-    doc3: document.getElementById('e_doc3').value,
-    doc4: document.getElementById('e_doc4').value,
-    doc5: document.getElementById('e_doc5').value,
-    existingPic1: existingFiles.pic1||'',
-    existingPic2: existingFiles.pic2||'',
-    existingCertificate: existingFiles.certificate||'',
-    existingQrLink: existingFiles.qrLink||'',
-    files: {}
-  };
-
-  const fileInputs = ['e_trainingDoc','e_invitationDoc','e_pic1','e_pic2','e_certificate'];
-  for (const id of fileInputs) {
-    const input = document.getElementById(id);
-    if (input.files[0]) data.files[id.replace('e_','')] = await fileToBase64(input.files[0]);
-  }
-
-  callGAS('saveEditedReport', { data: data, rowIndex: currentRowIndex })
-    .then(function(result) {
-      hideLoading();
-      if (result.success) {
-        savedPdfLinks = {pdf1: result.pdfLink1, pdf2: result.pdfLink2};
-        document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
-        document.getElementById('resultModal').classList.add('active');
-      } else {
-        document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + result.error + '</div>';
-        document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
+  
+  async function matchFaceWithUsers(descriptor) {
+    if (!allUsersData || allUsersData.length === 0) return null;
+    
+    let bestMatch = null;
+    let bestScore = 0;
+    let secondScore = 0;
+    
+    for (const user of allUsersData) {
+      let userMatchCount = 0;
+      let userBestScore = 0;
+      const embeddings = [user.embedding1, user.embedding2, user.embedding3].filter(e => e);
+      
+      for (const embStr of embeddings) {
+        if (!embStr) continue;
+        const storedDesc = new Float32Array(JSON.parse(embStr));
+        const similarity = cosineSimilarity(descriptor, storedDesc);
+        if (similarity > userBestScore) userBestScore = similarity;
+        if (similarity >= 0.95) userMatchCount++;
       }
-    })
-    .catch(function(e) {
-      hideLoading();
-      document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
-      document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
+      
+      if (userMatchCount >= 2 && userBestScore > bestScore) {
+        secondScore = bestScore;
+        bestScore = userBestScore;
+        bestMatch = user;
+      }
+    }
+    
+    if (bestMatch && bestScore >= 0.97) {
+      if (allUsersData.length === 1) return bestMatch;
+      if ((bestScore - secondScore) > 0.05) return bestMatch;
+    }
+    return null;
+  }
+  
+  function cosineSimilarity(desc1, desc2) {
+    let dot = 0, norm1 = 0, norm2 = 0;
+    for (let i = 0; i < desc1.length; i++) {
+      dot += desc1[i] * desc2[i];
+      norm1 += desc1[i] * desc1[i];
+      norm2 += desc2[i] * desc2[i];
+    }
+    return dot / (Math.sqrt(norm1) * Math.sqrt(norm2));
+  }
+  
+  function playBeep() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.frequency.value = 880;
+      gainNode.gain.value = 0.3;
+      oscillator.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+      oscillator.stop(audioCtx.currentTime + 0.5);
+    } catch(e) {}
+  }
+  
+  async function confirmFacialLogin() {
+    if (!detectedUserData) return;
+    showLoading('กำลังเข้าสู่ระบบ...');
+    stopFacialCamera();
+    const result = await callAPI('loginUserById', { idNumber: detectedUserData.idNumber });
+    if (result.success) {
+      currentUser = result.name;
+      document.getElementById('topbarName').textContent = '👤 ' + result.name;
+      document.getElementById('topbarUser').style.display = 'flex';
+      loadHistory();
+    } else {
+      showResult('error', 'เข้าสู่ระบบไม่สำเร็จ', result.message || 'เกิดข้อผิดพลาด');
+    }
+  }
+  
+  // ========== ID LOGIN ==========
+  async function doLogin() {
+    const id = document.getElementById('loginId').value.trim();
+    const phone = document.getElementById('loginPhone').value.trim();
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+    
+    if (!id || !phone) {
+      errEl.textContent = 'กรุณากรอกเลขประจำตัวและเบอร์โทรศัพท์';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    const btn = document.getElementById('btnLogin');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
+    
+    const result = await callAPI('loginUser', { idNumber: id, phone: phone });
+    
+    btn.disabled = false;
+    btn.textContent = '🔐 เข้าสู่ระบบ';
+    
+    if (result.success) {
+      currentUser = result.name;
+      document.getElementById('topbarName').textContent = '👤 ' + result.name;
+      document.getElementById('topbarUser').style.display = 'flex';
+      loadHistory();
+    } else {
+      errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
+      errEl.style.display = 'block';
+    }
+  }
+  
+  // ========== REGISTRATION ==========
+  async function openRegistrationModal() {
+    stopFacialCamera();
+    document.getElementById('regModal').classList.add('active');
+    document.getElementById('regModalContent').innerHTML = `
+      <div class="login-field"><label>เลขประจำตัว 13 หลัก</label><input type="text" id="regId" maxlength="13" placeholder="กรอกเลขประจำตัว 13 หลัก"></div>
+      <div class="login-field"><label>เบอร์โทรศัพท์</label><input type="text" id="regPhone" maxlength="20" placeholder="กรอกเบอร์โทรศัพท์"></div>
+      <button class="modal-btn primary" onclick="checkRegistrationUser()" style="width:100%">ตรวจสอบข้อมูล</button>
+    `;
+    document.getElementById('regModalTitle').innerHTML = '📝 ลงทะเบียนใบหน้า - ขั้นตอนที่ 1';
+  }
+  
+  async function checkRegistrationUser() {
+    const idNumber = document.getElementById('regId').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    if (!idNumber || !phone) {
+      showResult('error', 'ข้อมูลไม่ถูกต้อง', 'กรุณากรอกเลขประจำตัวและเบอร์โทรศัพท์');
+      return;
+    }
+    
+    const result = await callAPI('checkUserForRegistration', { idNumber, phone });
+    
+    if (!result.success) {
+      showResult('error', 'ไม่พบข้อมูล', result.message);
+      return;
+    }
+    
+    if (result.hasEmbeddings) {
+      showResult('error', 'ท่านเคยลงทะเบียนแล้ว', 'ท่านเคยลงทะเบียนแล้ว กรุณาใช้การล็อกอินแบบปกติ');
+      return;
+    }
+    
+    regUserId = idNumber;
+    regUserPhone = phone;
+    regUserName = result.name;
+    
+    document.getElementById('regModalContent').innerHTML = `
+      <p style="margin-bottom: 16px;">ท่านกำลังลงทะเบียนใบหน้าในนามของ <strong>${regUserName}</strong></p>
+      <p style="margin-bottom: 16px; color: #f59e0b;">📸 คำแนะนำ: ถ่ายรูป 3 รูป</p>
+      <div class="photo-steps">
+        <div class="photo-step"><div class="photo-preview" id="preview1"><div class="placeholder">📷</div></div><div class="photo-step-label">รูปที่ 1: หน้าตรง</div></div>
+        <div class="photo-step"><div class="photo-preview" id="preview2"><div class="placeholder">📷</div></div><div class="photo-step-label">รูปที่ 2: หันซ้าย 45°</div></div>
+        <div class="photo-step"><div class="photo-preview" id="preview3"><div class="placeholder">📷</div></div><div class="photo-step-label">รูปที่ 3: หันขวา 45°</div></div>
+      </div>
+      <div class="reg-camera-container"><video id="regVideo" width="100%" height="auto" autoplay playsinline muted></video></div>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button class="modal-btn secondary" onclick="capturePhoto()" style="flex:1">📸 ถ่ายรูป</button>
+        <button class="modal-btn primary" onclick="submitRegistration()" id="submitRegBtn" disabled style="flex:1">✅ ยืนยันการลงทะเบียน</button>
+      </div>
+    `;
+    document.getElementById('regModalTitle').innerHTML = '📸 ลงทะเบียนใบหน้า - ถ่ายรูป 3 รูป';
+    
+    capturedPhotos = [{}, {}, {}];
+    currentRegStep = 0;
+    
+    try {
+      regStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480, facingMode: 'user' }
+      });
+      const video = document.getElementById('regVideo');
+      video.srcObject = regStream;
+      await video.play();
+    } catch(e) { console.error('Camera error:', e); }
+  }
+  
+  async function capturePhoto() {
+    if (currentRegStep >= 3) {
+      showResult('info', 'ครบแล้ว', 'คุณถ่ายรูปครบ 3 รูปแล้ว');
+      return;
+    }
+    
+    const video = document.getElementById('regVideo');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks(true)
+      .withFaceDescriptor();
+    
+    if (!detection) {
+      showResult('error', 'ไม่พบใบหน้า', 'กรุณาถ่ายรูปให้เห็นใบหน้าชัดเจน');
+      return;
+    }
+    
+    capturedPhotos[currentRegStep] = {
+      image: canvas.toDataURL('image/jpeg', 0.85),
+      descriptor: Array.from(detection.descriptor)
+    };
+    
+    document.getElementById(`preview${currentRegStep + 1}`).innerHTML = `<img src="${capturedPhotos[currentRegStep].image}" style="width:100%;height:100%;object-fit:cover">`;
+    currentRegStep++;
+    
+    if (currentRegStep >= 3) {
+      document.getElementById('submitRegBtn').disabled = false;
+      showResult('success', 'ถ่ายรูปครบแล้ว', 'กรุณากดยืนยันการลงทะเบียน');
+    } else {
+      const instructions = ['หน้าตรง', 'หันซ้าย 45°', 'หันขวา 45°'];
+      showResult('info', `ถ่ายรูปที่ ${currentRegStep + 1}`, `กรุณาถ่ายรูป ${instructions[currentRegStep]}`);
+    }
+  }
+  
+  async function submitRegistration() {
+    if (capturedPhotos.length < 3 || capturedPhotos.some(p => !p.descriptor)) {
+      showResult('error', 'ข้อมูลไม่ครบ', 'กรุณาถ่ายรูปให้ครบ 3 รูป');
+      return;
+    }
+    
+    showLoading('กำลังบันทึกข้อมูลใบหน้า...');
+    const result = await callAPI('registerFace', {
+      idNumber: regUserId,
+      phone: regUserPhone,
+      userName: regUserName,
+      embedding1: capturedPhotos[0].descriptor,
+      embedding2: capturedPhotos[1].descriptor,
+      embedding3: capturedPhotos[2].descriptor,
+      image1: capturedPhotos[0].image,
+      image2: capturedPhotos[1].image,
+      image3: capturedPhotos[2].image
     });
-}
-
-function fileToBase64(file) {
-  return new Promise(function(resolve, reject) {
-    const reader = new FileReader();
-    reader.onload = function() { resolve(reader.result); };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-function openPDF(num) {
-  const url = num===1 ? savedPdfLinks.pdf1 : savedPdfLinks.pdf2;
-  if (url) window.open(url,'_blank');
-  else alert('ไม่พบลิงก์ PDF');
-}
-
-function closeModal() {
-  document.getElementById('resultModal').classList.remove('active');
-  loadHistory();
-}
+    
+    hideLoading();
+    
+    if (result.success) {
+      showResult('success', 'ลงทะเบียนสำเร็จ', 'ท่านสามารถใช้ระบบ Facial Login ได้แล้ว');
+      closeRegistrationModal();
+      await loadAllUserEmbeddings();
+    } else {
+      showResult('error', 'ลงทะเบียนไม่สำเร็จ', result.message);
+    }
+  }
+  
+  // ========== HISTORY & EDIT FUNCTIONS ==========
+  async function loadHistory() {
+    showPage('pageHistory');
+    document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
+    showLoading('กำลังโหลดรายการรายงาน...');
+    const reports = await callAPI('getUserReports', { userName: currentUser });
+    
+    const tbody = document.getElementById('reportTableBody');
+    document.getElementById('countBadge').textContent = (reports.length || 0) + ' รายการ';
+    
+    if (!reports || reports.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span>📭</span>ยังไม่มีรายการรายงาน</div></td></tr>';
+      hideLoading();
+      return;
+    }
+    
+    tbody.innerHTML = '';
+    reports.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td><span class="type-tag">${escapeHtml(r.type || '-')}</span></td><td>${escapeHtml(r.title || '-')}</td><td>${escapeHtml(r.dateStr || '-')}</td><td><button class="btn-edit" onclick="openEditForm(${r.rowIndex}, '${escapeHtml(r.reportNumber)}')">✏️ แก้ไขรายงาน</button></td>`;
+      tbody.appendChild(tr);
+    });
+    hideLoading();
+  }
+  
+  async function openEditForm(rowIndex, reportNum) {
+    currentRowIndex = rowIndex;
+    currentReportNum = reportNum;
+    document.getElementById('editReportNumLabel').textContent = 'หมายเลขรายงาน: ' + reportNum;
+    showLoading('กำลังโหลดข้อมูลรายงาน...');
+    
+    const rowData = await callAPI('getReportRowData', { rowIndex });
+    if (rowData.error) {
+      hideLoading();
+      alert('เกิดข้อผิดพลาด: ' + rowData.error);
+      return;
+    }
+    
+    existingFiles = {
+      pic1: rowData.pic1Url || '',
+      pic2: rowData.pic2Url || '',
+      certificate: rowData.certificateUrl || '',
+      qrLink: rowData.qrLink || ''
+    };
+    
+    document.getElementById('e_reportNumber').value = rowData.reportNumber || '';
+    document.getElementById('e_reportDate').value = rowData.reportDate || '';
+    document.getElementById('e_trainingTitle').value = rowData.trainingTitle || '';
+    document.getElementById('e_organizer').value = rowData.organizer || '';
+    document.getElementById('e_location').value = rowData.location || '';
+    document.getElementById('e_report').value = rowData.report || '';
+    document.getElementById('e_knowledgeSharing').value = rowData.knowledgeSharing || '';
+    document.getElementById('e_application').value = rowData.application || '';
+    
+    // Load dropdowns
+    const depts = await callAPI('getDepartments');
+    const deptSelect = document.getElementById('e_department');
+    deptSelect.innerHTML = '<option value="">-- เลือก --</option>';
+    depts.forEach(d => { deptSelect.innerHTML += `<option value="${escapeHtml(d)}" ${d === rowData.department ? 'selected' : ''}>${escapeHtml(d)}</option>`; });
+    
+    const pos = await callAPI('getDropdownOptions', { column: 'position' });
+    const posSelect = document.getElementById('e_position');
+    posSelect.innerHTML = '<option value="">-- เลือก --</option>';
+    pos.forEach(p => { posSelect.innerHTML += `<option value="${escapeHtml(p)}" ${p === rowData.position ? 'selected' : ''}>${escapeHtml(p)}</option>`; });
+    
+    hideLoading();
+    showPage('pageEdit');
+  }
+  
+  async function saveEdit() {
+    showLoading('กำลังบันทึกข้อมูล...');
+    const data = {
+      reportNumber: document.getElementById('e_reportNumber').value,
+      reportDate: document.getElementById('e_reportDate').value,
+      department: document.getElementById('e_department').value,
+      reporterName: currentUser,
+      position: document.getElementById('e_position').value,
+      trainingTitle: document.getElementById('e_trainingTitle').value,
+      organizer: document.getElementById('e_organizer').value,
+      location: document.getElementById('e_location').value,
+      report: document.getElementById('e_report').value,
+      knowledgeSharing: document.getElementById('e_knowledgeSharing').value,
+      application: document.getElementById('e_application').value,
+      existingPic1: existingFiles.pic1,
+      existingPic2: existingFiles.pic2,
+      existingCertificate: existingFiles.certificate,
+      existingQrLink: existingFiles.qrLink,
+      files: {}
+    };
+    
+    const result = await callAPI('saveEditedReport', { data, rowIndex: currentRowIndex });
+    hideLoading();
+    
+    if (result.success) {
+      showResult('success', 'บันทึกสำเร็จ!', `รายงาน ${result.reportNumber} ถูกอัปเดตเรียบร้อย`);
+      setTimeout(() => loadHistory(), 1500);
+    } else {
+      showResult('error', 'บันทึกไม่สำเร็จ', result.error || 'เกิดข้อผิดพลาด');
+    }
+  }
+  
+  function logout() {
+    currentUser = null;
+    stopFacialCamera();
+    document.getElementById('topbarUser').style.display = 'none';
+    document.getElementById('loginId').value = '';
+    document.getElementById('loginPhone').value = '';
+    showPage('pageLogin');
+    document.getElementById('toggleIdOption').click();
+  }
+  
+  function goToHistory() { if (currentUser) loadHistory(); else showPage('pageLogin'); }
+  function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+  function showLoading(msg) { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').classList.add('active'); }
+  function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
+  function showResult(type, title, message) {
+    const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+    document.getElementById('resultIcon').innerHTML = icons[type] || 'ℹ️';
+    document.getElementById('resultTitle').innerHTML = title;
+    document.getElementById('resultMessage').innerHTML = message;
+    document.getElementById('resultModal').classList.add('active');
+  }
+  function closeResultModal() { document.getElementById('resultModal').classList.remove('active'); }
+  function closeRegistrationModal() {
+    if (regStream) { regStream.getTracks().forEach(t => t.stop()); regStream = null; }
+    document.getElementById('regModal').classList.remove('active');
+    if (currentMethod === 'facial') startFacialCamera();
+  }
+  function escapeHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  
+  window.onload = async () => { setupToggle(); await initFaceAPI(); };
+  window.onbeforeunload = () => { if (facialStream) facialStream.getTracks().forEach(t => t.stop()); if (regStream) regStream.getTracks().forEach(t => t.stop()); };
 </script>
 </body>
 </html>
