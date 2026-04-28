@@ -20,7 +20,6 @@
       min-height: 100vh;
     }
 
-    /* Top Bar */
     .topbar {
       background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
       padding: 0 24px;
@@ -74,7 +73,6 @@
       background: rgba(255,255,255,0.25);
     }
 
-    /* Pages */
     .page {
       display: none;
       min-height: calc(100vh - 60px);
@@ -83,7 +81,6 @@
       display: block;
     }
 
-    /* Login Container */
     .login-container {
       min-height: calc(100vh - 60px);
       display: flex;
@@ -100,7 +97,6 @@
       overflow: hidden;
     }
 
-    /* iPhone Style Toggle */
     .toggle-header {
       background: #f5f5f5;
       padding: 8px;
@@ -124,7 +120,6 @@
       box-shadow: 0 2px 8px rgba(15,118,110,0.3);
     }
 
-    /* Login Content */
     .login-content {
       padding: 32px;
     }
@@ -143,7 +138,6 @@
       margin-top: 12px;
     }
 
-    /* Form Styling */
     .form-group {
       margin-bottom: 20px;
     }
@@ -178,7 +172,6 @@
       margin-top: 8px;
     }
 
-    /* Camera */
     .camera-container {
       text-align: center;
     }
@@ -204,7 +197,6 @@
       margin-top: 12px;
     }
 
-    /* Popup */
     .popup-overlay {
       display: none;
       position: fixed;
@@ -263,7 +255,6 @@
       border: none;
     }
 
-    /* History Table */
     .history-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -298,7 +289,6 @@
       cursor: pointer;
     }
 
-    /* Loading */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -347,12 +337,11 @@
   </div>
 </div>
 
-<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
 </div>
 
-<!-- ==================== LOGIN PAGE ==================== -->
+<!-- LOGIN PAGE -->
 <div class="page active" id="pageLogin">
   <div class="login-container">
     <div class="login-card">
@@ -367,7 +356,6 @@
           <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
         </div>
 
-        <!-- ID Login Form -->
         <div id="idLoginForm">
           <div class="form-group">
             <label>เลขประจำตัว 13 หลัก</label>
@@ -380,7 +368,6 @@
           <button class="btn-primary" onclick="loginWithId()">เข้าสู่ระบบ</button>
         </div>
 
-        <!-- Face Login Form -->
         <div id="faceLoginForm" style="display:none;">
           <div class="camera-container">
             <video id="video" autoplay muted playsinline></video>
@@ -396,7 +383,7 @@
   </div>
 </div>
 
-<!-- ==================== HISTORY PAGE ==================== -->
+<!-- HISTORY PAGE -->
 <div class="page" id="pageHistory">
   <div class="history-container">
     <div class="history-header">
@@ -413,7 +400,7 @@
             <th style="padding:12px;">เรื่อง</th>
             <th style="padding:12px;">วันที่อบรม</th>
             <th style="padding:12px;"></th>
-          </tr>
+           </tr>
         </thead>
         <tbody id="reportTableBody">
           <tr><td colspan="5" style="text-align:center; padding:40px;">กำลังโหลด...</td></tr>
@@ -423,7 +410,7 @@
   </div>
 </div>
 
-<!-- ==================== POPUP ==================== -->
+<!-- POPUP -->
 <div class="popup-overlay" id="popupOverlay">
   <div class="popup-card">
     <h3>✅ ยืนยันตัวตน</h3>
@@ -442,11 +429,9 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3
 
 let currentMethod = 'id';
 let currentUser = null;
-let currentRowIndex = null;
 
 // Face recognition variables
 let video = null;
-let canvas = null;
 let modelsLoaded = false;
 let scanInterval = null;
 let currentFaceDescriptor = null;
@@ -469,6 +454,39 @@ function showError(elementId, message) {
   el.textContent = message;
   el.style.display = 'block';
   setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+// ==================== CALL GAS ====================
+async function callGAS(action, data) {
+  try {
+    const response = await fetch(GAS_URL + '?action=' + action, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action, ...data })
+    });
+    
+    // เนื่องจาก mode: 'no-cors' เราไม่สามารถอ่าน response ได้
+    // ต้อง改用 google.script.run แทน
+    
+    console.log('Request sent to GAS');
+    return { success: true, message: 'Request sent' };
+  } catch (err) {
+    console.error('Error:', err);
+    return { success: false, message: err.message };
+  }
+}
+
+// ใช้ google.script.run แทน fetch (ต้องรันใน iframe)
+function callGASNative(action, data, callback) {
+  google.script.run
+    .withSuccessHandler(callback)
+    .withFailureHandler((err) => {
+      callback({ success: false, message: err.message });
+    })
+    [action](data);
 }
 
 // ==================== TOGGLE ====================
@@ -511,18 +529,23 @@ function stopCamera() {
 
 async function loadFaceModels() {
   document.getElementById('detectionStatus').innerHTML = '📥 กำลังโหลดโมเดล...';
-  const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models';
-  await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-  await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
-  await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-  modelsLoaded = true;
-  document.getElementById('detectionStatus').innerHTML = '🎥 กล้องพร้อม รอตรวจจับใบหน้า...';
+  try {
+    // ใช้ local models แทน cdn
+    await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+    await faceapi.nets.faceLandmark68TinyNet.loadFromUri('/models');
+    await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+    modelsLoaded = true;
+    document.getElementById('detectionStatus').innerHTML = '🎥 กล้องพร้อม รอตรวจจับใบหน้า...';
+  } catch (err) {
+    console.error('Model load error:', err);
+    document.getElementById('detectionStatus').innerHTML = '⚠️ โหลดโมเดลไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ';
+  }
 }
 
 function startFaceDetection() {
   if (scanInterval) clearInterval(scanInterval);
   scanInterval = setInterval(async () => {
-    if (!video || !modelsLoaded) return;
+    if (!video || !modelsLoaded || !video.videoWidth) return;
     
     const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks(true)
@@ -535,7 +558,6 @@ function startFaceDetection() {
       const rightEye = landmarks.getRightEye();
       const ear = calculateEAR(leftEye, rightEye);
       
-      // Blink detection
       if (ear < EAR_THRESHOLD && lastEAR > EAR_THRESHOLD) {
         const now = Date.now();
         if (now - lastBlinkTime > BLINK_LOCK_TIME) {
@@ -546,7 +568,6 @@ function startFaceDetection() {
       }
       lastEAR = ear;
       
-      // Get face descriptor
       currentFaceDescriptor = Array.from(face.descriptor);
       
       if (blinkCount >= 2) {
@@ -554,7 +575,7 @@ function startFaceDetection() {
         clearInterval(scanInterval);
         await verifyFaceWithServer(currentFaceDescriptor);
       } else {
-        document.getElementById('detectionStatus').innerHTML = `😐 กำลังตรวจจับ กรุณากระพริบตา ${blinkCount}/2 ครั้ง`;
+        document.getElementById('detectionStatus').innerHTML = `😐 กรุณากระพริบตา ${blinkCount}/2 ครั้ง`;
       }
     } else if (detections.length > 1) {
       document.getElementById('detectionStatus').innerHTML = '⚠️ พบหลายใบหน้า กรุณาอยู่คนเดียว';
@@ -566,17 +587,10 @@ function startFaceDetection() {
 
 function calculateEAR(leftEye, rightEye) {
   function eyeAspectRatio(eye) {
-    const p1 = eye[1];
-    const p2 = eye[5];
-    const p3 = eye[2];
-    const p4 = eye[4];
-    const p5 = eye[0];
-    const p6 = eye[3];
-    
+    const p1 = eye[1], p2 = eye[5], p3 = eye[2], p4 = eye[4], p5 = eye[0], p6 = eye[3];
     const vertical1 = Math.hypot(p1.x - p2.x, p1.y - p2.y);
     const vertical2 = Math.hypot(p3.x - p4.x, p3.y - p4.y);
     const horizontal = Math.hypot(p5.x - p6.x, p5.y - p6.y);
-    
     return (vertical1 + vertical2) / (2 * horizontal);
   }
   return (eyeAspectRatio(leftEye) + eyeAspectRatio(rightEye)) / 2;
@@ -584,38 +598,33 @@ function calculateEAR(leftEye, rightEye) {
 
 async function verifyFaceWithServer(descriptor) {
   showLoading(true);
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'facialLogin',
-        faceEmbedding: descriptor
-      })
-    });
-    const result = await response.json();
-    showLoading(false);
-    
-    if (result.success) {
-      pendingFaceLoginData = result;
-      document.getElementById('popupUserName').textContent = result.name;
-      document.getElementById('popupOverlay').classList.add('active');
-      // Play sound
-      const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-      audio.play().catch(e => console.log('Sound play failed'));
-    } else {
-      if (result.needsRegistration) {
-        alert('ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login');
+  
+  // ใช้ google.script.run เพื่อ bypass CORS
+  google.script.run
+    .withSuccessHandler((result) => {
+      showLoading(false);
+      if (result.success) {
+        pendingFaceLoginData = result;
+        document.getElementById('popupUserName').textContent = result.name;
+        document.getElementById('popupOverlay').classList.add('active');
+        try {
+          new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3').play();
+        } catch(e) {}
       } else {
-        alert(result.message);
+        if (result.needsRegistration) {
+          alert('ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login');
+        } else {
+          alert(result.message);
+        }
+        resetFaceDetection();
       }
+    })
+    .withFailureHandler((err) => {
+      showLoading(false);
+      alert('เกิดข้อผิดพลาด: ' + err);
       resetFaceDetection();
-    }
-  } catch (err) {
-    showLoading(false);
-    alert('เกิดข้อผิดพลาด: ' + err.message);
-    resetFaceDetection();
-  }
+    })
+    .facialLogin(descriptor);
 }
 
 function resetFaceDetection() {
@@ -642,7 +651,7 @@ function closePopup() {
 }
 
 // ==================== ID LOGIN ====================
-async function loginWithId() {
+function loginWithId() {
   const idNumber = document.getElementById('idNumber').value.trim();
   const phone = document.getElementById('phoneNumber').value.trim();
   
@@ -652,66 +661,51 @@ async function loginWithId() {
   }
   
   showLoading(true);
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'loginUser',
-        idNumber: idNumber,
-        phone: phone
-      })
-    });
-    const result = await response.json();
-    showLoading(false);
-    
-    if (result.success) {
-      currentUser = result.name;
-      currentRowIndex = result.rowIndex;
-      document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
-      document.getElementById('topbar').style.display = 'flex';
-      loadHistory();
-    } else {
-      showError('loginError', result.message);
-    }
-  } catch (err) {
-    showLoading(false);
-    showError('loginError', 'เกิดข้อผิดพลาด: ' + err.message);
-  }
+  
+  google.script.run
+    .withSuccessHandler((result) => {
+      showLoading(false);
+      if (result.success) {
+        currentUser = result.name;
+        document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
+        document.getElementById('topbar').style.display = 'flex';
+        loadHistory();
+      } else {
+        showError('loginError', result.message);
+      }
+    })
+    .withFailureHandler((err) => {
+      showLoading(false);
+      showError('loginError', 'เกิดข้อผิดพลาด: ' + err);
+    })
+    .loginUser(idNumber, phone);
 }
 
 // ==================== REGISTRATION ====================
-async function openRegistration() {
+function openRegistration() {
   const idForReg = prompt('กรุณากรอกเลขประจำตัว 13 หลัก เพื่อลงทะเบียน:');
   if (!idForReg) return;
   const phoneForReg = prompt('กรุณากรอกเบอร์โทรศัพท์:');
   if (!phoneForReg) return;
   
   showLoading(true);
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'verifyUserForRegistration',
-        idNumber: idForReg,
-        phone: phoneForReg
-      })
-    });
-    const result = await response.json();
-    showLoading(false);
-    
-    if (result.success) {
-      if (confirm(`ท่านกำลังลงทะเบียนใบหน้าในนามของ ${result.name} ดำเนินการต่อ?`)) {
-        await startRegistrationProcess(result.rowIndex, result.name);
+  
+  google.script.run
+    .withSuccessHandler((result) => {
+      showLoading(false);
+      if (result.success) {
+        if (confirm(`ท่านกำลังลงทะเบียนใบหน้าในนามของ ${result.name} ดำเนินการต่อ?`)) {
+          startRegistrationProcess(result.rowIndex, result.name);
+        }
+      } else {
+        alert(result.message);
       }
-    } else {
-      alert(result.message);
-    }
-  } catch (err) {
-    showLoading(false);
-    alert('เกิดข้อผิดพลาด: ' + err.message);
-  }
+    })
+    .withFailureHandler((err) => {
+      showLoading(false);
+      alert('เกิดข้อผิดพลาด: ' + err);
+    })
+    .verifyUserForRegistration(idForReg, phoneForReg);
 }
 
 async function startRegistrationProcess(rowIndex, userName) {
@@ -722,8 +716,7 @@ async function startRegistrationProcess(rowIndex, userName) {
   
   for (let i = 0; i < 3; i++) {
     await capturePhoto(i);
-    // Wait for face detection
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 1500));
     if (currentFaceDescriptor) {
       embeddings.push(currentFaceDescriptor);
       photos.push(await capturePhotoBase64());
@@ -732,37 +725,18 @@ async function startRegistrationProcess(rowIndex, userName) {
   
   if (embeddings.length === 3) {
     showLoading(true);
-    try {
-      const saveResponse = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'saveFaceEmbeddings',
-          rowIndex: rowIndex,
-          embeddings: embeddings
-        })
-      });
-      await saveResponse.json();
-      
-      const photoResponse = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'saveRegistrationPhotos',
-          userName: userName,
-          photos: photos,
-          rowIndex: rowIndex
-        })
-      });
-      await photoResponse.json();
-      
-      showLoading(false);
-      alert('✅ ลงทะเบียนใบหน้าสำเร็จ!');
-      resetFaceDetection();
-    } catch (err) {
-      showLoading(false);
-      alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
-    }
+    
+    google.script.run
+      .withSuccessHandler(() => {
+        google.script.run
+          .withSuccessHandler(() => {
+            showLoading(false);
+            alert('✅ ลงทะเบียนใบหน้าสำเร็จ!');
+            resetFaceDetection();
+          })
+          .saveRegistrationPhotos(userName, photos, rowIndex);
+      })
+      .saveFaceEmbeddings(rowIndex, embeddings);
   } else {
     alert('ไม่สามารถตรวจจับใบหน้าได้ครบ กรุณาลองใหม่');
   }
@@ -786,47 +760,40 @@ async function capturePhotoBase64() {
 }
 
 // ==================== HISTORY ====================
-async function loadHistory() {
+function loadHistory() {
   showLoading(true);
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'getUserReports',
-        userName: currentUser
-      })
-    });
-    const reports = await response.json();
-    showLoading(false);
-    
-    document.getElementById('reportCount').textContent = reports.length + ' รายการ';
-    const tbody = document.getElementById('reportTableBody');
-    
-    if (reports.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">ไม่มีรายการรายงาน</td></tr>';
-    } else {
-      tbody.innerHTML = reports.map((r, i) => `
-        <tr>
-          <td style="padding:12px;">${i + 1}</td>
-          <td style="padding:12px;"><span style="background:#ccfbf1; padding:4px 12px; border-radius:20px;">${escapeHtml(r.type)}</span></td>
-          <td style="padding:12px;">${escapeHtml(r.title)}</td>
-          <td style="padding:12px;">${escapeHtml(r.dateStr)}</td>
-          <td style="padding:12px;"><button class="btn-edit" onclick="editReport(${r.rowIndex})">✏️ แก้ไข</button></td>
-        </tr>
-      `).join('');
-    }
-    
-    document.getElementById('pageLogin').classList.remove('active');
-    document.getElementById('pageHistory').classList.add('active');
-  } catch (err) {
-    showLoading(false);
-    document.getElementById('historyError').innerHTML = '<div class="error-msg">เกิดข้อผิดพลาด: ' + err.message + '</div>';
-  }
+  
+  google.script.run
+    .withSuccessHandler((reports) => {
+      showLoading(false);
+      document.getElementById('reportCount').textContent = reports.length + ' รายการ';
+      const tbody = document.getElementById('reportTableBody');
+      
+      if (reports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">ไม่มีรายการรายงาน</td></tr>';
+      } else {
+        tbody.innerHTML = reports.map((r, i) => `
+          <tr>
+            <td style="padding:12px;">${i + 1}</td>
+            <td style="padding:12px;"><span style="background:#ccfbf1; padding:4px 12px; border-radius:20px;">${escapeHtml(r.type)}</span></td>
+            <td style="padding:12px;">${escapeHtml(r.title)}</td>
+            <td style="padding:12px;">${escapeHtml(r.dateStr)}</td>
+            <td style="padding:12px;"><button class="btn-edit" onclick="editReport(${r.rowIndex})">✏️ แก้ไข</button></td>
+          </tr>
+        `).join('');
+      }
+      
+      document.getElementById('pageLogin').classList.remove('active');
+      document.getElementById('pageHistory').classList.add('active');
+    })
+    .withFailureHandler((err) => {
+      showLoading(false);
+      document.getElementById('historyError').innerHTML = '<div class="error-msg">เกิดข้อผิดพลาด: ' + err + '</div>';
+    })
+    .getUserReports(currentUser);
 }
 
 function editReport(rowIndex) {
-  // Will implement edit form here
   alert('กำลังพัฒนาแบบฟอร์มแก้ไข...');
 }
 
@@ -850,22 +817,6 @@ function escapeHtml(str) {
     return m;
   });
 }
-
-// ==================== WRAPPER FOR GAS ====================
-async function callGAS(action, data) {
-  const payload = { action, ...data };
-  const response = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  return response.json();
-}
-
-// Initial load
-window.addEventListener('load', () => {
-  // Nothing to init
-});
 </script>
 </body>
 </html>
