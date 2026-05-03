@@ -2,820 +2,1492 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>ระบบรายงานการไปราชการ - Facial Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แก้ไขรายงานการไปราชการ / อบรม / ศึกษาดูงาน — โรงเรียนสิงห์บุรี</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --primary: #0f766e;
+      --primary-light: #14b8a6;
+      --primary-mid: #0d9488;
+      --primary-glow: rgba(20,184,166,0.15);
+      --primary-glow2: rgba(20,184,166,0.08);
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --bg: #f0fdfa;
+      --bg2: #e6fffa;
+      --surface: #ffffff;
+      --border: #ccfbf1;
+      --border2: #99f6e4;
+      --text: #134e4a;
+      --text-muted: #5eead4;
+      --text-sub: #6b7280;
+      --shadow-sm: 0 2px 8px rgba(15,118,110,0.08);
+      --shadow: 0 4px 24px rgba(15,118,110,0.10);
+      --shadow-lg: 0 12px 48px rgba(15,118,110,0.18);
+      --shadow-xl: 0 24px 80px rgba(15,118,110,0.22);
+      --radius: 18px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
     }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     body {
       font-family: 'Sarabun', sans-serif;
-      background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+      background: var(--bg);
       min-height: 100vh;
+      color: var(--text);
+      line-height: 1.6;
     }
 
+    /* ───── TOPBAR ───── */
     .topbar {
-      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
-      padding: 0 24px;
-      height: 60px;
+      background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 45%, var(--primary-light) 100%);
+      padding: 0 32px;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 20px rgba(15,118,110,0.30);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
+      backdrop-filter: blur(10px);
+    }
+    .topbar::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     }
     .topbar-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       color: white;
+      text-decoration: none;
     }
     .topbar-brand img {
-      width: 38px;
-      height: 38px;
+      width: 40px; height: 40px;
       border-radius: 50%;
-      background: white;
-      padding: 2px;
+      border: 2px solid rgba(255,255,255,0.45);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
-    .topbar-brand span {
+    .topbar-brand-text {
+      font-size: 15px;
       font-weight: 600;
-      font-size: 16px;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .topbar-brand-text small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.75;
     }
     .topbar-user {
-      display: flex;
+      display: none;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
+    .topbar-user.visible { display: flex; }
     .user-badge {
-      background: rgba(255,255,255,0.2);
-      padding: 6px 14px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.30);
+      padding: 5px 14px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: white;
+      letter-spacing: 0.01em;
     }
     .btn-logout {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: white;
-      padding: 6px 14px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.9);
+      padding: 5px 14px;
       border-radius: 8px;
       cursor: pointer;
+      font-size: 12px;
       font-family: inherit;
+      transition: var(--transition);
     }
-    .btn-logout:hover {
-      background: rgba(255,255,255,0.25);
-    }
+    .btn-logout:hover { background: rgba(255,255,255,0.22); color: white; }
 
-    .page {
-      display: none;
-      min-height: calc(100vh - 60px);
-    }
-    .page.active {
-      display: block;
-    }
+    /* ───── PAGES ───── */
+    .page { display: none; }
+    .page.active { display: block; }
 
-    .login-container {
-      min-height: calc(100vh - 60px);
+    /* ───── LOGIN PAGE ───── */
+    .login-wrap {
+      min-height: calc(100vh - 64px);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
+      background: radial-gradient(ellipse at 20% 50%, rgba(20,184,166,0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(15,118,110,0.08) 0%, transparent 50%),
+                  linear-gradient(160deg, #f0fdfa 0%, #e6fffa 50%, #ccfbf1 100%);
     }
     .login-card {
       background: white;
       border-radius: 28px;
-      box-shadow: 0 20px 60px rgba(15,118,110,0.25);
+      box-shadow: var(--shadow-xl);
+      padding: 52px 48px;
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
+      border-top: 5px solid var(--primary);
+      position: relative;
       overflow: hidden;
     }
-
-    .toggle-header {
-      background: #f5f5f5;
-      padding: 8px;
-      display: flex;
-      gap: 8px;
-    }
-    .toggle-btn {
-      flex: 1;
-      text-align: center;
-      padding: 12px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: #e0e0e0;
-      color: #666;
-    }
-    .toggle-btn.active {
-      background: #0f766e;
-      color: white;
-      box-shadow: 0 2px 8px rgba(15,118,110,0.3);
-    }
-
-    .login-content {
-      padding: 32px;
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 70%);
     }
     .login-logo {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 36px;
     }
     .login-logo img {
-      width: 80px;
-      height: 80px;
+      width: 84px; height: 84px;
       border-radius: 50%;
+      box-shadow: 0 8px 30px rgba(15,118,110,0.22);
+      border: 3px solid var(--primary-light);
     }
     .login-logo h1 {
-      font-size: 20px;
-      color: #0f766e;
-      margin-top: 12px;
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 18px;
+      line-height: 1.5;
     }
-
-    .form-group {
-      margin-bottom: 20px;
+    .login-logo p {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 6px;
     }
-    .form-group label {
+    .login-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border2), transparent);
+      margin: 24px 0;
+    }
+    .login-field { margin-bottom: 20px; }
+    .login-field label {
       display: block;
       font-weight: 600;
+      font-size: 13px;
+      color: var(--text);
       margin-bottom: 8px;
-      color: #134e4a;
+      letter-spacing: 0.01em;
     }
-    .form-group input {
+    .login-field input {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      font-size: 16px;
+      padding: 13px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
       font-family: inherit;
+      transition: var(--transition);
+      color: var(--text);
+      letter-spacing: 0.05em;
     }
-    .form-group input:focus {
+    .login-field input:focus {
       outline: none;
-      border-color: #14b8a6;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px var(--primary-glow);
     }
-    .btn-primary {
+    .btn-login {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       font-size: 16px;
       font-weight: 700;
+      font-family: inherit;
       cursor: pointer;
       margin-top: 8px;
+      box-shadow: 0 4px 18px rgba(15,118,110,0.32);
+      transition: var(--transition);
+      letter-spacing: 0.03em;
+      position: relative;
+      overflow: hidden;
     }
-
-    .camera-container {
-      text-align: center;
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
     }
-    video {
-      width: 100%;
-      max-width: 400px;
-      border-radius: 16px;
-      background: #333;
-      transform: scaleX(-1);
+    .btn-login:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(15,118,110,0.40);
     }
-    canvas {
+    .btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .login-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 16px;
       display: none;
+      animation: slideDown 0.2s ease;
     }
-    .detection-status {
-      margin: 12px 0;
-      padding: 10px;
-      border-radius: 10px;
-      background: #f0fdfa;
-      color: #0f766e;
-    }
-    .btn-register {
-      background: #f59e0b;
-      margin-top: 12px;
-    }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
 
-    .popup-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .popup-overlay.active {
-      display: flex;
-    }
-    .popup-card {
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-    }
-    .popup-card h3 {
-      font-size: 24px;
-      margin-bottom: 16px;
-    }
-    .popup-card .user-name {
-      background: #f0fdfa;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f766e;
-      margin: 16px 0;
-    }
-    .popup-buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .popup-buttons button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-confirm {
-      background: #0f766e;
-      color: white;
-      border: none;
-    }
-    .btn-cancel {
-      background: #e0e0e0;
-      border: none;
-    }
-
-    .history-container {
-      max-width: 1200px;
+    /* ───── HISTORY PAGE ───── */
+    .history-wrap {
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 36px 24px;
     }
     .history-header {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 14px;
     }
-    .report-table {
-      width: 100%;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
+    .history-title-group h2 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .report-table th {
-      background: #0f766e;
+    .history-title-group p {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+    .count-badge {
+      background: var(--primary);
       color: white;
-      padding: 12px;
-    }
-    .report-table td {
-      padding: 12px;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    .btn-edit {
-      background: #0f766e;
-      color: white;
-      padding: 6px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+      align-self: flex-start;
+      margin-top: 4px;
     }
 
+    .table-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .report-table { width: 100%; border-collapse: collapse; }
+    .report-table thead tr {
+      background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 60%, var(--primary-mid) 100%);
+    }
+    .report-table thead th {
+      padding: 15px 20px;
+      text-align: left;
+      color: rgba(255,255,255,0.95);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .report-table tbody tr {
+      border-bottom: 1px solid #f0fdf4;
+      transition: background var(--transition);
+    }
+    .report-table tbody tr:last-child { border-bottom: none; }
+    .report-table tbody tr:hover { background: #f0fdfa; }
+    .report-table td {
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .num-cell { color: #aaa; font-size: 12px; font-weight: 500; }
+    .type-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ccfbf1;
+      color: var(--primary);
+      white-space: nowrap;
+      border: 1px solid #99f6e4;
+    }
+    .title-cell { font-weight: 500; }
+    .date-cell { white-space: nowrap; font-weight: 600; color: var(--primary-mid); font-size: 13px; }
+    .btn-edit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      box-shadow: 0 2px 10px rgba(15,118,110,0.25);
+    }
+    .btn-edit:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(15,118,110,0.35); }
+    .btn-edit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .empty-state {
+      padding: 70px 20px;
+      text-align: center;
+      color: #aaa;
+    }
+    .empty-state .empty-icon { font-size: 52px; display: block; margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; }
+
+    /* ───── EDIT FORM PAGE ───── */
+    .edit-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .edit-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 2px solid var(--border2);
+      color: var(--primary);
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-back:hover { background: var(--bg); border-color: var(--primary-light); }
+    .edit-title-group h2 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .edit-title-group p {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+
+    /* Form sections */
+    .form-section {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px 34px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      transition: box-shadow var(--transition);
+    }
+    .form-section:hover { box-shadow: var(--shadow-lg); }
+    .form-section h3 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media(max-width: 640px) {
+      .form-row, .form-row.cols3 { grid-template-columns: 1fr; }
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+    label .req { color: var(--danger); margin-left: 2px; }
+    input[type=text], input[type=number], input[type=date],
+    select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      transition: var(--transition);
+      background: #fff;
+      color: var(--text);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    input.error-field { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
+    input[readonly], input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+    textarea { resize: vertical; min-height: 110px; }
+    .char-counter {
+      text-align: right;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+    .char-counter.warn { color: var(--accent); }
+    .char-counter.over { color: var(--danger); }
+
+    /* File upload */
+    .file-upload-box {
+      position: relative;
+      border: 2px dashed #b2dfdb;
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--bg2);
+    }
+    .file-upload-box:hover { border-color: var(--primary); background: #d1faf4; }
+    .file-upload-box input[type=file] {
+      position: absolute;
+      opacity: 0;
+      width: 100%; height: 100%;
+      top: 0; left: 0;
+      cursor: pointer;
+      padding: 0; border: none; background: transparent;
+    }
+    .file-upload-box .upload-icon { font-size: 22px; display: block; margin-bottom: 6px; pointer-events: none; }
+    .file-upload-box p { font-size: 13px; color: #6b7280; pointer-events: none; }
+    .file-preview { margin-top: 12px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+    .file-preview img { max-width: 100px; max-height: 100px; border-radius: 8px; border: 2px solid var(--border); object-fit: cover; }
+    .file-preview .file-name { font-size: 12px; color: var(--primary); font-weight: 500; }
+    .existing-note {
+      font-size: 11px;
+      color: #0f766e;
+      margin-top: 8px;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      border-radius: 6px;
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Save bar */
+    .save-bar {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 34px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .btn-save {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 13px 38px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(15,118,110,0.30);
+      transition: var(--transition);
+    }
+    .btn-save:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(15,118,110,0.40); }
+    .btn-save:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+    .btn-cancel {
+      background: white;
+      border: 2px solid #e5e7eb;
+      color: #6b7280;
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-cancel:hover { border-color: #d1d5db; background: #f9fafb; }
+
+    /* ───── LOADING OVERLAY ───── */
     .loading-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 2000;
-      align-items: center;
+      inset: 0;
+      background: rgba(2,32,28,0.78);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
       justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-    .loading-overlay.active {
-      display: flex;
+    .loading-overlay.active { display: flex; }
+    .loading-spinner-wrap {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 44px 52px;
+      text-align: center;
     }
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid white;
-      border-top-color: #14b8a6;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .loading-overlay img { width: 110px; height: 110px; border-radius: 16px; }
+    .loading-text { color: rgba(255,255,255,0.9); margin-top: 20px; font-size: 16px; font-weight: 500; }
+    .loading-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 6px; }
+
+    /* ───── RESULT MODAL ───── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2,32,28,0.60);
+      backdrop-filter: blur(6px);
+      z-index: 9998;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .modal-backdrop.active { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .modal-card {
+      background: white;
+      border-radius: 28px;
+      box-shadow: var(--shadow-xl);
+      padding: 48px 44px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      border-top: 5px solid var(--success);
+      animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .error-msg {
-      background: #fee2e2;
-      color: #dc2626;
-      padding: 12px;
+    @keyframes scaleIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+    .modal-success-icon { font-size: 56px; display: block; margin-bottom: 18px; }
+    .modal-card h3 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 10px;
+    }
+    .modal-card .modal-desc { color: var(--text-sub); font-size: 14px; margin-bottom: 4px; }
+    .modal-report-num {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      margin-top: 12px;
+      padding: 10px 18px;
+      margin: 18px 0;
+      display: inline-block;
+    }
+    .modal-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+    .modal-btn {
+      padding: 13px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+    }
+    .modal-btn:hover { transform: translateY(-1px); }
+    .modal-btn.primary { background: linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; box-shadow:0 4px 14px rgba(15,118,110,0.28); }
+    .modal-btn.secondary { background: linear-gradient(135deg,#059669,#10b981); color:white; box-shadow:0 4px 14px rgba(5,150,105,0.25); }
+    .modal-btn.outline { background: white; border: 2px solid var(--border); color: var(--primary); }
+
+    /* ───── SPINNER ───── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ───── ALERTS ───── */
+    .alert-box {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      animation: slideDown 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .alert-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .alert-box.info { background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; }
+    .alert-box.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+    /* ───── RESPONSIVE ───── */
+    @media(max-width: 640px) {
+      .topbar { padding: 0 16px; }
+      .topbar-brand-text { font-size: 13px; }
+      .login-card { padding: 36px 24px; }
+      .history-wrap, .edit-wrap { padding: 20px 14px; }
+      .form-section { padding: 22px 18px; }
+      .save-bar { padding: 18px; }
+      .btn-save { padding: 12px 24px; font-size: 14px; }
     }
   </style>
 </head>
 <body>
 
-<div class="topbar" id="topbar" style="display:none;">
-  <div class="topbar-brand">
-    <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
-    <span>ระบบรายงานการไปราชการ</span>
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner-wrap">
+    <img src="https://img2.pic.in.th/pic/Untitled-designa252d1a12dd2af5b.gif" alt="Loading">
+    <div class="loading-text" id="loadingText">กำลังประมวลผล...</div>
+    <div class="loading-sub" id="loadingSub">กรุณารอสักครู่</div>
   </div>
-  <div class="topbar-user">
-    <span class="user-badge" id="userNameDisplay"></span>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-backdrop" id="resultModal">
+  <div class="modal-card">
+    <span class="modal-success-icon">✅</span>
+    <h3>บันทึกรายงานสำเร็จ!</h3>
+    <p class="modal-desc">อัปเดตข้อมูลและสร้างเอกสารใหม่เรียบร้อยแล้ว</p>
+    <div class="modal-report-num" id="resultReportNum"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" onclick="openPDF(1)">📄 พิมพ์บันทึกข้อความ</button>
+      <button class="modal-btn secondary" onclick="openPDF(2)">📋 พิมพ์รายงานการอบรม</button>
+      <button class="modal-btn outline" onclick="closeModal()">🔙 กลับรายการรายงาน</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo" onerror="this.style.display='none'">
+    <div class="topbar-brand-text">
+      ระบบแก้ไขรายงานการไปราชการ
+      <small>โรงเรียนสิงห์บุรี</small>
+    </div>
+  </div>
+  <div class="topbar-user" id="topbarUser">
+    <span class="user-badge" id="topbarName"></span>
     <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
   </div>
 </div>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-</div>
-
-<!-- LOGIN PAGE -->
+<!-- ══════════════ PAGE: LOGIN ══════════════ -->
 <div class="page active" id="pageLogin">
-  <div class="login-container">
+  <div class="login-wrap">
     <div class="login-card">
-      <div class="toggle-header">
-        <div class="toggle-btn active" id="toggleId" onclick="switchLoginMethod('id')">เลข 13 หลัก</div>
-        <div class="toggle-btn" id="toggleFace" onclick="switchLoginMethod('face')">Facial Login</div>
+      <div class="login-logo">
+        <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
+        <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
+        <p>โรงเรียนสิงห์บุรี</p>
       </div>
-      
-      <div class="login-content">
-        <div class="login-logo">
-          <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
-          <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
-        </div>
-
-        <div id="idLoginForm">
-          <div class="form-group">
-            <label>เลขประจำตัว 13 หลัก</label>
-            <input type="text" id="idNumber" maxlength="13" placeholder="กรอกเลขประจำตัว 13 หลัก">
-          </div>
-          <div class="form-group">
-            <label>เบอร์โทรศัพท์</label>
-            <input type="text" id="phoneNumber" placeholder="กรอกเบอร์โทรศัพท์">
-          </div>
-          <button class="btn-primary" onclick="loginWithId()">เข้าสู่ระบบ</button>
-        </div>
-
-        <div id="faceLoginForm" style="display:none;">
-          <div class="camera-container">
-            <video id="video" autoplay muted playsinline></video>
-            <canvas id="canvas"></canvas>
-            <div class="detection-status" id="detectionStatus">📷 กำลังเปิดกล้อง...</div>
-            <button class="btn-primary btn-register" onclick="openRegistration()">📝 ลงทะเบียนใบหน้า</button>
-          </div>
-        </div>
-
-        <div id="loginError" class="error-msg" style="display:none;"></div>
+      <div class="login-divider"></div>
+      <div class="login-field">
+        <label>🪪 เลขประจำตัว 13 หลัก</label>
+        <input type="text" id="loginId" maxlength="13" placeholder="กรอกเลขประจำตัว 13 หลัก" inputmode="numeric" autocomplete="off">
       </div>
+      <div class="login-field">
+        <label>📱 เบอร์โทรศัพท์</label>
+        <input type="text" id="loginPhone" maxlength="20" placeholder="กรอกเบอร์โทรศัพท์" inputmode="tel" autocomplete="off">
+      </div>
+      <button class="btn-login" id="btnLogin" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
+      <div class="login-error" id="loginError"></div>
     </div>
   </div>
 </div>
 
-<!-- HISTORY PAGE -->
+<!-- ══════════════ PAGE: HISTORY ══════════════ -->
 <div class="page" id="pageHistory">
-  <div class="history-container">
+  <div class="history-wrap">
     <div class="history-header">
-      <h2>📋 ประวัติการรายงาน</h2>
-      <span id="reportCount" style="background:#0f766e; color:white; padding:4px 12px; border-radius:20px;">0 รายการ</span>
+      <div class="history-title-group">
+        <h2>📋 ประวัติการรายงาน</h2>
+        <p id="historySubtitle">กำลังโหลดข้อมูล...</p>
+      </div>
+      <span class="count-badge" id="countBadge">0 รายการ</span>
     </div>
-    <div id="historyError"></div>
-    <div class="report-table">
-      <table style="width:100%; border-collapse:collapse;">
+    <div id="alertHistory"></div>
+    <div class="table-card">
+      <table class="report-table" id="reportTable">
         <thead>
-          <tr style="background:#0f766e; color:white;">
-            <th style="padding:12px;">#</th>
-            <th style="padding:12px;">ประเภท</th>
-            <th style="padding:12px;">เรื่อง</th>
-            <th style="padding:12px;">วันที่อบรม</th>
-            <th style="padding:12px;"></th>
-           </tr>
+          <tr>
+            <th style="width:48px">#</th>
+            <th>ประเภท</th>
+            <th>เรื่อง / หัวข้อการอบรม</th>
+            <th>วันที่อบรม</th>
+            <th style="width:150px"></th>
+          </tr>
         </thead>
         <tbody id="reportTableBody">
-          <tr><td colspan="5" style="text-align:center; padding:40px;">กำลังโหลด...</td></tr>
+          <tr><td colspan="5"><div class="empty-state"><span class="empty-icon">⏳</span><p>กำลังโหลดข้อมูล...</p></div></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- POPUP -->
-<div class="popup-overlay" id="popupOverlay">
-  <div class="popup-card">
-    <h3>✅ ยืนยันตัวตน</h3>
-    <p>พบผู้ใช้:</p>
-    <div class="user-name" id="popupUserName"></div>
-    <div class="popup-buttons">
-      <button class="btn-confirm" onclick="confirmLogin()">ยืนยันล็อกอิน</button>
-      <button class="btn-cancel" onclick="closePopup()">ยกเลิก</button>
+<!-- ══════════════ PAGE: EDIT FORM ══════════════ -->
+<div class="page" id="pageEdit">
+  <div class="edit-wrap">
+    <div class="edit-header">
+      <button class="btn-back" onclick="goToHistory()">← ย้อนกลับ</button>
+      <div class="edit-title-group">
+        <h2>✏️ แก้ไขรายงาน</h2>
+        <p id="editReportNumLabel">หมายเลขรายงาน: —</p>
+      </div>
+    </div>
+
+    <div id="alertEdit"></div>
+
+    <!-- Section 1 -->
+    <div class="form-section">
+      <h3>📋 ข้อมูลทั่วไปและผู้รายงาน</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>เลขที่รายงาน</label>
+          <input type="text" id="e_reportNumber" readonly>
+        </div>
+        <div class="form-group">
+          <label>วันที่ทำรายงาน <span class="req">*</span></label>
+          <input type="date" id="e_reportDate">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>กลุ่มสาระ <span class="req">*</span></label>
+          <select id="e_department"><option value="">กำลังโหลด...</option></select>
+        </div>
+        <div class="form-group">
+          <label>ชื่อผู้รายงาน <span class="req">*</span></label>
+          <select id="e_reporterName"><option value="">เลือกชื่อผู้รายงาน</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>ตำแหน่ง <span class="req">*</span></label>
+          <select id="e_position"><option value="">กำลังโหลด...</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="form-section">
+      <h3>📄 ข้อมูลการอ้างอิง</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>ประเภทการไปราชการ</label>
+          <select id="e_type"><option value="">กำลังโหลด...</option></select>
+        </div>
+        <div class="form-group">
+          <label>อ้างถึง</label>
+          <select id="e_reference"><option value="">กำลังโหลด...</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>หน่วยงานที่ออกเอกสาร</label>
+          <input type="text" id="e_invitingOrg" placeholder="เช่น สพม.สิงห์บุรี">
+        </div>
+        <div class="form-group">
+          <label>เลขที่เอกสาร</label>
+          <input type="text" id="e_invitationNumber" placeholder="เช่น ศธ 04234/1234">
+        </div>
+      </div>
+      <div class="form-group" style="max-width:50%">
+        <label>ลงวันที่</label>
+        <input type="date" id="e_invitationDate">
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="form-section">
+      <h3>🎓 ข้อมูลการอบรม</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>วันที่รับการอบรม <span class="req">*</span></label>
+          <input type="date" id="e_trainingStartDate">
+        </div>
+        <div class="form-group">
+          <label>ถึงวันที่ <span class="req">*</span></label>
+          <input type="date" id="e_trainingEndDate">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>จำนวนวัน <span class="req">*</span></label>
+          <input type="number" id="e_days" min="1" placeholder="จำนวนวัน">
+        </div>
+        <div class="form-group">
+          <label>ชั่วโมงการอบรม <span class="req">*</span></label>
+          <input type="number" id="e_hours" min="1" step="0.5" placeholder="ชั่วโมง">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>เรื่องอบรม <span class="req">*</span></label>
+        <input type="text" id="e_trainingTitle" placeholder="หัวข้อการอบรม">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>จัดโดย <span class="req">*</span></label>
+          <input type="text" id="e_organizer" placeholder="หน่วยงานผู้จัด">
+        </div>
+        <div class="form-group">
+          <label>สถานที่ <span class="req">*</span></label>
+          <input type="text" id="e_location" placeholder="สถานที่อบรม">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="form-section">
+      <h3>✍️ รายงานและการนำไปใช้</h3>
+      <div class="form-group">
+        <label>รายงานการไปราชการ (ไม่เกิน 400 ตัวอักษร) <span class="req">*</span></label>
+        <textarea id="e_report" maxlength="800" placeholder="สรุปเนื้อหาการอบรม..."></textarea>
+        <div class="char-counter" id="cnt_report">0 / 400</div>
+      </div>
+      <div class="form-group">
+        <label>การเผยแพร่ความรู้ (ไม่เกิน 400 ตัวอักษร) <span class="req">*</span></label>
+        <textarea id="e_knowledgeSharing" maxlength="800" placeholder="วิธีการเผยแพร่ความรู้ที่ได้รับ..."></textarea>
+        <div class="char-counter" id="cnt_sharing">0 / 400</div>
+      </div>
+      <div class="form-group">
+        <label>การนำประสบการณ์ไปใช้ (ไม่เกิน 430 ตัวอักษร) <span class="req">*</span></label>
+        <textarea id="e_application" maxlength="900" placeholder="การนำความรู้ที่ได้รับไปประยุกต์ใช้..."></textarea>
+        <div class="char-counter" id="cnt_application">0 / 430</div>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="form-section">
+      <h3>📑 เอกสารที่แนบ</h3>
+      <div class="form-row">
+        <div class="form-group"><label>เอกสาร 1</label><input type="text" id="e_doc1" placeholder="เช่น เกียรติบัตร"></div>
+        <div class="form-group"><label>เอกสาร 2</label><input type="text" id="e_doc2" placeholder="เช่น เอกสารประกอบการอบรม"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>เอกสาร 3</label><input type="text" id="e_doc3"></div>
+        <div class="form-group"><label>เอกสาร 4</label><input type="text" id="e_doc4"></div>
+      </div>
+      <div class="form-group" style="max-width:50%">
+        <label>เอกสาร 5</label><input type="text" id="e_doc5">
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="form-section">
+      <h3>📸 อัปโหลดเอกสารและรูปภาพ</h3>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:22px;">หากไม่อัปโหลดใหม่ ระบบจะใช้ไฟล์เดิมโดยอัตโนมัติ</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>เอกสารประกอบการอบรม</label>
+          <div class="file-upload-box">
+            <input type="file" id="e_trainingDoc" accept=".pdf,.doc,.docx">
+            <span class="upload-icon">📄</span>
+            <p>คลิกเพื่อเลือกไฟล์ใหม่</p>
+            <div class="file-preview" id="prev_trainingDoc"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>หนังสือเชิญ / คำสั่ง</label>
+          <div class="file-upload-box">
+            <input type="file" id="e_invitationDoc" accept=".pdf,.doc,.docx">
+            <span class="upload-icon">📄</span>
+            <p>คลิกเพื่อเลือกไฟล์ใหม่</p>
+            <div class="file-preview" id="prev_invitationDoc"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>รูปที่ 1 (ภาพกับป้ายงาน)</label>
+          <div class="file-upload-box">
+            <input type="file" id="e_pic1" accept="image/*">
+            <span class="upload-icon">🖼️</span>
+            <p>คลิกเพื่อเลือกรูปใหม่</p>
+            <div class="file-preview" id="prev_pic1"></div>
+          </div>
+          <div id="note_pic1"></div>
+        </div>
+        <div class="form-group">
+          <label>รูปที่ 2 (ภาพขณะรับการอบรม)</label>
+          <div class="file-upload-box">
+            <input type="file" id="e_pic2" accept="image/*">
+            <span class="upload-icon">🖼️</span>
+            <p>คลิกเพื่อเลือกรูปใหม่</p>
+            <div class="file-preview" id="prev_pic2"></div>
+          </div>
+          <div id="note_pic2"></div>
+        </div>
+      </div>
+
+      <div class="form-group" style="max-width:460px">
+        <label>เกียรติบัตร</label>
+        <div class="file-upload-box">
+          <input type="file" id="e_certificate" accept="image/*,.pdf">
+          <span class="upload-icon">🏆</span>
+          <p>คลิกเพื่อเลือกไฟล์ใหม่</p>
+          <div class="file-preview" id="prev_certificate"></div>
+        </div>
+        <div id="note_certificate"></div>
+      </div>
+    </div>
+
+    <!-- Save bar -->
+    <div class="save-bar">
+      <button class="btn-cancel" onclick="goToHistory()">ยกเลิก</button>
+      <button class="btn-save" id="btnSave" onclick="saveEdit()">💾 บันทึกการแก้ไข</button>
     </div>
   </div>
 </div>
 
 <script>
-// ==================== CONFIG ====================
+// ══════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-let currentMethod = 'id';
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
 let currentUser = null;
+let currentRowIndex = null;
+let currentReportNum = '';
+let savedPdfLinks = {};
+let existingFiles = {};
+let ddData = { departments: [], positions: [], types: [], references: [] };
+let dropdownsLoaded = false;
 
-// Face recognition variables
-let video = null;
-let modelsLoaded = false;
-let scanInterval = null;
-let currentFaceDescriptor = null;
-let pendingFaceLoginData = null;
-
-// Blink detection
-let lastEAR = 1;
-let blinkCount = 0;
-let lastBlinkTime = 0;
-const EAR_THRESHOLD = 0.25;
-const BLINK_LOCK_TIME = 400;
-
-// ==================== UTILS ====================
-function showLoading(show) {
-  document.getElementById('loadingOverlay').classList.toggle('active', show);
+// ══════════════════════════════════════════════
+//  GAS API HELPER
+//  GET  → ?action=xxx&param=yyy
+//  POST → FormData with action + jsonData
+// ══════════════════════════════════════════════
+async function gasGet(params) {
+  const url = new URL(GAS_URL);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  const res = await fetch(url.toString(), { redirect: 'follow' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
 }
 
-function showError(elementId, message) {
-  const el = document.getElementById(elementId);
-  el.textContent = message;
-  el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 3000);
+async function gasPost(action, payload) {
+  const form = new FormData();
+  form.append('action', action);
+  form.append('jsonData', JSON.stringify(payload));
+  const res = await fetch(GAS_URL, { method: 'POST', body: form, redirect: 'follow' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
 }
 
-// ==================== CALL GAS ====================
-async function callGAS(action, data) {
-  try {
-    const response = await fetch(GAS_URL + '?action=' + action, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ action, ...data })
-    });
-    
-    // เนื่องจาก mode: 'no-cors' เราไม่สามารถอ่าน response ได้
-    // ต้อง改用 google.script.run แทน
-    
-    console.log('Request sent to GAS');
-    return { success: true, message: 'Request sent' };
-  } catch (err) {
-    console.error('Error:', err);
-    return { success: false, message: err.message };
-  }
+// ══════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════
+function showLoading(msg, sub) {
+  document.getElementById('loadingText').textContent = msg || 'กำลังประมวลผล...';
+  document.getElementById('loadingSub').textContent = sub || 'กรุณารอสักครู่';
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function showAlert(containerId, type, msg) {
+  const icons = { error: '⚠️', info: 'ℹ️', warn: '🔔' };
+  document.getElementById(containerId).innerHTML =
+    `<div class="alert-box ${type}">${icons[type]||''} ${escHtml(msg)}</div>`;
+}
+function clearAlert(containerId) {
+  document.getElementById(containerId).innerHTML = '';
 }
 
-// ใช้ google.script.run แทน fetch (ต้องรันใน iframe)
-function callGASNative(action, data, callback) {
-  google.script.run
-    .withSuccessHandler(callback)
-    .withFailureHandler((err) => {
-      callback({ success: false, message: err.message });
-    })
-    [action](data);
-}
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+async function doLogin() {
+  const id    = document.getElementById('loginId').value.trim();
+  const phone = document.getElementById('loginPhone').value.trim();
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
 
-// ==================== TOGGLE ====================
-function switchLoginMethod(method) {
-  currentMethod = method;
-  document.getElementById('toggleId').classList.toggle('active', method === 'id');
-  document.getElementById('toggleFace').classList.toggle('active', method === 'face');
-  
-  document.getElementById('idLoginForm').style.display = method === 'id' ? 'block' : 'none';
-  document.getElementById('faceLoginForm').style.display = method === 'face' ? 'block' : 'none';
-  
-  if (method === 'face') {
-    initCamera();
-  } else {
-    stopCamera();
-  }
-}
-
-// ==================== CAMERA ====================
-async function initCamera() {
-  video = document.getElementById('video');
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: 640, height: 480, facingMode: 'user' }
-    });
-    video.srcObject = stream;
-    await loadFaceModels();
-    startFaceDetection();
-  } catch (err) {
-    document.getElementById('detectionStatus').innerHTML = '❌ ไม่สามารถเปิดกล้องได้: ' + err.message;
-  }
-}
-
-function stopCamera() {
-  if (scanInterval) clearInterval(scanInterval);
-  if (video && video.srcObject) {
-    video.srcObject.getTracks().forEach(track => track.stop());
-  }
-}
-
-async function loadFaceModels() {
-  document.getElementById('detectionStatus').innerHTML = '📥 กำลังโหลดโมเดล...';
-  try {
-    // ใช้ local models แทน cdn
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-    await faceapi.nets.faceLandmark68TinyNet.loadFromUri('/models');
-    await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
-    modelsLoaded = true;
-    document.getElementById('detectionStatus').innerHTML = '🎥 กล้องพร้อม รอตรวจจับใบหน้า...';
-  } catch (err) {
-    console.error('Model load error:', err);
-    document.getElementById('detectionStatus').innerHTML = '⚠️ โหลดโมเดลไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ';
-  }
-}
-
-function startFaceDetection() {
-  if (scanInterval) clearInterval(scanInterval);
-  scanInterval = setInterval(async () => {
-    if (!video || !modelsLoaded || !video.videoWidth) return;
-    
-    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks(true)
-      .withFaceDescriptors();
-    
-    if (detections.length === 1) {
-      const face = detections[0];
-      const landmarks = face.landmarks;
-      const leftEye = landmarks.getLeftEye();
-      const rightEye = landmarks.getRightEye();
-      const ear = calculateEAR(leftEye, rightEye);
-      
-      if (ear < EAR_THRESHOLD && lastEAR > EAR_THRESHOLD) {
-        const now = Date.now();
-        if (now - lastBlinkTime > BLINK_LOCK_TIME) {
-          blinkCount++;
-          lastBlinkTime = now;
-          document.getElementById('detectionStatus').innerHTML = `😀 ตรวจพบการกระพริบตา ${blinkCount}/2 ครั้ง`;
-        }
-      }
-      lastEAR = ear;
-      
-      currentFaceDescriptor = Array.from(face.descriptor);
-      
-      if (blinkCount >= 2) {
-        document.getElementById('detectionStatus').innerHTML = '✅ ตรวจจับใบหน้าและกระพริบตาครบแล้ว กำลังตรวจสอบ...';
-        clearInterval(scanInterval);
-        await verifyFaceWithServer(currentFaceDescriptor);
-      } else {
-        document.getElementById('detectionStatus').innerHTML = `😐 กรุณากระพริบตา ${blinkCount}/2 ครั้ง`;
-      }
-    } else if (detections.length > 1) {
-      document.getElementById('detectionStatus').innerHTML = '⚠️ พบหลายใบหน้า กรุณาอยู่คนเดียว';
-    } else {
-      document.getElementById('detectionStatus').innerHTML = '🔍 กำลังมองหาใบหน้า...';
-    }
-  }, 200);
-}
-
-function calculateEAR(leftEye, rightEye) {
-  function eyeAspectRatio(eye) {
-    const p1 = eye[1], p2 = eye[5], p3 = eye[2], p4 = eye[4], p5 = eye[0], p6 = eye[3];
-    const vertical1 = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-    const vertical2 = Math.hypot(p3.x - p4.x, p3.y - p4.y);
-    const horizontal = Math.hypot(p5.x - p6.x, p5.y - p6.y);
-    return (vertical1 + vertical2) / (2 * horizontal);
-  }
-  return (eyeAspectRatio(leftEye) + eyeAspectRatio(rightEye)) / 2;
-}
-
-async function verifyFaceWithServer(descriptor) {
-  showLoading(true);
-  
-  // ใช้ google.script.run เพื่อ bypass CORS
-  google.script.run
-    .withSuccessHandler((result) => {
-      showLoading(false);
-      if (result.success) {
-        pendingFaceLoginData = result;
-        document.getElementById('popupUserName').textContent = result.name;
-        document.getElementById('popupOverlay').classList.add('active');
-        try {
-          new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3').play();
-        } catch(e) {}
-      } else {
-        if (result.needsRegistration) {
-          alert('ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login');
-        } else {
-          alert(result.message);
-        }
-        resetFaceDetection();
-      }
-    })
-    .withFailureHandler((err) => {
-      showLoading(false);
-      alert('เกิดข้อผิดพลาด: ' + err);
-      resetFaceDetection();
-    })
-    .facialLogin(descriptor);
-}
-
-function resetFaceDetection() {
-  blinkCount = 0;
-  currentFaceDescriptor = null;
-  startFaceDetection();
-}
-
-// ==================== CONFIRM LOGIN ====================
-function confirmLogin() {
-  closePopup();
-  if (pendingFaceLoginData) {
-    currentUser = pendingFaceLoginData.name;
-    document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
-    document.getElementById('topbar').style.display = 'flex';
-    stopCamera();
-    loadHistory();
-  }
-}
-
-function closePopup() {
-  document.getElementById('popupOverlay').classList.remove('active');
-  pendingFaceLoginData = null;
-}
-
-// ==================== ID LOGIN ====================
-function loginWithId() {
-  const idNumber = document.getElementById('idNumber').value.trim();
-  const phone = document.getElementById('phoneNumber').value.trim();
-  
-  if (!idNumber || !phone) {
-    showError('loginError', 'กรุณากรอกข้อมูลให้ครบ');
+  if (!id || !phone) {
+    errEl.textContent = '⚠️ กรุณากรอกเลขประจำตัวและเบอร์โทรศัพท์';
+    errEl.style.display = 'block';
     return;
   }
-  
-  showLoading(true);
-  
-  google.script.run
-    .withSuccessHandler((result) => {
-      showLoading(false);
-      if (result.success) {
-        currentUser = result.name;
-        document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
-        document.getElementById('topbar').style.display = 'flex';
-        loadHistory();
-      } else {
-        showError('loginError', result.message);
-      }
-    })
-    .withFailureHandler((err) => {
-      showLoading(false);
-      showError('loginError', 'เกิดข้อผิดพลาด: ' + err);
-    })
-    .loginUser(idNumber, phone);
-}
 
-// ==================== REGISTRATION ====================
-function openRegistration() {
-  const idForReg = prompt('กรุณากรอกเลขประจำตัว 13 หลัก เพื่อลงทะเบียน:');
-  if (!idForReg) return;
-  const phoneForReg = prompt('กรุณากรอกเบอร์โทรศัพท์:');
-  if (!phoneForReg) return;
-  
-  showLoading(true);
-  
-  google.script.run
-    .withSuccessHandler((result) => {
-      showLoading(false);
-      if (result.success) {
-        if (confirm(`ท่านกำลังลงทะเบียนใบหน้าในนามของ ${result.name} ดำเนินการต่อ?`)) {
-          startRegistrationProcess(result.rowIndex, result.name);
-        }
-      } else {
-        alert(result.message);
-      }
-    })
-    .withFailureHandler((err) => {
-      showLoading(false);
-      alert('เกิดข้อผิดพลาด: ' + err);
-    })
-    .verifyUserForRegistration(idForReg, phoneForReg);
-}
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-async function startRegistrationProcess(rowIndex, userName) {
-  alert('📸 การลงทะเบียนจะถ่ายรูป 3 รูป:\n1. หน้าตรง\n2. หันซ้าย 45°\n3. หันขวา 45°\n\nกด OK เพื่อเริ่ม');
-  
-  const photos = [];
-  const embeddings = [];
-  
-  for (let i = 0; i < 3; i++) {
-    await capturePhoto(i);
-    await new Promise(r => setTimeout(r, 1500));
-    if (currentFaceDescriptor) {
-      embeddings.push(currentFaceDescriptor);
-      photos.push(await capturePhotoBase64());
+  try {
+    const result = await gasGet({ action: 'loginUser', idNumber: id, phone: phone });
+    if (result.success) {
+      currentUser = result.name;
+      document.getElementById('topbarName').textContent = '👤 ' + result.name;
+      document.getElementById('topbarUser').classList.add('visible');
+      loadHistory();
+    } else {
+      errEl.textContent = '❌ ' + (result.message || 'ข้อมูลไม่ถูกต้อง');
+      errEl.style.display = 'block';
     }
-  }
-  
-  if (embeddings.length === 3) {
-    showLoading(true);
-    
-    google.script.run
-      .withSuccessHandler(() => {
-        google.script.run
-          .withSuccessHandler(() => {
-            showLoading(false);
-            alert('✅ ลงทะเบียนใบหน้าสำเร็จ!');
-            resetFaceDetection();
-          })
-          .saveRegistrationPhotos(userName, photos, rowIndex);
-      })
-      .saveFaceEmbeddings(rowIndex, embeddings);
-  } else {
-    alert('ไม่สามารถตรวจจับใบหน้าได้ครบ กรุณาลองใหม่');
+  } catch(e) {
+    errEl.textContent = '❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔐 เข้าสู่ระบบ';
   }
 }
 
-async function capturePhoto(index) {
-  const instructions = ['หน้าตรง', 'หันซ้าย 45°', 'หันขวา 45°'];
-  alert(`ถ่ายรูปที่ ${index + 1}: ${instructions[index]}\nกด OK เพื่อถ่าย`);
-  await new Promise(r => setTimeout(r, 1500));
-}
-
-async function capturePhotoBase64() {
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.translate(canvas.width, 0);
-  ctx.scale(-1, 1);
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL('image/jpeg', 0.85);
-}
-
-// ==================== HISTORY ====================
-function loadHistory() {
-  showLoading(true);
-  
-  google.script.run
-    .withSuccessHandler((reports) => {
-      showLoading(false);
-      document.getElementById('reportCount').textContent = reports.length + ' รายการ';
-      const tbody = document.getElementById('reportTableBody');
-      
-      if (reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">ไม่มีรายการรายงาน</td></tr>';
-      } else {
-        tbody.innerHTML = reports.map((r, i) => `
-          <tr>
-            <td style="padding:12px;">${i + 1}</td>
-            <td style="padding:12px;"><span style="background:#ccfbf1; padding:4px 12px; border-radius:20px;">${escapeHtml(r.type)}</span></td>
-            <td style="padding:12px;">${escapeHtml(r.title)}</td>
-            <td style="padding:12px;">${escapeHtml(r.dateStr)}</td>
-            <td style="padding:12px;"><button class="btn-edit" onclick="editReport(${r.rowIndex})">✏️ แก้ไข</button></td>
-          </tr>
-        `).join('');
-      }
-      
-      document.getElementById('pageLogin').classList.remove('active');
-      document.getElementById('pageHistory').classList.add('active');
-    })
-    .withFailureHandler((err) => {
-      showLoading(false);
-      document.getElementById('historyError').innerHTML = '<div class="error-msg">เกิดข้อผิดพลาด: ' + err + '</div>';
-    })
-    .getUserReports(currentUser);
-}
-
-function editReport(rowIndex) {
-  alert('กำลังพัฒนาแบบฟอร์มแก้ไข...');
-}
+document.getElementById('loginId').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginPhone').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
 
 function logout() {
   currentUser = null;
-  stopCamera();
-  document.getElementById('topbar').style.display = 'none';
-  document.getElementById('pageHistory').classList.remove('active');
-  document.getElementById('pageLogin').classList.add('active');
-  document.getElementById('idNumber').value = '';
-  document.getElementById('phoneNumber').value = '';
-  switchLoginMethod('id');
+  dropdownsLoaded = false;
+  ddData = { departments: [], positions: [], types: [], references: [] };
+  document.getElementById('topbarUser').classList.remove('visible');
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPhone').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  showPage('pageLogin');
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
+// ══════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════
+async function loadHistory() {
+  showPage('pageHistory');
+  document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
+  clearAlert('alertHistory');
+  showLoading('กำลังโหลดรายการรายงาน...', 'กรุณารอสักครู่');
+
+  try {
+    const reports = await gasGet({ action: 'getUserReports', userName: currentUser });
+    hideLoading();
+    renderHistory(Array.isArray(reports) ? reports : []);
+    if (!dropdownsLoaded) preloadDropdowns();
+  } catch(e) {
+    hideLoading();
+    renderHistory([]);
+    showAlert('alertHistory', 'error', 'เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e.message);
+  }
+}
+
+function renderHistory(reports) {
+  document.getElementById('countBadge').textContent = reports.length + ' รายการ';
+  const tbody = document.getElementById('reportTableBody');
+
+  if (!reports.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span class="empty-icon">📭</span><p>ยังไม่มีรายการรายงาน</p></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  reports.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="num-cell">${i+1}</td>
+      <td><span class="type-tag">${escHtml(r.type||'-')}</span></td>
+      <td class="title-cell">${escHtml(r.title||'-')}</td>
+      <td class="date-cell">${escHtml(r.dateStr||'-')}</td>
+      <td>
+        <button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber||'')}')">
+          ✏️ แก้ไขรายงาน
+        </button>
+      </td>`;
+    tbody.appendChild(tr);
   });
+}
+
+function goToHistory() { showPage('pageHistory'); }
+
+// ══════════════════════════════════════════════
+//  PRELOAD DROPDOWNS
+// ══════════════════════════════════════════════
+function preloadDropdowns() {
+  gasGet({ action: 'getDepartments' }).then(d => { if(Array.isArray(d)) ddData.departments = d; }).catch(()=>{});
+  gasGet({ action: 'getDropdownOptions', column: 'position' }).then(d => { if(Array.isArray(d)) ddData.positions = d; }).catch(()=>{});
+  gasGet({ action: 'getDropdownOptions', column: 'type' }).then(d => { if(Array.isArray(d)) ddData.types = d; }).catch(()=>{});
+  gasGet({ action: 'getDropdownOptions', column: 'reference' }).then(d => { if(Array.isArray(d)) ddData.references = d; }).catch(()=>{});
+  dropdownsLoaded = true;
+}
+
+function populateSelect(id, options, currentVal) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="">-- เลือก --</option>';
+  (options||[]).forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === currentVal) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  OPEN EDIT FORM
+// ══════════════════════════════════════════════
+async function openEditForm(rowIndex, reportNum) {
+  currentRowIndex = rowIndex;
+  currentReportNum = reportNum;
+  document.getElementById('editReportNumLabel').textContent = 'หมายเลขรายงาน: ' + reportNum;
+  clearAlert('alertEdit');
+  showLoading('กำลังโหลดข้อมูลรายงาน...', 'กรุณารอสักครู่');
+
+  try {
+    const rowData = await gasGet({ action: 'getReportRowData', rowIndex: rowIndex });
+    hideLoading();
+    fillEditForm(rowData);
+    showPage('pageEdit');
+  } catch(e) {
+    hideLoading();
+    alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e.message);
+  }
+}
+
+function fillEditForm(d) {
+  existingFiles = {
+    pic1: d.pic1Url || '',
+    pic2: d.pic2Url || '',
+    certificate: d.certificateUrl || '',
+    qrLink: d.qrLink || ''
+  };
+
+  setFileNote('note_pic1', d.pic1Url);
+  setFileNote('note_pic2', d.pic2Url);
+  setFileNote('note_certificate', d.certificateUrl);
+
+  const fields = {
+    e_reportNumber: d.reportNumber,
+    e_reportDate: d.reportDate,
+    e_invitingOrg: d.invitingOrg,
+    e_invitationNumber: d.invitationNumber,
+    e_invitationDate: d.invitationDate,
+    e_trainingStartDate: d.trainingStartDate,
+    e_trainingEndDate: d.trainingEndDate,
+    e_days: d.days,
+    e_hours: d.hours,
+    e_trainingTitle: d.trainingTitle,
+    e_organizer: d.organizer,
+    e_location: d.location,
+    e_report: d.report,
+    e_knowledgeSharing: d.knowledgeSharing,
+    e_application: d.application,
+    e_doc1: d.doc1, e_doc2: d.doc2, e_doc3: d.doc3, e_doc4: d.doc4, e_doc5: d.doc5
+  };
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) { el.value = val || ''; el.classList.remove('error-field'); }
+  });
+
+  updateCounter('e_report', 'cnt_report', 400);
+  updateCounter('e_knowledgeSharing', 'cnt_sharing', 400);
+  updateCounter('e_application', 'cnt_application', 430);
+
+  ['trainingDoc','invitationDoc','pic1','pic2','certificate'].forEach(id => {
+    document.getElementById('prev_' + id).innerHTML = '';
+    document.getElementById('e_' + id).value = '';
+  });
+
+  loadDropdownsForEdit(d);
+}
+
+function setFileNote(id, url) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = url
+    ? '<span class="existing-note">📎 มีไฟล์เดิม (ใช้ไฟล์เดิมหากไม่อัปโหลดใหม่)</span>'
+    : '';
+}
+
+async function loadDropdownsForEdit(d) {
+  // ถ้าโหลดแล้ว ใช้ cache
+  if (ddData.departments.length > 0) {
+    setupAllDropdowns(d);
+    return;
+  }
+  // โหลดพร้อมกัน
+  try {
+    const [depts, positions, types, refs] = await Promise.all([
+      gasGet({ action: 'getDepartments' }),
+      gasGet({ action: 'getDropdownOptions', column: 'position' }),
+      gasGet({ action: 'getDropdownOptions', column: 'type' }),
+      gasGet({ action: 'getDropdownOptions', column: 'reference' })
+    ]);
+    ddData.departments = Array.isArray(depts) ? depts : [];
+    ddData.positions   = Array.isArray(positions) ? positions : [];
+    ddData.types       = Array.isArray(types) ? types : [];
+    ddData.references  = Array.isArray(refs) ? refs : [];
+    dropdownsLoaded = true;
+  } catch(e) { console.warn('Dropdown load error:', e); }
+  setupAllDropdowns(d);
+}
+
+async function setupAllDropdowns(d) {
+  populateSelect('e_department', ddData.departments, d.department);
+  populateSelect('e_position',   ddData.positions,   d.position);
+  populateSelect('e_type',       ddData.types,        d.type);
+  populateSelect('e_reference',  ddData.references,   d.reference);
+
+  // Load names for dept
+  if (d.department) {
+    try {
+      const names = await gasGet({ action: 'getNamesByDepartment', department: d.department });
+      populateSelect('e_reporterName', Array.isArray(names) ? names : [], d.reporterName);
+    } catch(e) {}
+  }
+}
+
+// Dept → Name cascading
+document.getElementById('e_department').addEventListener('change', async function() {
+  const dept = this.value;
+  const sel = document.getElementById('e_reporterName');
+  sel.innerHTML = '<option value="">กำลังโหลด...</option>';
+  if (!dept) { sel.innerHTML = '<option value="">เลือกชื่อผู้รายงาน</option>'; return; }
+  try {
+    const names = await gasGet({ action: 'getNamesByDepartment', department: dept });
+    populateSelect('e_reporterName', Array.isArray(names) ? names : [], '');
+  } catch(e) {
+    sel.innerHTML = '<option value="">เกิดข้อผิดพลาด</option>';
+  }
+});
+
+// Auto-calc days
+document.getElementById('e_trainingStartDate').addEventListener('change', calcDays);
+document.getElementById('e_trainingEndDate').addEventListener('change', calcDays);
+function calcDays() {
+  const s = new Date(document.getElementById('e_trainingStartDate').value);
+  const e = new Date(document.getElementById('e_trainingEndDate').value);
+  if (s && e && !isNaN(s) && !isNaN(e) && e >= s) {
+    document.getElementById('e_days').value = Math.ceil(Math.abs(e - s) / 86400000) + 1;
+  }
+}
+
+// Char counters
+function countThaiChars(text) {
+  let c = 0;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if ((code >= 0x0E34 && code <= 0x0E3A) || (code >= 0x0E47 && code <= 0x0E4E)) continue;
+    c++;
+  }
+  return c;
+}
+function updateCounter(tid, cid, max) {
+  const val   = document.getElementById(tid).value;
+  const count = countThaiChars(val);
+  const el    = document.getElementById(cid);
+  el.textContent = count + ' / ' + max;
+  el.className = 'char-counter' + (count > max ? ' over' : count > max * 0.85 ? ' warn' : '');
+}
+[['e_report','cnt_report',400],['e_knowledgeSharing','cnt_sharing',400],['e_application','cnt_application',430]]
+  .forEach(([tid,cid,max]) => {
+    document.getElementById(tid).addEventListener('input', () => updateCounter(tid, cid, max));
+  });
+
+// File previews
+['trainingDoc','invitationDoc','pic1','pic2','certificate'].forEach(id => {
+  document.getElementById('e_' + id).addEventListener('change', function(ev) {
+    const file = ev.target.files[0];
+    const prev = document.getElementById('prev_' + id);
+    prev.innerHTML = '';
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      prev.appendChild(img);
+    } else {
+      const p = document.createElement('p');
+      p.className = 'file-name';
+      p.textContent = '📄 ' + file.name;
+      prev.appendChild(p);
+    }
+  });
+});
+
+// ══════════════════════════════════════════════
+//  SAVE EDIT
+// ══════════════════════════════════════════════
+async function saveEdit() {
+  const required = [
+    { id: 'e_reportDate',        label: 'วันที่ทำรายงาน' },
+    { id: 'e_department',        label: 'กลุ่มสาระ' },
+    { id: 'e_reporterName',      label: 'ชื่อผู้รายงาน' },
+    { id: 'e_position',          label: 'ตำแหน่ง' },
+    { id: 'e_trainingStartDate', label: 'วันที่รับการอบรม' },
+    { id: 'e_trainingEndDate',   label: 'ถึงวันที่' },
+    { id: 'e_days',              label: 'จำนวนวัน' },
+    { id: 'e_hours',             label: 'ชั่วโมงการอบรม' },
+    { id: 'e_trainingTitle',     label: 'เรื่องอบรม' },
+    { id: 'e_organizer',         label: 'จัดโดย' },
+    { id: 'e_location',          label: 'สถานที่' },
+    { id: 'e_report',            label: 'รายงานการไปราชการ' },
+    { id: 'e_knowledgeSharing',  label: 'การเผยแพร่ความรู้' },
+    { id: 'e_application',       label: 'การนำประสบการณ์ไปใช้' },
+  ];
+
+  const invalid = [];
+  required.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (!el.value) { invalid.push(f.label); el.classList.add('error-field'); }
+    else el.classList.remove('error-field');
+  });
+
+  if (invalid.length) {
+    showAlert('alertEdit', 'error', 'กรุณากรอกข้อมูลที่จำเป็น: ' + invalid.join(', '));
+    document.getElementById('alertEdit').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  clearAlert('alertEdit');
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  showLoading('กำลังบันทึกข้อมูล...', 'กำลังสร้างเอกสาร PDF กรุณารอ 1-2 นาที');
+
+  const data = {
+    reportNumber:      document.getElementById('e_reportNumber').value,
+    reportDate:        document.getElementById('e_reportDate').value,
+    department:        document.getElementById('e_department').value,
+    reporterName:      document.getElementById('e_reporterName').value,
+    position:          document.getElementById('e_position').value,
+    type:              document.getElementById('e_type').value,
+    reference:         document.getElementById('e_reference').value,
+    invitingOrg:       document.getElementById('e_invitingOrg').value,
+    invitationNumber:  document.getElementById('e_invitationNumber').value,
+    invitationDate:    document.getElementById('e_invitationDate').value,
+    trainingStartDate: document.getElementById('e_trainingStartDate').value,
+    trainingEndDate:   document.getElementById('e_trainingEndDate').value,
+    days:              document.getElementById('e_days').value,
+    hours:             document.getElementById('e_hours').value,
+    trainingTitle:     document.getElementById('e_trainingTitle').value,
+    organizer:         document.getElementById('e_organizer').value,
+    location:          document.getElementById('e_location').value,
+    report:            document.getElementById('e_report').value,
+    knowledgeSharing:  document.getElementById('e_knowledgeSharing').value,
+    application:       document.getElementById('e_application').value,
+    doc1: document.getElementById('e_doc1').value,
+    doc2: document.getElementById('e_doc2').value,
+    doc3: document.getElementById('e_doc3').value,
+    doc4: document.getElementById('e_doc4').value,
+    doc5: document.getElementById('e_doc5').value,
+    existingPic1:        existingFiles.pic1 || '',
+    existingPic2:        existingFiles.pic2 || '',
+    existingCertificate: existingFiles.certificate || '',
+    existingQrLink:      existingFiles.qrLink || '',
+    rowIndex: currentRowIndex,
+    files: {}
+  };
+
+  // Convert files to base64
+  const fileIds = ['trainingDoc','invitationDoc','pic1','pic2','certificate'];
+  for (const id of fileIds) {
+    const input = document.getElementById('e_' + id);
+    if (input.files[0]) {
+      data.files[id] = await fileToBase64(input.files[0]);
+    }
+  }
+
+  try {
+    const result = await gasPost('saveEditedReport', data);
+    hideLoading();
+    btn.disabled = false;
+    if (result.success) {
+      savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
+      document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
+      document.getElementById('resultModal').classList.add('active');
+    } else {
+      showAlert('alertEdit', 'error', 'เกิดข้อผิดพลาด: ' + (result.error || 'ไม่ทราบสาเหตุ'));
+      document.getElementById('alertEdit').scrollIntoView({ behavior: 'smooth' });
+    }
+  } catch(e) {
+    hideLoading();
+    btn.disabled = false;
+    showAlert('alertEdit', 'error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + e.message);
+    document.getElementById('alertEdit').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════════
+function openPDF(num) {
+  const url = num === 1 ? savedPdfLinks.pdf1 : savedPdfLinks.pdf2;
+  if (url) window.open(url, '_blank');
+  else alert('ไม่พบลิงก์ PDF');
+}
+function closeModal() {
+  document.getElementById('resultModal').classList.remove('active');
+  loadHistory();
 }
 </script>
 </body>
