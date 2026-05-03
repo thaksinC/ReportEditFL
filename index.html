@@ -9,7 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.15.0/dist/tf-core.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.15.0/dist/tf-converter.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.15.0/dist/tf-backend-webgl.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.3/dist/face-landmarks-detection.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
     :root {
@@ -17,7 +16,6 @@
       --primary-light: #14b8a6;
       --primary-mid: #0d9488;
       --primary-glow: rgba(20,184,166,0.15);
-      --primary-glow2: rgba(20,184,166,0.08);
       --accent: #f59e0b;
       --danger: #ef4444;
       --success: #10b981;
@@ -27,20 +25,15 @@
       --border: #ccfbf1;
       --border2: #99f6e4;
       --text: #134e4a;
-      --text-muted: #5eead4;
       --text-sub: #6b7280;
       --shadow-sm: 0 2px 8px rgba(15,118,110,0.08);
       --shadow: 0 4px 24px rgba(15,118,110,0.10);
-      --shadow-lg: 0 12px 48px rgba(15,118,110,0.18);
       --shadow-xl: 0 24px 80px rgba(15,118,110,0.22);
       --radius: 18px;
       --radius-sm: 10px;
-      --radius-xs: 6px;
       --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
     }
-
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
     body {
       font-family: 'Sarabun', sans-serif;
       background: var(--bg);
@@ -48,8 +41,6 @@
       color: var(--text);
       line-height: 1.6;
     }
-
-    /* ───── TOPBAR ───── */
     .topbar {
       background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 45%, var(--primary-light) 100%);
       padding: 0 32px;
@@ -61,14 +52,6 @@
       position: sticky;
       top: 0;
       z-index: 200;
-      backdrop-filter: blur(10px);
-    }
-    .topbar::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     }
     .topbar-brand {
       display: flex;
@@ -81,18 +64,14 @@
       width: 40px; height: 40px;
       border-radius: 50%;
       border: 2px solid rgba(255,255,255,0.45);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     .topbar-brand-text {
       font-size: 15px;
       font-weight: 600;
-      letter-spacing: 0.01em;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
     }
     .topbar-brand-text small {
       display: block;
       font-size: 11px;
-      font-weight: 400;
       opacity: 0.75;
     }
     .topbar-user {
@@ -107,9 +86,7 @@
       padding: 5px 14px;
       border-radius: 20px;
       font-size: 13px;
-      font-weight: 500;
       color: white;
-      letter-spacing: 0.01em;
     }
     .btn-logout {
       background: rgba(255,255,255,0.12);
@@ -120,15 +97,10 @@
       cursor: pointer;
       font-size: 12px;
       font-family: inherit;
-      transition: var(--transition);
     }
     .btn-logout:hover { background: rgba(255,255,255,0.22); color: white; }
-
-    /* ───── PAGES ───── */
     .page { display: none; }
     .page.active { display: block; }
-
-    /* ───── LOGIN PAGE ───── */
     .login-wrap {
       min-height: calc(100vh - 64px);
       display: flex;
@@ -136,7 +108,6 @@
       justify-content: center;
       padding: 40px 20px;
       background: radial-gradient(ellipse at 20% 50%, rgba(20,184,166,0.12) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 20%, rgba(15,118,110,0.08) 0%, transparent 50%),
                   linear-gradient(160deg, #f0fdfa 0%, #e6fffa 50%, #ccfbf1 100%);
     }
     .login-card {
@@ -148,18 +119,7 @@
       max-width: 460px;
       border-top: 5px solid var(--primary);
       position: relative;
-      overflow: hidden;
     }
-    .login-card::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 180px; height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 70%);
-    }
-
-    /* Toggle Switch Style */
     .toggle-container {
       display: flex;
       justify-content: center;
@@ -180,13 +140,10 @@
       border-radius: 32px;
       z-index: 2;
       position: relative;
-      transition: color 0.25s ease;
       color: #64748b;
       cursor: pointer;
     }
-    .toggle-option.active {
-      color: white;
-    }
+    .toggle-option.active { color: white; }
     .toggle-slider {
       position: absolute;
       top: 4px;
@@ -197,25 +154,11 @@
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1;
     }
-    .toggle-slider.idcard-mode {
-      transform: translateX(0);
-    }
-    .toggle-slider.facial-mode {
-      transform: translateX(100%);
-    }
-
-    /* Login Panels */
-    .login-panel {
-      display: none;
-    }
-    .login-panel.active {
-      display: block;
-    }
-
-    .login-logo {
-      text-align: center;
-      margin-bottom: 36px;
-    }
+    .toggle-slider.idcard-mode { transform: translateX(0); }
+    .toggle-slider.facial-mode { transform: translateX(100%); }
+    .login-panel { display: none; }
+    .login-panel.active { display: block; }
+    .login-logo { text-align: center; margin-bottom: 36px; }
     .login-logo img {
       width: 84px; height: 84px;
       border-radius: 50%;
@@ -228,13 +171,8 @@
       font-weight: 700;
       color: var(--primary);
       margin-top: 18px;
-      line-height: 1.5;
     }
-    .login-logo p {
-      font-size: 13px;
-      color: var(--text-sub);
-      margin-top: 6px;
-    }
+    .login-logo p { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
     .login-divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--border2), transparent);
@@ -247,7 +185,6 @@
       font-size: 13px;
       color: var(--text);
       margin-bottom: 8px;
-      letter-spacing: 0.01em;
     }
     .login-field input {
       width: 100%;
@@ -257,8 +194,6 @@
       font-size: 15px;
       font-family: inherit;
       transition: var(--transition);
-      color: var(--text);
-      letter-spacing: 0.05em;
     }
     .login-field input:focus {
       outline: none;
@@ -274,26 +209,13 @@
       border-radius: var(--radius-sm);
       font-size: 16px;
       font-weight: 700;
-      font-family: inherit;
       cursor: pointer;
       margin-top: 8px;
       box-shadow: 0 4px 18px rgba(15,118,110,0.32);
       transition: var(--transition);
-      letter-spacing: 0.03em;
-      position: relative;
-      overflow: hidden;
     }
-    .btn-login::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-    }
-    .btn-login:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(15,118,110,0.40);
-    }
-    .btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .btn-login:hover:not(:disabled) { transform: translateY(-2px); }
+    .btn-login:disabled { opacity: 0.7; cursor: not-allowed; }
     .login-error {
       background: #fef2f2;
       border: 1px solid #fecaca;
@@ -303,11 +225,7 @@
       font-size: 14px;
       margin-top: 16px;
       display: none;
-      animation: slideDown 0.2s ease;
     }
-    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-
-    /* Facial Video */
     .facial-video-container {
       background: #1a2a2a;
       border-radius: 20px;
@@ -318,7 +236,7 @@
     }
     #facialVideo {
       width: 100%;
-      max-width: 320px;
+      max-width: 100%;
       height: auto;
       border-radius: 16px;
       background: #0f172a;
@@ -332,7 +250,7 @@
       background: rgba(0,0,0,0.6);
       color: white;
       font-size: 12px;
-      padding: 4px;
+      padding: 6px;
       text-align: center;
     }
     .btn-register-face {
@@ -347,9 +265,7 @@
       cursor: pointer;
       margin-top: 12px;
     }
-    .btn-register-face:hover {
-      background: #d97706;
-    }
+    .btn-register-face:hover { background: #d97706; }
     .face-match-info {
       background: #dcfce7;
       padding: 12px;
@@ -357,8 +273,6 @@
       text-align: center;
       margin-bottom: 12px;
     }
-
-    /* Register Modal */
     .register-modal {
       display: none;
       position: fixed;
@@ -368,9 +282,7 @@
       justify-content: center;
       align-items: center;
     }
-    .register-modal.active {
-      display: flex;
-    }
+    .register-modal.active { display: flex; }
     .register-modal-content {
       background: white;
       border-radius: 28px;
@@ -387,10 +299,7 @@
       margin: 20px 0;
       flex-wrap: wrap;
     }
-    .photo-item {
-      text-align: center;
-      width: 100px;
-    }
+    .photo-item { text-align: center; width: 100px; }
     .photo-item img {
       width: 100px;
       height: 100px;
@@ -398,11 +307,7 @@
       border-radius: 16px;
       border: 3px solid var(--border);
     }
-    .photo-item .photo-label {
-      font-size: 11px;
-      margin-top: 8px;
-      color: var(--text-sub);
-    }
+    .photo-item .photo-label { font-size: 11px; margin-top: 8px; color: var(--text-sub); }
     #regVideo {
       width: 100%;
       max-width: 320px;
@@ -417,15 +322,9 @@
       border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 600;
-      font-family: inherit;
       cursor: pointer;
-      transition: var(--transition);
     }
-    .btn-cancel:hover { border-color: #d1d5db; background: #f9fafb; }
     .btn-save {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
@@ -435,16 +334,9 @@
       font-weight: 700;
       cursor: pointer;
     }
-
-    /* ───── HISTORY PAGE ───── */
-    .history-wrap {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 36px 24px;
-    }
+    .history-wrap { max-width: 1000px; margin: 0 auto; padding: 36px 24px; }
     .history-header {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
       margin-bottom: 28px;
       flex-wrap: wrap;
@@ -455,14 +347,6 @@
       font-size: 22px;
       font-weight: 700;
       color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .history-title-group p {
-      font-size: 14px;
-      color: var(--text-sub);
-      margin-top: 4px;
     }
     .count-badge {
       background: var(--primary);
@@ -471,11 +355,7 @@
       font-weight: 700;
       padding: 4px 12px;
       border-radius: 20px;
-      letter-spacing: 0.02em;
-      align-self: flex-start;
-      margin-top: 4px;
     }
-
     .table-card {
       background: white;
       border-radius: var(--radius);
@@ -490,43 +370,23 @@
     .report-table thead th {
       padding: 15px 20px;
       text-align: left;
-      color: rgba(255,255,255,0.95);
+      color: white;
       font-size: 13px;
       font-weight: 600;
-      white-space: nowrap;
-      letter-spacing: 0.02em;
     }
-    .report-table tbody tr {
-      border-bottom: 1px solid #f0fdf4;
-      transition: background var(--transition);
-    }
-    .report-table tbody tr:last-child { border-bottom: none; }
+    .report-table tbody tr { border-bottom: 1px solid #f0fdf4; }
     .report-table tbody tr:hover { background: #f0fdfa; }
-    .report-table td {
-      padding: 16px 20px;
-      font-size: 14px;
-      color: var(--text);
-      vertical-align: middle;
-    }
-    .num-cell { color: #aaa; font-size: 12px; font-weight: 500; }
+    .report-table td { padding: 16px 20px; font-size: 14px; }
     .type-tag {
       display: inline-flex;
-      align-items: center;
       padding: 4px 11px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 600;
       background: #ccfbf1;
       color: var(--primary);
-      white-space: nowrap;
-      border: 1px solid #99f6e4;
     }
-    .title-cell { font-weight: 500; }
-    .date-cell { white-space: nowrap; font-weight: 600; color: var(--primary-mid); font-size: 13px; }
     .btn-edit {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
@@ -534,36 +394,16 @@
       border-radius: 8px;
       font-size: 13px;
       font-weight: 600;
-      font-family: inherit;
       cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition);
-      box-shadow: 0 2px 10px rgba(15,118,110,0.25);
     }
-    .btn-edit:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(15,118,110,0.35); }
-    .empty-state {
-      padding: 70px 20px;
-      text-align: center;
-      color: #aaa;
-    }
-
-    /* ───── EDIT FORM PAGE ───── */
-    .edit-wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 32px 24px;
-    }
+    .edit-wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px; }
     .edit-header {
       display: flex;
       align-items: center;
       gap: 18px;
       margin-bottom: 28px;
-      flex-wrap: wrap;
     }
     .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
       background: white;
       border: 2px solid var(--border2);
       color: var(--primary);
@@ -571,59 +411,27 @@
       border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 600;
-      font-family: inherit;
       cursor: pointer;
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
     }
-    .btn-back:hover { background: var(--bg); border-color: var(--primary-light); }
-    .edit-title-group h2 {
-      font-family: 'Noto Serif Thai', serif;
-      font-size: 21px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .edit-title-group p {
-      font-size: 13px;
-      color: var(--text-sub);
-      margin-top: 3px;
-    }
-
     .form-section {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 30px 34px;
       margin-bottom: 20px;
-      border: 1px solid var(--border);
       border-left: 5px solid var(--primary);
-      transition: box-shadow var(--transition);
     }
     .form-section h3 {
-      font-family: 'Noto Serif Thai', serif;
       font-size: 16px;
       font-weight: 700;
       color: var(--primary);
       margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
       padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media(max-width: 640px) {
-      .form-row { grid-template-columns: 1fr; }
-      .login-card { padding: 36px 24px; }
-    }
     .form-group { margin-bottom: 18px; }
-    label {
-      display: block;
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--text);
-      margin-bottom: 7px;
-    }
+    label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 7px; }
     input, select, textarea {
       width: 100%;
       padding: 11px 14px;
@@ -631,28 +439,19 @@
       border-radius: var(--radius-sm);
       font-size: 14px;
       font-family: inherit;
-      transition: var(--transition);
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary-light);
-      box-shadow: 0 0 0 4px var(--primary-glow);
     }
     textarea { resize: vertical; min-height: 110px; }
-    .char-counter {
-      text-align: right;
-      font-size: 11px;
-      color: #9ca3af;
-      margin-top: 5px;
-    }
+    .char-counter { text-align: right; font-size: 11px; color: #9ca3af; margin-top: 5px; }
     .file-upload-box {
-      position: relative;
       border: 2px dashed #b2dfdb;
       border-radius: var(--radius-sm);
       padding: 20px 16px;
       text-align: center;
       cursor: pointer;
-      transition: var(--transition);
       background: var(--bg2);
     }
     .file-upload-box:hover { border-color: var(--primary); background: #d1faf4; }
@@ -660,32 +459,18 @@
       position: absolute;
       opacity: 0;
       width: 100%; height: 100%;
-      top: 0; left: 0;
       cursor: pointer;
     }
     .file-preview img { max-width: 80px; max-height: 80px; border-radius: 8px; margin-top: 8px; }
-    .existing-note {
-      font-size: 11px;
-      color: #0f766e;
-      margin-top: 8px;
-      background: #f0fdfa;
-      border: 1px solid #99f6e4;
-      border-radius: 6px;
-      padding: 5px 10px;
-      display: inline-block;
-    }
     .save-bar {
       background: white;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
       padding: 24px 34px;
       display: flex;
       justify-content: flex-end;
       gap: 14px;
       margin-bottom: 48px;
     }
-
-    /* Loading */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -695,19 +480,15 @@
       z-index: 9999;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
     }
     .loading-overlay.active { display: flex; }
     .loading-spinner-wrap {
       background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 24px;
       padding: 44px 52px;
       text-align: center;
     }
-    .loading-text { color: rgba(255,255,255,0.9); margin-top: 20px; }
-
-    /* Modal */
+    .loading-text { color: white; margin-top: 20px; }
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -736,6 +517,13 @@
     }
     .modal-btn.primary { background: var(--primary); color: white; border: none; }
     .modal-btn.outline { background: white; border: 2px solid var(--border); color: var(--primary); }
+    .empty-state { padding: 70px 20px; text-align: center; color: #aaa; }
+    @media(max-width: 640px) {
+      .topbar { padding: 0 16px; }
+      .login-card { padding: 36px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-section { padding: 22px 18px; }
+    }
   </style>
 </head>
 <body>
@@ -751,16 +539,16 @@
     <span style="font-size:56px;">✅</span>
     <h3 style="color:var(--success);">บันทึกรายงานสำเร็จ!</h3>
     <div id="resultReportNum" style="margin:16px 0;"></div>
-    <button class="modal-btn primary" onclick="openPDF(1)">📄 พิมพ์บันทึกข้อความ</button>
-    <button class="modal-btn primary" onclick="openPDF(2)">📋 พิมพ์รายงานการอบรม</button>
-    <button class="modal-btn outline" onclick="closeModal()">🔙 กลับรายการรายงาน</button>
+    <button class="modal-btn primary" onclick="openPDF(1)">📄 บันทึกข้อความ</button>
+    <button class="modal-btn primary" onclick="openPDF(2)">📋 รายงานการอบรม</button>
+    <button class="modal-btn outline" onclick="closeModal()">🔙 กลับ</button>
   </div>
 </div>
 
 <div class="topbar">
   <div class="topbar-brand">
     <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
-    <div class="topbar-brand-text">ระบบแก้ไขรายงานการไปราชการ<small>โรงเรียนสิงห์บุรี</small></div>
+    <div class="topbar-brand-text">ระบบแก้ไขรายงาน<small>โรงเรียนสิงห์บุรี</small></div>
   </div>
   <div class="topbar-user" id="topbarUser">
     <span class="user-badge" id="topbarName"></span>
@@ -806,7 +594,7 @@
           <p>สแกนใบหน้าเพื่อเข้าสู่ระบบ</p>
         </div>
         <div class="facial-video-container">
-          <video id="facialVideo" width="320" height="240" autoplay playsinline muted></video>
+          <video id="facialVideo" autoplay playsinline muted></video>
           <div class="facial-status" id="facialStatus">🎥 กำลังเปิดกล้อง...</div>
         </div>
         <button class="btn-register-face" onclick="openRegisterModal()">📸 ลงทะเบียนใบหน้าเพื่อใช้ระบบ Facial Login</button>
@@ -833,7 +621,7 @@
     <div id="alertHistory"></div>
     <div class="table-card">
       <table class="report-table">
-        <thead><tr><th>#</th><th>ประเภท</th><th>เรื่อง / หัวข้อการอบรม</th><th>วันที่อบรม</th><th></th></tr></thead>
+        <thead><tr><th>#</th><th>ประเภท</th><th>เรื่อง</th><th>วันที่</th><th></th></tr></thead>
         <tbody id="reportTableBody"><tr><td colspan="5"><div class="empty-state">กำลังโหลด...</div></td></tr></tbody>
       </table>
     </div>
@@ -845,10 +633,91 @@
   <div class="edit-wrap">
     <div class="edit-header">
       <button class="btn-back" onclick="goToHistory()">← ย้อนกลับ</button>
-      <div class="edit-title-group"><h2>✏️ แก้ไขรายงาน</h2><p id="editReportNumLabel"></p></div>
+      <div class="edit-title-group">
+        <h2>✏️ แก้ไขรายงาน</h2>
+        <p id="editReportNumLabel"></p>
+      </div>
     </div>
     <div id="alertEdit"></div>
-    <!-- sections omitted for brevity - same as original -->
+
+    <div class="form-section">
+      <h3>📋 ข้อมูลทั่วไป</h3>
+      <div class="form-row">
+        <div class="form-group"><label>เลขที่รายงาน</label><input type="text" id="e_reportNumber" readonly></div>
+        <div class="form-group"><label>วันที่ทำรายงาน *</label><input type="date" id="e_reportDate"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>กลุ่มสาระ *</label><select id="e_department"><option>กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>ชื่อผู้รายงาน *</label><select id="e_reporterName"><option>เลือกชื่อ</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>ตำแหน่ง *</label><select id="e_position"><option>กำลังโหลด...</option></select></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>📄 ข้อมูลการอ้างอิง</h3>
+      <div class="form-row">
+        <div class="form-group"><label>ประเภท</label><select id="e_type"><option>กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>อ้างถึง</label><select id="e_reference"><option>กำลังโหลด...</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>หน่วยงานที่ออกเอกสาร</label><input type="text" id="e_invitingOrg"></div>
+        <div class="form-group"><label>เลขที่เอกสาร</label><input type="text" id="e_invitationNumber"></div>
+      </div>
+      <div class="form-group"><label>ลงวันที่</label><input type="date" id="e_invitationDate"></div>
+    </div>
+
+    <div class="form-section">
+      <h3>🎓 ข้อมูลการอบรม</h3>
+      <div class="form-row">
+        <div class="form-group"><label>วันที่เริ่ม *</label><input type="date" id="e_trainingStartDate"></div>
+        <div class="form-group"><label>ถึงวันที่ *</label><input type="date" id="e_trainingEndDate"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>จำนวนวัน *</label><input type="number" id="e_days" min="1"></div>
+        <div class="form-group"><label>ชั่วโมง *</label><input type="number" id="e_hours" min="1" step="0.5"></div>
+      </div>
+      <div class="form-group"><label>เรื่องอบรม *</label><input type="text" id="e_trainingTitle"></div>
+      <div class="form-row">
+        <div class="form-group"><label>จัดโดย *</label><input type="text" id="e_organizer"></div>
+        <div class="form-group"><label>สถานที่ *</label><input type="text" id="e_location"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>✍️ รายงานและการนำไปใช้</h3>
+      <div class="form-group"><label>รายงานการไปราชการ *</label><textarea id="e_report" maxlength="800"></textarea><div class="char-counter" id="cnt_report">0 / 400</div></div>
+      <div class="form-group"><label>การเผยแพร่ความรู้ *</label><textarea id="e_knowledgeSharing" maxlength="800"></textarea><div class="char-counter" id="cnt_sharing">0 / 400</div></div>
+      <div class="form-group"><label>การนำประสบการณ์ไปใช้ *</label><textarea id="e_application" maxlength="900"></textarea><div class="char-counter" id="cnt_application">0 / 430</div></div>
+    </div>
+
+    <div class="form-section">
+      <h3>📑 เอกสารที่แนบ</h3>
+      <div class="form-row">
+        <div class="form-group"><label>เอกสาร 1</label><input type="text" id="e_doc1"></div>
+        <div class="form-group"><label>เอกสาร 2</label><input type="text" id="e_doc2"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>เอกสาร 3</label><input type="text" id="e_doc3"></div>
+        <div class="form-group"><label>เอกสาร 4</label><input type="text" id="e_doc4"></div>
+      </div>
+      <div class="form-group"><label>เอกสาร 5</label><input type="text" id="e_doc5"></div>
+    </div>
+
+    <div class="form-section">
+      <h3>📸 อัปโหลดไฟล์</h3>
+      <div class="form-row">
+        <div class="form-group"><label>เอกสารประกอบการอบรม</label><div class="file-upload-box"><input type="file" id="e_trainingDoc" accept=".pdf,.doc,.docx"><div class="file-preview" id="prev_trainingDoc"></div></div></div>
+        <div class="form-group"><label>หนังสือเชิญ</label><div class="file-upload-box"><input type="file" id="e_invitationDoc" accept=".pdf,.doc,.docx"><div class="file-preview" id="prev_invitationDoc"></div></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>รูปที่ 1</label><div class="file-upload-box"><input type="file" id="e_pic1" accept="image/*"><div class="file-preview" id="prev_pic1"></div></div><div id="note_pic1"></div></div>
+        <div class="form-group"><label>รูปที่ 2</label><div class="file-upload-box"><input type="file" id="e_pic2" accept="image/*"><div class="file-preview" id="prev_pic2"></div></div><div id="note_pic2"></div></div>
+      </div>
+      <div class="form-group"><label>เกียรติบัตร</label><div class="file-upload-box"><input type="file" id="e_certificate" accept="image/*,.pdf"><div class="file-preview" id="prev_certificate"></div></div><div id="note_certificate"></div></div>
+    </div>
+
     <div class="save-bar">
       <button class="btn-cancel" onclick="goToHistory()">ยกเลิก</button>
       <button class="btn-save" onclick="saveEdit()">💾 บันทึกการแก้ไข</button>
@@ -870,15 +739,13 @@ let faceModelsLoaded = false;
 let facialStream = null;
 let facialScanInterval = null;
 let currentDetectedUser = null;
-let currentFaceEmbeddings = [];
 let blinkCount = 0;
 let lastBlinkTime = 0;
 let lastEyeState = 'open';
 
-// Helper functions
 function showLoading(msg) { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').classList.add('active'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
-function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 function showAlert(container, type, msg) { document.getElementById(container).innerHTML = `<div class="login-error" style="display:block;">${msg}</div>`; }
 function clearAlert(container) { document.getElementById(container).innerHTML = ''; }
 
@@ -903,7 +770,7 @@ async function doLogin() {
   const errEl = document.getElementById('loginError');
   if (!id || !phone) { errEl.textContent = 'กรุณากรอกข้อมูล'; errEl.style.display = 'block'; return; }
   const btn = document.getElementById('btnLogin');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
+  btn.disabled = true; btn.innerHTML = '⏳ กำลังตรวจสอบ...';
   try {
     const result = await gasGet({ action: 'loginUser', idNumber: id, phone: phone });
     if (result.success) {
@@ -925,11 +792,64 @@ function logout() {
 
 // ==================== FACIAL LOGIN ====================
 async function loadFaceModels() {
+  const statusDiv = document.getElementById('facialStatus');
   const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models';
-  await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-  await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
-  await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-  faceModelsLoaded = true;
+  
+  statusDiv.innerHTML = '📦 กำลังโหลดโมเดลจดจำใบหน้า (ประมาณ 10-20 วินาที)...';
+  
+  try {
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    faceModelsLoaded = true;
+    statusDiv.innerHTML = '✅ โหลดโมเดลสำเร็จ! กำลังเปิดกล้อง...';
+    console.log('Face models loaded successfully');
+    return true;
+  } catch(e) {
+    console.error('Model load error:', e);
+    statusDiv.innerHTML = '❌ โหลดโมเดลล้มเหลว: ' + e.message + ' กรุณารีเฟรชหน้าใหม่';
+    return false;
+  }
+}
+
+async function startFacialLogin() {
+  const statusDiv = document.getElementById('facialStatus');
+  const video = document.getElementById('facialVideo');
+  
+  if (!faceModelsLoaded) {
+    const loaded = await loadFaceModels();
+    if (!loaded) return;
+  }
+  
+  if (facialStream) {
+    facialStream.getTracks().forEach(track => track.stop());
+  }
+  
+  try {
+    facialStream = await navigator.mediaDevices.getUserMedia({ 
+      video: { width: 640, height: 480, facingMode: 'user' } 
+    });
+    video.srcObject = facialStream;
+    await video.play();
+    
+    statusDiv.innerHTML = '🔍 กำลังสแกนใบหน้า... กรุณามองตรงกล้อง';
+    
+    if (facialScanInterval) clearInterval(facialScanInterval);
+    facialScanInterval = setInterval(scanFace, 200);
+    
+    blinkCount = 0;
+    lastBlinkTime = 0;
+    lastEyeState = 'open';
+    
+  } catch(err) {
+    console.error('Camera error:', err);
+    statusDiv.innerHTML = '❌ ไม่สามารถเปิดกล้องได้: ' + (err.message || 'กรุณาอนุญาตการเข้าถึงกล้อง');
+  }
+}
+
+function stopFacialCamera() {
+  if (facialScanInterval) { clearInterval(facialScanInterval); facialScanInterval = null; }
+  if (facialStream) { facialStream.getTracks().forEach(t => t.stop()); facialStream = null; }
 }
 
 function calculateEAR(eye) {
@@ -947,58 +867,71 @@ async function scanFace() {
   const faceMatchInfo = document.getElementById('faceMatchInfo');
   const facialError = document.getElementById('facialError');
   
-  if (!video.videoWidth) return;
-  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-    .withFaceLandmarks(true).withFaceDescriptor();
-  if (!detection) { statusDiv.innerHTML = '😐 ไม่พบใบหน้า'; confirmPanel.style.display = 'none'; return; }
+  if (!video.videoWidth || !video.videoHeight) return;
   
+  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+    .withFaceLandmarks(true)
+    .withFaceDescriptor();
+    
+  if (!detection) {
+    statusDiv.innerHTML = '😐 ไม่พบใบหน้า กรุณามองตรงกล้อง';
+    confirmPanel.style.display = 'none';
+    return;
+  }
+  
+  // Liveness: blink detection
   const landmarks = detection.landmarks;
-  const leftEye = landmarks.getLeftEye(), rightEye = landmarks.getRightEye();
-  const avgEAR = (calculateEAR(leftEye) + calculateEAR(rightEye)) / 2;
+  const leftEye = landmarks.getLeftEye();
+  const rightEye = landmarks.getRightEye();
+  const leftEAR = calculateEAR(leftEye);
+  const rightEAR = calculateEAR(rightEye);
+  const avgEAR = (leftEAR + rightEAR) / 2;
   const now = Date.now();
   
   if (avgEAR < 0.25 && lastEyeState === 'open' && (now - lastBlinkTime) > 400) {
-    blinkCount++; lastBlinkTime = now; lastEyeState = 'closed';
+    blinkCount++;
+    lastBlinkTime = now;
+    lastEyeState = 'closed';
     statusDiv.innerHTML = `👁️ กระพริบตา ${blinkCount}/2 ครั้ง`;
-  } else if (avgEAR >= 0.25 && lastEyeState === 'closed') { lastEyeState = 'open'; }
+  } else if (avgEAR >= 0.25 && lastEyeState === 'closed') {
+    lastEyeState = 'open';
+  }
   
-  if (blinkCount < 2) { statusDiv.innerHTML = `👁️ กรุณากระพริบตา ${blinkCount}/2 ครั้ง`; confirmPanel.style.display = 'none'; return; }
+  if (blinkCount < 2) {
+    statusDiv.innerHTML = `👁️ กรุณากระพริบตา (${blinkCount}/2)`;
+    confirmPanel.style.display = 'none';
+    return;
+  }
   
+  // Face matching
   const descriptor = Array.from(detection.descriptor);
-  currentFaceEmbeddings = [descriptor];
-  statusDiv.innerHTML = '🔍 กำลังตรวจสอบ...';
+  statusDiv.innerHTML = '🔍 กำลังตรวจสอบใบหน้ากับฐานข้อมูล...';
   
   try {
     const result = await gasPost('findUserByFace', { embeddings: [descriptor] });
+    
     if (result.success) {
       currentDetectedUser = result;
       faceMatchInfo.innerHTML = `<strong>✅ พบผู้ใช้:</strong> ${result.name}<br><small>ความแม่นยำ: ${(result.score*100).toFixed(1)}%</small>`;
       confirmPanel.style.display = 'block';
-      statusDiv.innerHTML = '✅ ตรวจสอบพบตัวตนแล้ว กดยืนยัน';
+      statusDiv.innerHTML = '✅ ตรวจสอบพบตัวตนแล้ว กดยืนยันเพื่อเข้าสู่ระบบ';
       facialError.style.display = 'none';
     } else {
       confirmPanel.style.display = 'none';
-      statusDiv.innerHTML = '❌ ' + (result.message || 'ไม่พบผู้ใช้');
-      if (result.error === 'NO_USER') facialError.textContent = 'ไม่พบผู้ใช้ กรุณาลงทะเบียน';
-      facialError.style.display = 'block';
+      if (result.error === 'NO_USER') {
+        statusDiv.innerHTML = '❌ ไม่พบผู้ใช้ที่ลงทะเบียน กรุณาลงทะเบียนก่อน';
+        facialError.textContent = 'ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login';
+        facialError.style.display = 'block';
+      } else {
+        statusDiv.innerHTML = '❌ ' + (result.message || 'ไม่สามารถตรวจสอบได้');
+        facialError.textContent = result.message;
+        facialError.style.display = 'block';
+      }
     }
-  } catch(e) { statusDiv.innerHTML = '❌ ข้อผิดพลาด'; }
-}
-
-async function startFacialLogin() {
-  if (!faceModelsLoaded) { document.getElementById('facialStatus').innerHTML = '📦 กำลังโหลดโมเดล...'; await loadFaceModels(); }
-  try {
-    facialStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' } });
-    document.getElementById('facialVideo').srcObject = facialStream;
-    if (facialScanInterval) clearInterval(facialScanInterval);
-    facialScanInterval = setInterval(scanFace, 200);
-    document.getElementById('facialStatus').innerHTML = '🔍 กำลังสแกนใบหน้า...';
-  } catch(e) { document.getElementById('facialStatus').innerHTML = '❌ ไม่สามารถเปิดกล้องได้'; }
-}
-
-function stopFacialCamera() {
-  if (facialScanInterval) { clearInterval(facialScanInterval); facialScanInterval = null; }
-  if (facialStream) { facialStream.getTracks().forEach(t => t.stop()); facialStream = null; }
+  } catch(e) {
+    statusDiv.innerHTML = '❌ เกิดข้อผิดพลาดในการตรวจสอบ';
+    console.error(e);
+  }
 }
 
 async function confirmFacialLogin() {
@@ -1013,7 +946,7 @@ async function confirmFacialLogin() {
 }
 
 // ==================== REGISTER MODAL ====================
-let registerModal = null, regVideo = null, regStream = null, capturedPhotos = [], regUserData = null, currentPhotoStep = 0;
+let registerModal = null, regVideo = null, regStream = null, capturedPhotos = [], regUserData = null;
 const photoSteps = ['หน้าตรง', 'หันซ้าย 45°', 'หันขวา 45°'];
 
 function openRegisterModal() {
@@ -1037,8 +970,10 @@ function createRegisterModal() {
         <div id="regUserInfo"></div>
         <p>📷 ถ่ายรูป 3 รูป: หน้าตรง, หันซ้าย 45°, หันขวา 45°</p>
         <div class="photo-strip" id="photoStrip"></div>
-        <div style="text-align:center;"><video id="regVideo" width="280" height="210" autoplay playsinline muted></video><br>
-        <button class="btn-register-face" onclick="capturePhoto()">📸 ถ่ายรูป</button></div>
+        <div style="text-align:center;">
+          <video id="regVideo" width="280" height="210" autoplay playsinline muted></video><br>
+          <button class="btn-register-face" onclick="capturePhoto()">📸 ถ่ายรูป</button>
+        </div>
         <div style="display:flex; gap:12px; margin-top:16px;">
           <button class="btn-cancel" onclick="closeRegisterModal()">ยกเลิก</button>
           <button class="btn-save" id="completeRegBtn" onclick="completeRegistration()" disabled>✅ ยืนยันการลงทะเบียน</button>
@@ -1067,45 +1002,69 @@ async function verifyAndStartRegister() {
     regStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
     regVideo = document.getElementById('regVideo');
     regVideo.srcObject = regStream;
+    capturedPhotos = [];
+    document.getElementById('completeRegBtn').disabled = true;
+    document.getElementById('photoStrip').innerHTML = '';
   } catch(e) { hideLoading(); alert(e.message); }
 }
 
 async function capturePhoto() {
   if (capturedPhotos.length >= 3) { alert('ถ่ายครบ 3 รูปแล้ว'); return; }
   const canvas = document.createElement('canvas');
-  canvas.width = regVideo.videoWidth; canvas.height = regVideo.videoHeight;
+  canvas.width = regVideo.videoWidth;
+  canvas.height = regVideo.videoHeight;
   canvas.getContext('2d').drawImage(regVideo, 0, 0);
   capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+  
   const strip = document.getElementById('photoStrip');
   strip.innerHTML = capturedPhotos.map((p, i) => `<div class="photo-item"><img src="${p}"><div class="photo-label">${photoSteps[i]}</div></div>`).join('');
-  currentPhotoStep++;
-  if (currentPhotoStep < 3) alert(`ถ่ายรูป ${photoSteps[currentPhotoStep]} แล้ว`);
-  else document.getElementById('completeRegBtn').disabled = false;
+  
+  if (capturedPhotos.length === 3) {
+    document.getElementById('completeRegBtn').disabled = false;
+    alert('ถ่ายครบ 3 รูปแล้ว กรุณากดยืนยันการลงทะเบียน');
+  } else {
+    alert(`ถ่ายรูป ${photoSteps[capturedPhotos.length]} แล้ว`);
+  }
 }
 
 async function completeRegistration() {
   if (capturedPhotos.length !== 3) { alert('ถ่ายรูปให้ครบ 3 รูป'); return; }
   showLoading('กำลังลงทะเบียน...');
+  
   const embeddings = [];
   for (const photo of capturedPhotos) {
-    const img = new Image(); img.src = photo;
+    const img = new Image();
+    img.src = photo;
     await new Promise(r => img.onload = r);
     const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions()).withFaceDescriptor();
-    if (!detection) { alert('ไม่พบใบหน้าในรูป'); hideLoading(); return; }
+    if (!detection) { alert('ไม่พบใบหน้าในรูป กรุณาถ่ายใหม่'); hideLoading(); return; }
     embeddings.push(Array.from(detection.descriptor));
   }
+  
   try {
-    const result = await gasPost('registerFace', { idNumber: regUserData.idNumber, phone: regUserData.phone, userName: regUserData.name, embeddings, photoUrls: capturedPhotos });
+    const result = await gasPost('registerFace', { 
+      idNumber: regUserData.idNumber, 
+      phone: regUserData.phone, 
+      userName: regUserData.name, 
+      embeddings, 
+      photoUrls: capturedPhotos 
+    });
     hideLoading();
-    if (result.success) { alert('ลงทะเบียนสำเร็จ!'); closeRegisterModal(); startFacialLogin(); }
-    else alert(result.error);
+    if (result.success) {
+      alert('ลงทะเบียนสำเร็จ!');
+      closeRegisterModal();
+      startFacialLogin();
+    } else {
+      alert(result.error);
+    }
   } catch(e) { hideLoading(); alert(e.message); }
 }
 
 function closeRegisterModal() {
   if (regStream) { regStream.getTracks().forEach(t => t.stop()); regStream = null; }
   if (registerModal) registerModal.classList.remove('active');
-  capturedPhotos = []; currentPhotoStep = 0; regUserData = null;
+  capturedPhotos = [];
+  regUserData = null;
 }
 
 // ==================== HISTORY & EDIT ====================
@@ -1118,49 +1077,224 @@ async function loadHistory() {
     hideLoading();
     const tbody = document.getElementById('reportTableBody');
     if (!reports.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">ไม่มีรายการ</div></td></tr>'; return; }
-    tbody.innerHTML = reports.map((r, i) => `<tr>
-      <td>${i+1}</td><td><span class="type-tag">${r.type||'-'}</span></td>
-      <td>${r.title||'-'}</td><td>${r.dateStr||'-'}</td>
-      <td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${r.reportNumber}')">✏️ แก้ไข</button></td>
-    </tr>`).join('');
+    tbody.innerHTML = reports.map((r, i) => `
+      <tr>
+        <td class="num-cell">${i+1}</td>
+        <td><span class="type-tag">${r.type||'-'}</span></td>
+        <td class="title-cell">${r.title||'-'}</td>
+        <td class="date-cell">${r.dateStr||'-'}</td>
+        <td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${r.reportNumber}')">✏️ แก้ไข</button></td>
+      </tr>
+    `).join('');
     document.getElementById('countBadge').innerHTML = reports.length + ' รายการ';
+    if (!dropdownsLoaded) preloadDropdowns();
   } catch(e) { hideLoading(); showAlert('alertHistory', 'error', e.message); }
 }
 
 function goToHistory() { showPage('pageHistory'); }
 
-// Edit form functions (simplified)
+function preloadDropdowns() {
+  gasGet({ action: 'getDepartments' }).then(d => { if(Array.isArray(d)) ddData.departments = d; });
+  gasGet({ action: 'getDropdownOptions', column: 'position' }).then(d => { if(Array.isArray(d)) ddData.positions = d; });
+  gasGet({ action: 'getDropdownOptions', column: 'type' }).then(d => { if(Array.isArray(d)) ddData.types = d; });
+  gasGet({ action: 'getDropdownOptions', column: 'reference' }).then(d => { if(Array.isArray(d)) ddData.references = d; });
+  dropdownsLoaded = true;
+}
+
+function populateSelect(id, options, currentVal) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="">-- เลือก --</option>';
+  (options||[]).forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === currentVal) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
 async function openEditForm(rowIndex, reportNum) {
   currentRowIndex = rowIndex;
   document.getElementById('editReportNumLabel').innerHTML = 'หมายเลขรายงาน: ' + reportNum;
+  clearAlert('alertEdit');
   showLoading('กำลังโหลดข้อมูล...');
   try {
-    const d = await gasGet({ action: 'getReportRowData', rowIndex });
+    const rowData = await gasGet({ action: 'getReportRowData', rowIndex: rowIndex });
     hideLoading();
-    Object.keys(d).forEach(k => { let el = document.getElementById(`e_${k}`); if(el) el.value = d[k] || ''; });
-    existingFiles = { pic1: d.pic1Url, pic2: d.pic2Url, certificate: d.certificateUrl, qrLink: d.qrLink };
+    
+    // Fill form fields
+    const fields = ['reportNumber','reportDate','invitingOrg','invitationNumber','invitationDate',
+                    'trainingStartDate','trainingEndDate','days','hours','trainingTitle','organizer',
+                    'location','report','knowledgeSharing','application','doc1','doc2','doc3','doc4','doc5'];
+    fields.forEach(f => { let el = document.getElementById(`e_${f}`); if(el) el.value = rowData[f] || ''; });
+    
+    existingFiles = { pic1: rowData.pic1Url, pic2: rowData.pic2Url, certificate: rowData.certificateUrl, qrLink: rowData.qrLink };
+    
+    // Load dropdowns
+    if (ddData.departments.length) {
+      populateSelect('e_department', ddData.departments, rowData.department);
+      populateSelect('e_position', ddData.positions, rowData.position);
+      populateSelect('e_type', ddData.types, rowData.type);
+      populateSelect('e_reference', ddData.references, rowData.reference);
+    } else {
+      const [depts, positions, types, refs] = await Promise.all([
+        gasGet({ action: 'getDepartments' }),
+        gasGet({ action: 'getDropdownOptions', column: 'position' }),
+        gasGet({ action: 'getDropdownOptions', column: 'type' }),
+        gasGet({ action: 'getDropdownOptions', column: 'reference' })
+      ]);
+      populateSelect('e_department', depts, rowData.department);
+      populateSelect('e_position', positions, rowData.position);
+      populateSelect('e_type', types, rowData.type);
+      populateSelect('e_reference', refs, rowData.reference);
+    }
+    
+    // Load names for department
+    if (rowData.department) {
+      const names = await gasGet({ action: 'getNamesByDepartment', department: rowData.department });
+      populateSelect('e_reporterName', names, rowData.reporterName);
+    }
+    
+    // File preview notes
+    document.getElementById('note_pic1').innerHTML = rowData.pic1Url ? '<span class="existing-note">📎 มีไฟล์เดิม</span>' : '';
+    document.getElementById('note_pic2').innerHTML = rowData.pic2Url ? '<span class="existing-note">📎 มีไฟล์เดิม</span>' : '';
+    document.getElementById('note_certificate').innerHTML = rowData.certificateUrl ? '<span class="existing-note">📎 มีไฟล์เดิม</span>' : '';
+    
+    updateCounter('e_report', 'cnt_report', 400);
+    updateCounter('e_knowledgeSharing', 'cnt_sharing', 400);
+    updateCounter('e_application', 'cnt_application', 430);
+    
+    // Dept change handler
+    document.getElementById('e_department').onchange = async function() {
+      const dept = this.value;
+      if (!dept) return;
+      const names = await gasGet({ action: 'getNamesByDepartment', department: dept });
+      populateSelect('e_reporterName', names, '');
+    };
+    
+    // Date change handler
+    document.getElementById('e_trainingStartDate').onchange = calcDays;
+    document.getElementById('e_trainingEndDate').onchange = calcDays;
+    
     showPage('pageEdit');
-  } catch(e) { hideLoading(); alert(e.message); }
+  } catch(e) { hideLoading(); alert('เกิดข้อผิดพลาด: ' + e.message); }
 }
 
-async function saveEdit() {
-  showLoading('กำลังบันทึก...');
-  const data = { rowIndex: currentRowIndex, existingPic1: existingFiles.pic1, existingPic2: existingFiles.pic2, existingCertificate: existingFiles.certificate, existingQrLink: existingFiles.qrLink, files: {} };
-  const fields = ['reportNumber','reportDate','department','reporterName','position','type','reference','invitingOrg','invitationNumber','invitationDate','trainingStartDate','trainingEndDate','days','hours','trainingTitle','organizer','location','report','knowledgeSharing','application','doc1','doc2','doc3','doc4','doc5'];
-  fields.forEach(f => data[f] = document.getElementById(`e_${f}`)?.value || '');
-  for (let id of ['pic1','pic2','certificate','trainingDoc','invitationDoc']) {
-    let input = document.getElementById(`e_${id}`);
-    if (input && input.files[0]) data.files[id] = await new Promise(r => { let fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(input.files[0]); });
+function calcDays() {
+  const s = new Date(document.getElementById('e_trainingStartDate').value);
+  const e = new Date(document.getElementById('e_trainingEndDate').value);
+  if (s && e && !isNaN(s) && !isNaN(e) && e >= s) {
+    document.getElementById('e_days').value = Math.ceil(Math.abs(e - s) / 86400000) + 1;
   }
+}
+
+function countThaiChars(text) {
+  let c = 0;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if ((code >= 0x0E34 && code <= 0x0E3A) || (code >= 0x0E47 && code <= 0x0E4E)) continue;
+    c++;
+  }
+  return c;
+}
+
+function updateCounter(tid, cid, max) {
+  const val = document.getElementById(tid).value;
+  const count = countThaiChars(val);
+  document.getElementById(cid).textContent = count + ' / ' + max;
+}
+
+[['e_report','cnt_report',400],['e_knowledgeSharing','cnt_sharing',400],['e_application','cnt_application',430]]
+  .forEach(([tid,cid,max]) => {
+    document.getElementById(tid).addEventListener('input', () => updateCounter(tid, cid, max));
+  });
+
+// File previews
+['trainingDoc','invitationDoc','pic1','pic2','certificate'].forEach(id => {
+  document.getElementById('e_' + id).addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const prev = document.getElementById('prev_' + id);
+    prev.innerHTML = '';
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      prev.appendChild(img);
+    } else {
+      const p = document.createElement('p');
+      p.textContent = '📄 ' + file.name;
+      prev.appendChild(p);
+    }
+  });
+});
+
+async function saveEdit() {
+  const required = ['e_reportDate','e_department','e_reporterName','e_position','e_trainingStartDate','e_trainingEndDate','e_days','e_hours','e_trainingTitle','e_organizer','e_location','e_report','e_knowledgeSharing','e_application'];
+  let missing = [];
+  required.forEach(id => { if(!document.getElementById(id).value) missing.push(id); });
+  if(missing.length) { showAlert('alertEdit', 'error', 'กรุณากรอกข้อมูลให้ครบ'); return; }
+  
+  clearAlert('alertEdit');
+  const btn = document.querySelector('#pageEdit .btn-save');
+  btn.disabled = true;
+  showLoading('กำลังบันทึก...');
+  
+  const data = {
+    rowIndex: currentRowIndex,
+    reportNumber: document.getElementById('e_reportNumber').value,
+    reportDate: document.getElementById('e_reportDate').value,
+    department: document.getElementById('e_department').value,
+    reporterName: document.getElementById('e_reporterName').value,
+    position: document.getElementById('e_position').value,
+    type: document.getElementById('e_type').value,
+    reference: document.getElementById('e_reference').value,
+    invitingOrg: document.getElementById('e_invitingOrg').value,
+    invitationNumber: document.getElementById('e_invitationNumber').value,
+    invitationDate: document.getElementById('e_invitationDate').value,
+    trainingStartDate: document.getElementById('e_trainingStartDate').value,
+    trainingEndDate: document.getElementById('e_trainingEndDate').value,
+    days: document.getElementById('e_days').value,
+    hours: document.getElementById('e_hours').value,
+    trainingTitle: document.getElementById('e_trainingTitle').value,
+    organizer: document.getElementById('e_organizer').value,
+    location: document.getElementById('e_location').value,
+    report: document.getElementById('e_report').value,
+    knowledgeSharing: document.getElementById('e_knowledgeSharing').value,
+    application: document.getElementById('e_application').value,
+    doc1: document.getElementById('e_doc1').value,
+    doc2: document.getElementById('e_doc2').value,
+    doc3: document.getElementById('e_doc3').value,
+    doc4: document.getElementById('e_doc4').value,
+    doc5: document.getElementById('e_doc5').value,
+    existingPic1: existingFiles.pic1 || '',
+    existingPic2: existingFiles.pic2 || '',
+    existingCertificate: existingFiles.certificate || '',
+    existingQrLink: existingFiles.qrLink || '',
+    files: {}
+  };
+  
+  for (let id of ['pic1','pic2','certificate','trainingDoc','invitationDoc']) {
+    const input = document.getElementById('e_' + id);
+    if (input && input.files[0]) {
+      data.files[id] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(input.files[0]); });
+    }
+  }
+  
   try {
     const result = await gasPost('saveEditedReport', data);
     hideLoading();
+    btn.disabled = false;
     if (result.success) {
       savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
       document.getElementById('resultReportNum').innerHTML = `หมายเลขรายงาน: ${result.reportNumber}`;
       document.getElementById('resultModal').classList.add('active');
-    } else alert(result.error);
-  } catch(e) { hideLoading(); alert(e.message); }
+    } else {
+      showAlert('alertEdit', 'error', 'เกิดข้อผิดพลาด: ' + (result.error || 'ไม่ทราบสาเหตุ'));
+    }
+  } catch(e) {
+    hideLoading();
+    btn.disabled = false;
+    showAlert('alertEdit', 'error', 'เกิดข้อผิดพลาด: ' + e.message);
+  }
 }
 
 function openPDF(num) { window.open(num === 1 ? savedPdfLinks.pdf1 : savedPdfLinks.pdf2, '_blank'); }
@@ -1172,6 +1306,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const slider = document.getElementById('toggleSlider');
   const idCardPanel = document.getElementById('loginIdCardPanel');
   const facialPanel = document.getElementById('loginFacialPanel');
+  
   options.forEach(opt => opt.addEventListener('click', () => {
     const mode = opt.dataset.mode;
     options.forEach(o => o.classList.remove('active'));
@@ -1189,6 +1324,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }));
 });
+
+let dropdownsLoaded = false;
 </script>
 </body>
 </html>
