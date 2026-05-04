@@ -1422,7 +1422,6 @@ async function gasPost(action, payload) {
   return res.json();
 }
 
-// Additional GAS actions for face system
 async function gasGetFaceData() {
   return gasGet({ action: 'getFaceRegistrationData' });
 }
@@ -1551,17 +1550,17 @@ function logout() {
   document.getElementById('loginError').style.display = 'none';
   stopFacialCamera();
   showPage('pageLogin');
-  // switch back to ID method by default
   if (loginMethod !== 'id') switchLoginMethod('id');
 }
 
 // ══════════════════════════════════════════════
-//  FACE API INITIALIZATION
+//  FACE API INITIALIZATION (FIXED URL)
 // ══════════════════════════════════════════════
 async function initFaceApi() {
   if (faceApiReady) return true;
   try {
-    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+    // Use GitHub raw URL which mirrors the weights correctly
+    const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
@@ -1618,7 +1617,6 @@ async function startFacialCamera() {
     video.srcObject = facialStream;
     await video.play();
 
-    // Setup canvas
     const canvas = document.getElementById('facialCanvas');
     const wrap = document.getElementById('facialCameraWrap');
     canvas.width = wrap.clientWidth;
@@ -1629,7 +1627,6 @@ async function startFacialCamera() {
       : '⚠️ ยังไม่มีผู้ลงทะเบียน Facial Login ในระบบ';
     statusEl.className = faceDB.length > 0 ? 'facial-status scanning' : 'facial-status';
 
-    // Start scan loop
     matchedUser = null;
     if (facialScanTimer) clearInterval(facialScanTimer);
     if (faceDB.length > 0) {
@@ -1664,10 +1661,9 @@ async function facialScanTick() {
   try {
     const detection = await faceapi
       .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
-      .withFaceLandmarks(true) // use tiny net via config
+      .withFaceLandmarks(true)
       .withFaceDescriptor();
 
-    // Draw on canvas
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1677,7 +1673,6 @@ async function facialScanTick() {
       return;
     }
 
-    // Draw detection box
     const dims = faceapi.matchDimensions(canvas, video, true);
     const resized = faceapi.resizeResults(detection, dims);
     const box = resized.detection.box;
@@ -1685,7 +1680,6 @@ async function facialScanTick() {
     ctx.lineWidth = 3;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-    // Compare with DB
     const descriptor = detection.descriptor;
     const results = [];
     for (const user of faceDB) {
@@ -1694,7 +1688,7 @@ async function facialScanTick() {
       let matchCount = 0;
       for (const storedDesc of user.descriptors) {
         const score = faceapi.euclideanDistance(descriptor, storedDesc);
-        const similarity = 1 - score; // convert distance to similarity
+        const similarity = 1 - score;
         if (similarity > bestScore) bestScore = similarity;
         if (similarity >= FACE_SETTINGS.MATCH) matchCount++;
       }
@@ -1707,7 +1701,6 @@ async function facialScanTick() {
       return;
     }
 
-    // Sort by score descending
     results.sort((a, b) => b.score - a.score);
     const best = results[0];
     const second = results.length > 1 ? results[1] : null;
@@ -1715,12 +1708,10 @@ async function facialScanTick() {
     let decision = null;
 
     if (results.length === 1) {
-      // Single user
       if (best.score >= FACE_SETTINGS.STRICT && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES) {
         decision = best;
       }
     } else {
-      // Multiple users
       if (
         best.score >= FACE_SETTINGS.STRICT &&
         best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES &&
@@ -1790,7 +1781,6 @@ function confirmFacialLogin(name) {
 //  REGISTRATION MODAL
 // ══════════════════════════════════════════════
 async function openRegistration() {
-  // Check face API
   if (!faceApiReady) {
     const ok = await initFaceApi();
     if (!ok) {
@@ -1812,13 +1802,11 @@ async function openRegistration() {
 }
 
 function closeRegistration() {
-  // Stop reg camera if running
   if (registrationState && registrationState._regStream) {
     registrationState._regStream.getTracks().forEach(t => t.stop());
   }
   registrationState = null;
   document.getElementById('regOverlay').classList.remove('active');
-  // Restart facial camera if on facial tab
   if (loginMethod === 'facial') {
     startFacialCamera();
   }
@@ -1855,7 +1843,6 @@ async function doRegVerify() {
   }
 
   try {
-    // Verify via loginUser
     const result = await gasGet({ action: 'loginUser', idNumber: idNum, phone: phone });
     if (!result.success) {
       errEl.textContent = '❌ ' + (result.message || 'ข้อมูลไม่ถูกต้อง');
@@ -1868,11 +1855,9 @@ async function doRegVerify() {
     registrationState.name = result.name;
     registrationState.rowIndex = result.rowIndex;
 
-    // Check if already registered
     const faceData = await gasGetFaceData();
     const existing = (faceData || []).find(u => u.name === result.name && u.descriptors && u.descriptors.length > 0);
     if (existing) {
-      // Already registered
       const container = document.getElementById('regStepContent');
       container.innerHTML = `
         <div style="text-align:center;padding:20px 0;">
@@ -1891,7 +1876,6 @@ async function doRegVerify() {
       return;
     }
 
-    // Show name and proceed
     renderRegStepInstructions();
   } catch(e) {
     errEl.textContent = '❌ เกิดข้อผิดพลาด: ' + e.message;
@@ -1950,7 +1934,6 @@ async function startRegPhotoCapture() {
     </div>
   `;
 
-  // Start camera
   try {
     if (registrationState._regStream) {
       registrationState._regStream.getTracks().forEach(t => t.stop());
@@ -1982,7 +1965,6 @@ async function captureRegPhoto() {
     return;
   }
 
-  // Detect face and get descriptor
   try {
     const detection = await faceapi
       .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
@@ -1994,7 +1976,6 @@ async function captureRegPhoto() {
       return;
     }
 
-    // Capture frame
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -2005,7 +1986,6 @@ async function captureRegPhoto() {
     registrationState.photos.push(dataUrl);
     registrationState.descriptors.push(Array.from(detection.descriptor));
 
-    // Update UI
     const slot = document.getElementById('regSlot' + idx);
     slot.innerHTML = `<img src="${dataUrl}" alt="รูปที่ ${idx+1}"><span class="slot-label">${photoLabels[idx]}</span>`;
     slot.classList.add('filled');
@@ -2013,11 +1993,9 @@ async function captureRegPhoto() {
     registrationState._currentPhotoIndex++;
 
     if (registrationState._currentPhotoIndex >= FACE_SETTINGS.TOTAL_PHOTOS) {
-      // All done
       document.getElementById('regPhotoPrompt').textContent = '✅ ถ่ายครบ 3 รูปแล้ว';
       document.getElementById('btnCapture').disabled = true;
       document.getElementById('btnCapture').textContent = '✅ ครบแล้ว';
-      // Add confirm button
       const buttonsDiv = document.querySelector('#regStepContent .reg-buttons');
       const confirmBtn = document.createElement('button');
       confirmBtn.className = 'btn-primary';
@@ -2085,7 +2063,6 @@ async function submitRegistration() {
 
 function closeRegistrationAndScan() {
   closeRegistration();
-  // Switch to facial login tab and start camera
   if (loginMethod !== 'facial') switchLoginMethod('facial');
   else startFacialCamera();
 }
