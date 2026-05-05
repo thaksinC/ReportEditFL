@@ -46,7 +46,6 @@
       overflow-x: hidden;
     }
 
-    /* ───── TOPBAR ───── */
     .topbar {
       background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 45%, var(--primary-light) 100%);
       padding: 0 16px;
@@ -148,11 +147,9 @@
     }
     .btn-logout:hover { background: rgba(255,255,255,0.22); color: white; }
 
-    /* ───── PAGES ───── */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* ───── LOGIN PAGE ───── */
     .login-wrap {
       min-height: calc(100vh - 56px);
       display: flex;
@@ -320,7 +317,6 @@
     }
     @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
 
-    /* ───── LOGIN TOGGLE ───── */
     .login-toggle-bar {
       display: flex;
       background: #f1f5f9;
@@ -374,7 +370,6 @@
     .login-panel { display: none; }
     .login-panel.active { display: block; }
 
-    /* ───── FACIAL PANEL ───── */
     .facial-camera-wrap {
       width: 100%;
       aspect-ratio: 4/3;
@@ -434,7 +429,6 @@
       border-color: var(--primary-light);
     }
 
-    /* ───── FACIAL RESULT POPUP ───── */
     .facial-popup-overlay {
       display: none;
       position: fixed;
@@ -540,7 +534,6 @@
     }
     .facial-popup-card .btn-cancel-face:hover { background: #f9fafb; }
 
-    /* ───── REGISTRATION MODAL ───── */
     .reg-overlay {
       display: none;
       position: fixed;
@@ -717,7 +710,7 @@
       .reg-error { padding: 12px 16px; font-size: 14px; margin-top: 12px; }
     }
 
-    /* ───── HISTORY PAGE ───── */
+    /* ══════════ HISTORY PAGE ══════════ */
     .history-wrap {
       max-width: 1000px;
       margin: 0 auto;
@@ -772,28 +765,34 @@
     @media(min-width: 768px) {
       .count-badge { font-size: 12px; padding: 4px 12px; margin-top: 4px; }
     }
+    
+    /* ★★★ ตาราง — แสดงทั้งหมดโดยไม่ต้องเลื่อน ★★★ */
     .table-card {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      overflow-x: auto;
+      overflow: hidden;
       border: 1px solid var(--border);
     }
-    .report-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+    .report-table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      table-layout: fixed;
+    }
     .report-table thead tr {
       background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 60%, var(--primary-mid) 100%);
     }
     .report-table thead th {
-      padding: 10px 12px;
+      padding: 10px 4px;
       text-align: left;
       color: rgba(255,255,255,0.95);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       white-space: nowrap;
       letter-spacing: 0.02em;
     }
     @media(min-width: 768px) {
-      .report-table thead th { padding: 15px 20px; font-size: 13px; }
+      .report-table thead th { padding: 15px 12px; font-size: 13px; }
     }
     .report-table tbody tr {
       border-bottom: 1px solid #f0fdf4;
@@ -802,42 +801,66 @@
     .report-table tbody tr:last-child { border-bottom: none; }
     .report-table tbody tr:hover { background: #f0fdfa; }
     .report-table td {
-      padding: 10px 12px;
-      font-size: 12px;
+      padding: 8px 4px;
+      font-size: 11px;
       color: var(--text);
       vertical-align: middle;
+      word-break: break-word;
     }
     @media(min-width: 768px) {
-      .report-table td { padding: 16px 20px; font-size: 14px; }
+      .report-table td { padding: 14px 12px; font-size: 14px; }
     }
-    .num-cell { color: #aaa; font-size: 11px; font-weight: 500; }
+    .num-cell { 
+      color: #aaa; 
+      font-size: 11px; 
+      font-weight: 500; 
+      text-align: center; 
+    }
     @media(min-width: 768px) {
       .num-cell { font-size: 12px; }
     }
     .type-tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 10px;
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 12px;
+      font-size: 9px;
       font-weight: 600;
       background: #ccfbf1;
       color: var(--primary);
-      white-space: nowrap;
       border: 1px solid #99f6e4;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     @media(min-width: 768px) {
-      .type-tag { padding: 4px 11px; font-size: 12px; }
+      .type-tag { padding: 4px 11px; font-size: 12px; border-radius: 20px; }
     }
-    .title-cell { font-weight: 500; word-break: break-word; }
-    .date-cell { white-space: nowrap; font-weight: 600; color: var(--primary-mid); font-size: 11px; }
+    .title-cell { 
+      font-weight: 500; 
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .date-cell { 
+      white-space: nowrap; 
+      font-weight: 600; 
+      color: var(--primary-mid); 
+      font-size: 10px; 
+      text-align: center;
+    }
     @media(min-width: 768px) {
       .date-cell { font-size: 13px; }
+    }
+    .action-cell {
+      text-align: center;
+      white-space: nowrap;
     }
     .btn-edit {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 3px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
@@ -849,13 +872,14 @@
       cursor: pointer;
       white-space: nowrap;
       transition: var(--transition);
-      box-shadow: 0 2px 10px rgba(15,118,110,0.25);
+      box-shadow: 0 2px 8px rgba(15,118,110,0.25);
     }
     @media(min-width: 768px) {
       .btn-edit { padding: 8px 18px; border-radius: 8px; font-size: 13px; gap: 6px; }
     }
     .btn-edit:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(15,118,110,0.35); }
     .btn-edit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
     .empty-state {
       padding: 40px 16px;
       text-align: center;
@@ -873,7 +897,7 @@
       .empty-state p { font-size: 15px; }
     }
 
-    /* ───── EDIT FORM PAGE ───── */
+    /* ══════════ EDIT FORM ══════════ */
     .edit-wrap {
       max-width: 980px;
       margin: 0 auto;
@@ -1138,7 +1162,6 @@
     }
     .btn-cancel:hover { border-color: #d1d5db; background: #f9fafb; }
 
-    /* ───── LOADING OVERLAY ───── */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -1174,7 +1197,6 @@
       .loading-sub { font-size: 13px; margin-top: 6px; }
     }
 
-    /* ───── RESULT MODAL ───── */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -1260,7 +1282,6 @@
     .modal-btn.secondary { background: linear-gradient(135deg,#059669,#10b981); color:white; box-shadow:0 4px 14px rgba(5,150,105,0.25); }
     .modal-btn.outline { background: white; border: 2px solid var(--border); color: var(--primary); }
 
-    /* ───── SPINNER ───── */
     .spinner {
       display: inline-block;
       width: 14px; height: 14px;
@@ -1275,7 +1296,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ───── ALERTS ───── */
     .alert-box {
       padding: 10px 14px;
       border-radius: 10px;
@@ -1342,6 +1362,7 @@
   </div>
 </div>
 
+<!-- ══════════════ PAGE: LOGIN ══════════════ -->
 <div class="page active" id="pageLogin">
   <div class="login-wrap">
     <div class="login-card">
@@ -1389,6 +1410,7 @@
   </div>
 </div>
 
+<!-- ══════════════ PAGE: HISTORY ══════════════ -->
 <div class="page" id="pageHistory">
   <div class="history-wrap">
     <div class="history-header">
@@ -1403,11 +1425,11 @@
       <table class="report-table" id="reportTable">
         <thead>
           <tr>
-            <th style="width:40px">#</th>
-            <th>ประเภท</th>
-            <th>เรื่อง / หัวข้อการอบรม</th>
-            <th>วันที่อบรม</th>
-            <th style="width:120px"></th>
+            <th style="width:8%">#</th>
+            <th style="width:18%">ประเภท</th>
+            <th style="width:32%">เรื่อง / หัวข้อการอบรม</th>
+            <th style="width:22%">วันที่อบรม</th>
+            <th style="width:20%"></th>
           </tr>
         </thead>
         <tbody id="reportTableBody">
@@ -1418,6 +1440,7 @@
   </div>
 </div>
 
+<!-- ══════════════ PAGE: EDIT FORM ══════════════ -->
 <div class="page" id="pageEdit">
   <div class="edit-wrap">
     <div class="edit-header">
@@ -1568,15 +1591,12 @@ const FACE_SETTINGS = Object.freeze({
   VIDEO_WIDTH: 640,
   VIDEO_HEIGHT: 480,
   FACING_MODE: 'user',
-  SCAN_INTERVAL: 300,           // ตรวจจับทุกกี่ ms
-  
-  // ★★★ ปรับค่าต่อไปนี้เพื่อเปลี่ยนความเข้มงวด ★★★
-  DETECTION_SCORE: 0.5,        // ขั้นต่ำในการตรวจจับใบหน้า (0-1)
-  STRICT_DISTANCE: 0.45,       // ระยะสูงสุดที่ถือว่าใช่ (75% similarity) ← เปลี่ยนตรงนี้!
-  MATCH_DISTANCE: 0.50,        // ระยะที่ถือว่าตรง 1 รูป (70% similarity) ← เปลี่ยนตรงนี้!
-  REQUIRED_MATCHES: 2,         // ต้องตรงกี่รูปจาก 3 รูป
-  GAP_DISTANCE: 0.08,          // ต้องห่างจากอันดับ 2 เท่าไหร่
-  
+  SCAN_INTERVAL: 300,
+  DETECTION_SCORE: 0.5,
+  STRICT_DISTANCE: 0.45,
+  MATCH_DISTANCE: 0.50,
+  REQUIRED_MATCHES: 2,
+  GAP_DISTANCE: 0.08,
   TOTAL_PHOTOS: 3,
   JPEG_QUALITY: 0.85
 });
@@ -1754,12 +1774,6 @@ function stopFacialCamera() {
   matchedUser = null;
 }
 
-/*
-  ╔══════════════════════════════════════════════════════════════╗
-  ║  facialScanTick() - ฟังก์ชันสแกนใบหน้าหลัก                 ║
-  ║  แก้ไข logic ได้ตาม comment ใน FACE_SETTINGS ด้านบน        ║
-  ╚══════════════════════════════════════════════════════════════╝
-*/
 async function facialScanTick() {
   if (!faceApiReady || !facialStream || faceDB.length === 0) return;
   const video = document.getElementById('facialVideo');
@@ -1769,15 +1783,7 @@ async function facialScanTick() {
   try {
     const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: FACE_SETTINGS.DETECTION_SCORE })).withFaceLandmarks(true).withFaceDescriptor();
     const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // ถ้าไม่พบใบหน้าเลย
-    if (!detection) { 
-      statusEl.textContent = '🔍 กำลังมองหาใบหน้า... กรุณามองกล้อง'; 
-      statusEl.className = 'facial-status'; 
-      return; 
-    }
-    
-    // วาดกรอบใบหน้า
+    if (!detection) { statusEl.textContent = '🔍 กำลังมองหาใบหน้า... กรุณามองกล้อง'; statusEl.className = 'facial-status'; return; }
     const dims = faceapi.matchDimensions(canvas, video, true);
     const resized = faceapi.resizeResults(detection, dims);
     ctx.strokeStyle = '#14b8a6'; ctx.lineWidth = 3;
@@ -1785,8 +1791,6 @@ async function facialScanTick() {
 
     const descriptor = detection.descriptor;
     const results = [];
-    
-    // เปรียบเทียบกับทุกคนในฐานข้อมูล
     for (const user of faceDB) {
       if (!user.descriptors || user.descriptors.length === 0) continue;
       let bestDistance = Infinity, matchCount = 0;
@@ -1796,119 +1800,52 @@ async function facialScanTick() {
         if (distance < bestDistance) bestDistance = distance;
         if (distance <= FACE_SETTINGS.MATCH_DISTANCE) matchCount++;
       }
-      // แปลง distance เป็น % similarity: 0 = 100%เหมือน, 1 = 0%เหมือน
       const similarity = Math.max(0, (1 - bestDistance) * 100);
       results.push({ name: user.name, distance: bestDistance, similarity: similarity, matchCount, rowIndex: user.rowIndex });
     }
-    
-    // ไม่มีใครในระบบที่ลงทะเบียนใบหน้าไว้
-    if (results.length === 0) { 
-      statusEl.textContent = '🔍 ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login'; 
-      statusEl.className = 'facial-status error';
-      // แสดง popup แนะนำให้ลงทะเบียน
-      showFacialPopup_noUser();
-      return; 
-    }
-    
-    // เรียงจากเหมือนที่สุดไปน้อยที่สุด
+    if (results.length === 0) { statusEl.textContent = '🔍 ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login'; statusEl.className = 'facial-status error'; showFacialPopup_noUser(); return; }
     results.sort((a, b) => a.distance - b.distance);
     const best = results[0], second = results.length > 1 ? results[1] : null;
-
     let decision = null;
-
-    // ── DECISION LOGIC ──
-    if (results.length === 1) {
-      // มีคนเดียวในฐานข้อมูล
-      if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES) {
-        decision = best;
-      }
-    } else {
-      // หลายคน — ต้องชนะขาด
-      if (
-        best.distance <= FACE_SETTINGS.STRICT_DISTANCE &&
-        best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES &&
-        (second.distance - best.distance) > FACE_SETTINGS.GAP_DISTANCE
-      ) {
-        decision = best;
-      }
-    }
-
-    // ── แสดงผล ──
+    if (results.length === 1) { if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES) decision = best; }
+    else { if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES && (second.distance - best.distance) > FACE_SETTINGS.GAP_DISTANCE) decision = best; }
     if (decision) {
-      // เจอตัวตนที่ตรง!
-      if (!matchedUser || matchedUser.name !== decision.name) { 
-        matchedUser = decision; 
-        statusEl.textContent = '✅ พบ: ' + decision.name + ' (' + decision.similarity.toFixed(1) + '%)'; 
-        statusEl.className = 'facial-status success'; 
-        showFacialPopup_found(decision); 
-      }
+      if (!matchedUser || matchedUser.name !== decision.name) { matchedUser = decision; statusEl.textContent = '✅ พบ: ' + decision.name + ' (' + decision.similarity.toFixed(1) + '%)'; statusEl.className = 'facial-status success'; showFacialPopup_found(decision); }
     } else {
-      // ไม่ผ่านเกณฑ์ — แสดงสาเหตุ
       matchedUser = null;
-      let debugMsg = `🔍 ดีสุด: ${best.name} (${best.similarity.toFixed(1)}%, ตรง ${best.matchCount} รูป)`;
-      if (best.distance > FACE_SETTINGS.STRICT_DISTANCE) {
-        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — คะแนนความตรงต่ำเกินไป (' + best.similarity.toFixed(1) + '%)';
-        showFacialPopup_noUser();
-      } else if (best.matchCount < FACE_SETTINGS.REQUIRED_MATCHES) {
-        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — ตรงเพียง ' + best.matchCount + ' รูป (ต้องการ ' + FACE_SETTINGS.REQUIRED_MATCHES + ')';
+      if (best.distance > FACE_SETTINGS.STRICT_DISTANCE || best.matchCount < FACE_SETTINGS.REQUIRED_MATCHES) {
+        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — คะแนนความตรงต่ำเกินไป';
         showFacialPopup_noUser();
       } else if (second && (second.distance - best.distance) <= FACE_SETTINGS.GAP_DISTANCE) {
         statusEl.textContent = '🔍 ไม่สามารถระบุตัวตน — ใกล้เคียงกับ ' + second.name + ' เกินไป';
         statusEl.className = 'facial-status error';
-      } else {
-        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — ไม่ผ่านเกณฑ์การจดจำ';
-        showFacialPopup_noUser();
-      }
+      } else { statusEl.textContent = '🔍 ไม่พบผู้ใช้ — ไม่ผ่านเกณฑ์การจดจำ'; showFacialPopup_noUser(); }
       statusEl.className = 'facial-status error';
     }
   } catch(e) { console.warn('Scan tick error:', e); }
 }
 
-// ═══════════════════════════════════ FACIAL POPUP ════════════════════════════
-// Popup เมื่อพบผู้ใช้ที่ตรง
 function showFacialPopup_found(user) {
   playBeep();
   const overlay = document.getElementById('facialPopup');
   const card = document.getElementById('facialPopupCard');
   card.className = 'facial-popup-card';
-  card.innerHTML = `
-    <span class="popup-icon">😊</span>
-    <h3>พบใบหน้าผู้ใช้</h3>
-    <div class="popup-name">${escHtml(user.name)}</div>
-    <div class="popup-detail">ความตรง: ${user.similarity.toFixed(1)}% | ตรง ${user.matchCount}/${FACE_SETTINGS.TOTAL_PHOTOS} รูป</div>
-    <button class="btn-confirm-face" onclick="confirmFacialLogin('${escHtml(user.name)}')">✅ ยืนยันล็อกอิน</button>
-    <button class="btn-cancel-face" onclick="closeFacialPopup()">❌ ยกเลิก</button>
-  `;
+  card.innerHTML = `<span class="popup-icon">😊</span><h3>พบใบหน้าผู้ใช้</h3><div class="popup-name">${escHtml(user.name)}</div><div class="popup-detail">ความตรง: ${user.similarity.toFixed(1)}% | ตรง ${user.matchCount}/${FACE_SETTINGS.TOTAL_PHOTOS} รูป</div><button class="btn-confirm-face" onclick="confirmFacialLogin('${escHtml(user.name)}')">✅ ยืนยันล็อกอิน</button><button class="btn-cancel-face" onclick="closeFacialPopup()">❌ ยกเลิก</button>`;
   overlay.classList.add('active');
 }
 
-// Popup เมื่อไม่พบผู้ใช้ — แนะนำให้ลงทะเบียน
 function showFacialPopup_noUser() {
-  // แสดง popup แค่ครั้งเดียว ไม่ให้เด้งซ้ำ
   if (document.getElementById('facialPopup').classList.contains('active')) return;
-  
-  // หยุดสแกนชั่วคราวเพื่อให้ผู้ใช้กด
   if (facialScanTimer) { clearInterval(facialScanTimer); facialScanTimer = null; }
-  
   const overlay = document.getElementById('facialPopup');
   const card = document.getElementById('facialPopupCard');
   card.className = 'facial-popup-card error-popup';
-  card.innerHTML = `
-    <span class="popup-icon">❓</span>
-    <h3>ไม่พบผู้ใช้ในระบบ</h3>
-    <div class="popup-detail">ไม่พบบุคคลนี้ในฐานข้อมูล Facial Login<br>กรุณาลงทะเบียนใบหน้าเพื่อใช้งาน</div>
-    <button class="btn-facial-register-popup" onclick="closeFacialPopup(); openRegistration();">📸 ลงทะเบียนใบหน้า</button>
-    <button class="btn-cancel-face" onclick="closeFacialPopup(); resumeFacialScan();">❌ ปิด</button>
-  `;
+  card.innerHTML = `<span class="popup-icon">❓</span><h3>ไม่พบผู้ใช้ในระบบ</h3><div class="popup-detail">ไม่พบบุคคลนี้ในฐานข้อมูล Facial Login<br>กรุณาลงทะเบียนใบหน้าเพื่อใช้งาน</div><button class="btn-facial-register-popup" onclick="closeFacialPopup(); openRegistration();">📸 ลงทะเบียนใบหน้า</button><button class="btn-cancel-face" onclick="closeFacialPopup(); resumeFacialScan();">❌ ปิด</button>`;
   overlay.classList.add('active');
 }
 
-function closeFacialPopup() { 
-  document.getElementById('facialPopup').classList.remove('active'); 
-  matchedUser = null; 
-}
+function closeFacialPopup() { document.getElementById('facialPopup').classList.remove('active'); matchedUser = null; }
 
-// กลับมาสแกนต่อหลังจากปิด popup
 function resumeFacialScan() {
   if (faceDB.length > 0 && loginMethod === 'facial') {
     if (facialScanTimer) clearInterval(facialScanTimer);
@@ -1918,11 +1855,7 @@ function resumeFacialScan() {
   }
 }
 
-function confirmFacialLogin(name) { 
-  closeFacialPopup(); 
-  stopFacialCamera(); 
-  setLoggedInUser(name); 
-}
+function confirmFacialLogin(name) { closeFacialPopup(); stopFacialCamera(); setLoggedInUser(name); }
 
 // ═══════════════════════════════════ REGISTRATION ════════════════════════════
 async function openRegistration() {
@@ -2020,17 +1953,38 @@ async function loadHistory() {
   try { const reports = await gasGet({ action: 'getUserReports', userName: currentUser }); hideLoading(); renderHistory(Array.isArray(reports) ? reports : []); if (!dropdownsLoaded) preloadDropdowns(); }
   catch(e) { hideLoading(); renderHistory([]); showAlert('alertHistory', 'error', 'เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e.message); }
 }
+
 function renderHistory(reports) {
   document.getElementById('countBadge').textContent = reports.length + ' รายการ';
   const tbody = document.getElementById('reportTableBody');
-  if (!reports.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span class="empty-icon">📭</span><p>ยังไม่มีรายการรายงาน</p></div></td></tr>'; return; }
+
+  if (!reports.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span class="empty-icon">📭</span><p>ยังไม่มีรายการรายงาน</p></div></td></tr>';
+    return;
+  }
+
   tbody.innerHTML = '';
   reports.forEach((r, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="num-cell">${i+1}</td><td><span class="type-tag">${escHtml(r.type||'-')}</span></td><td class="title-cell">${escHtml(r.title||'-')}</td><td class="date-cell">${escHtml(r.dateStr||'-')}</td><td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber||'')}')">✏️ แก้ไข</button></td>`;
+    // ตัดข้อความยาวเกิน 35 ตัวอักษร ให้มี ... และแสดงเต็มเมื่อ hover
+    const titleShort = (r.title || '-').length > 35 
+      ? escHtml((r.title || '-').substring(0, 35) + '...') 
+      : escHtml(r.title || '-');
+    
+    tr.innerHTML = `
+      <td class="num-cell">${i+1}</td>
+      <td><span class="type-tag" title="${escHtml(r.type||'')}">${escHtml(r.type||'-')}</span></td>
+      <td class="title-cell" title="${escHtml(r.title||'')}">${titleShort}</td>
+      <td class="date-cell">${escHtml(r.dateStr||'-')}</td>
+      <td class="action-cell">
+        <button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber||'')}')">
+          ✏️ แก้ไข
+        </button>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
+
 function goToHistory() { showPage('pageHistory'); }
 
 // ═══════════════════════════════════ DROPDOWNS ═══════════════════════════════
