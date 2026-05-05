@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>แก้ไขรายงานการไปราชการ / อบรม / ศึกษาดูงาน — โรงเรียนสิงห์บุรี</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
@@ -42,12 +42,15 @@
       min-height: 100vh;
       color: var(--text);
       line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
     }
 
+    /* ───── TOPBAR ───── */
     .topbar {
       background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 45%, var(--primary-light) 100%);
-      padding: 0 32px;
-      height: 64px;
+      padding: 0 16px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -56,6 +59,9 @@
       top: 0;
       z-index: 200;
       backdrop-filter: blur(10px);
+    }
+    @media(min-width: 768px) {
+      .topbar { padding: 0 32px; height: 64px; }
     }
     .topbar::after {
       content: '';
@@ -67,73 +73,102 @@
     .topbar-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 8px;
       color: white;
       text-decoration: none;
     }
+    @media(min-width: 768px) {
+      .topbar-brand { gap: 14px; }
+    }
     .topbar-brand img {
-      width: 40px; height: 40px;
+      width: 32px; height: 32px;
       border-radius: 50%;
       border: 2px solid rgba(255,255,255,0.45);
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
+    @media(min-width: 768px) {
+      .topbar-brand img { width: 40px; height: 40px; }
+    }
     .topbar-brand-text {
-      font-size: 15px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.01em;
       text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      line-height: 1.3;
+    }
+    @media(min-width: 768px) {
+      .topbar-brand-text { font-size: 15px; }
     }
     .topbar-brand-text small {
       display: block;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 400;
       opacity: 0.75;
+    }
+    @media(min-width: 768px) {
+      .topbar-brand-text small { font-size: 11px; }
     }
     .topbar-user {
       display: none;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
+    }
+    @media(min-width: 768px) {
+      .topbar-user { gap: 10px; }
     }
     .topbar-user.visible { display: flex; }
     .user-badge {
       background: rgba(255,255,255,0.18);
       border: 1px solid rgba(255,255,255,0.30);
-      padding: 5px 14px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 10px;
       font-weight: 500;
       color: white;
       letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    @media(min-width: 768px) {
+      .user-badge { font-size: 13px; padding: 5px 14px; }
     }
     .btn-logout {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.25);
       color: rgba(255,255,255,0.9);
-      padding: 5px 14px;
+      padding: 4px 10px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 10px;
       font-family: inherit;
       transition: var(--transition);
+      white-space: nowrap;
+    }
+    @media(min-width: 768px) {
+      .btn-logout { font-size: 12px; padding: 5px 14px; }
     }
     .btn-logout:hover { background: rgba(255,255,255,0.22); color: white; }
 
+    /* ───── PAGES ───── */
     .page { display: none; }
     .page.active { display: block; }
 
+    /* ───── LOGIN PAGE ───── */
     .login-wrap {
-      min-height: calc(100vh - 64px);
+      min-height: calc(100vh - 56px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 20px 12px;
       background: radial-gradient(ellipse at 20% 50%, rgba(20,184,166,0.12) 0%, transparent 60%),
                   radial-gradient(ellipse at 80% 20%, rgba(15,118,110,0.08) 0%, transparent 50%),
                   linear-gradient(160deg, #f0fdfa 0%, #e6fffa 50%, #ccfbf1 100%);
     }
+    @media(min-width: 768px) {
+      .login-wrap { min-height: calc(100vh - 64px); padding: 40px 20px; }
+    }
     .login-card {
       background: white;
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--shadow-xl);
       padding: 0;
       width: 100%;
@@ -142,8 +177,14 @@
       position: relative;
       overflow: hidden;
     }
+    @media(min-width: 768px) {
+      .login-card { border-radius: 28px; }
+    }
     .login-card-inner {
-      padding: 52px 48px;
+      padding: 24px 20px;
+    }
+    @media(min-width: 768px) {
+      .login-card-inner { padding: 52px 48px; }
     }
     .login-card::before {
       content: '';
@@ -156,51 +197,75 @@
     }
     .login-logo {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 20px;
+    }
+    @media(min-width: 768px) {
+      .login-logo { margin-bottom: 36px; }
     }
     .login-logo img {
-      width: 84px; height: 84px;
+      width: 60px; height: 60px;
       border-radius: 50%;
       box-shadow: 0 8px 30px rgba(15,118,110,0.22);
       border: 3px solid var(--primary-light);
     }
+    @media(min-width: 768px) {
+      .login-logo img { width: 84px; height: 84px; }
+    }
     .login-logo h1 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 19px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--primary);
-      margin-top: 18px;
+      margin-top: 12px;
       line-height: 1.5;
     }
+    @media(min-width: 768px) {
+      .login-logo h1 { font-size: 19px; margin-top: 18px; }
+    }
     .login-logo p {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--text-sub);
-      margin-top: 6px;
+      margin-top: 4px;
+    }
+    @media(min-width: 768px) {
+      .login-logo p { font-size: 13px; margin-top: 6px; }
     }
     .login-divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--border2), transparent);
-      margin: 24px 0;
+      margin: 16px 0;
     }
-    .login-field { margin-bottom: 20px; }
+    @media(min-width: 768px) {
+      .login-divider { margin: 24px 0; }
+    }
+    .login-field { margin-bottom: 14px; }
+    @media(min-width: 768px) {
+      .login-field { margin-bottom: 20px; }
+    }
     .login-field label {
       display: block;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       letter-spacing: 0.01em;
+    }
+    @media(min-width: 768px) {
+      .login-field label { font-size: 13px; margin-bottom: 8px; }
     }
     .login-field input {
       width: 100%;
-      padding: 13px 16px;
+      padding: 10px 12px;
       border: 2px solid #e5e7eb;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-size: 14px;
       font-family: inherit;
       transition: var(--transition);
       color: var(--text);
       letter-spacing: 0.05em;
+    }
+    @media(min-width: 768px) {
+      .login-field input { padding: 13px 16px; font-size: 15px; }
     }
     .login-field input:focus {
       outline: none;
@@ -209,21 +274,24 @@
     }
     .btn-login {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
       border-radius: var(--radius-sm);
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 6px;
       box-shadow: 0 4px 18px rgba(15,118,110,0.32);
       transition: var(--transition);
       letter-spacing: 0.03em;
       position: relative;
       overflow: hidden;
+    }
+    @media(min-width: 768px) {
+      .btn-login { padding: 14px; font-size: 16px; margin-top: 8px; }
     }
     .btn-login::after {
       content: '';
@@ -240,28 +308,34 @@
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #dc2626;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 14px;
-      margin-top: 16px;
+      font-size: 13px;
+      margin-top: 12px;
       display: none;
       animation: slideDown 0.2s ease;
     }
+    @media(min-width: 768px) {
+      .login-error { padding: 12px 16px; font-size: 14px; margin-top: 16px; }
+    }
     @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
 
+    /* ───── LOGIN TOGGLE ───── */
     .login-toggle-bar {
       display: flex;
       background: #f1f5f9;
-      border-radius: 0;
-      padding: 4px;
-      margin-bottom: 0;
+      padding: 3px;
       border-bottom: 1px solid #e2e8f0;
+      gap: 2px;
+    }
+    @media(min-width: 768px) {
+      .login-toggle-bar { padding: 4px; gap: 0; }
     }
     .login-toggle-btn {
       flex: 1;
-      padding: 14px 12px;
+      padding: 10px 8px;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
@@ -271,26 +345,36 @@
       transition: var(--transition);
       position: relative;
       z-index: 1;
+      border-radius: 10px 10px 0 0;
+      white-space: nowrap;
+    }
+    @media(min-width: 768px) {
+      .login-toggle-btn { padding: 14px 12px; font-size: 14px; border-radius: 0; }
     }
     .login-toggle-btn.active {
       color: var(--primary);
       background: white;
-      border-radius: 12px 12px 0 0;
       box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
     }
-    .login-toggle-btn:first-child.active { border-radius: 12px 0 0 0; }
-    .login-toggle-btn:last-child.active { border-radius: 0 12px 0 0; }
+    .login-toggle-btn:first-child.active { border-radius: 10px 0 0 0; }
+    @media(min-width: 768px) {
+      .login-toggle-btn:first-child.active { border-radius: 12px 0 0 0; }
+    }
+    .login-toggle-btn:last-child.active { border-radius: 0 10px 0 0; }
+    @media(min-width: 768px) {
+      .login-toggle-btn:last-child.active { border-radius: 0 12px 0 0; }
+    }
     .login-toggle-btn .toggle-icon {
       display: inline-block;
-      margin-right: 4px;
+      margin-right: 2px;
     }
-    .login-panel {
-      display: none;
+    @media(min-width: 768px) {
+      .login-toggle-btn .toggle-icon { margin-right: 4px; }
     }
-    .login-panel.active {
-      display: block;
-    }
+    .login-panel { display: none; }
+    .login-panel.active { display: block; }
 
+    /* ───── FACIAL PANEL ───── */
     .facial-camera-wrap {
       width: 100%;
       aspect-ratio: 4/3;
@@ -298,7 +382,10 @@
       border-radius: var(--radius-sm);
       overflow: hidden;
       position: relative;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+    }
+    @media(min-width: 768px) {
+      .facial-camera-wrap { margin-bottom: 16px; }
     }
     .facial-camera-wrap video {
       width: 100%;
@@ -314,32 +401,40 @@
     }
     .facial-status {
       text-align: center;
-      font-size: 13px;
+      font-size: 11px;
       color: var(--text-sub);
-      margin-bottom: 12px;
-      min-height: 20px;
+      margin-bottom: 10px;
+      min-height: 18px;
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .facial-status { font-size: 13px; margin-bottom: 12px; min-height: 20px; }
     }
     .facial-status.success { color: var(--success); font-weight: 600; }
     .facial-status.error { color: var(--danger); font-weight: 600; }
     .facial-status.scanning { color: var(--accent); font-weight: 600; }
     .btn-facial-register {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       background: white;
       border: 2px solid var(--border2);
       color: var(--primary);
       border-radius: var(--radius-sm);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
+    }
+    @media(min-width: 768px) {
+      .btn-facial-register { padding: 10px; font-size: 14px; }
     }
     .btn-facial-register:hover {
       background: var(--bg);
       border-color: var(--primary-light);
     }
 
+    /* ───── FACIAL RESULT POPUP ───── */
     .facial-popup-overlay {
       display: none;
       position: fixed;
@@ -349,71 +444,103 @@
       z-index: 9999;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
     }
     .facial-popup-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .facial-popup-card {
       background: white;
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--shadow-xl);
-      padding: 44px 40px;
-      max-width: 440px;
+      padding: 28px 22px;
+      max-width: 400px;
       width: 100%;
       text-align: center;
       border-top: 5px solid var(--success);
       animation: scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
     }
+    @media(min-width: 768px) {
+      .facial-popup-card { padding: 44px 40px; max-width: 440px; border-radius: 28px; }
+    }
     .facial-popup-card.error-popup { border-top-color: var(--danger); }
-    .facial-popup-card .popup-icon { font-size: 56px; display: block; margin-bottom: 12px; }
+    .facial-popup-card .popup-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+    @media(min-width: 768px) {
+      .facial-popup-card .popup-icon { font-size: 56px; margin-bottom: 12px; }
+    }
     .facial-popup-card h3 {
       font-family: 'Noto Serif Thai', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .facial-popup-card h3 { font-size: 22px; margin-bottom: 8px; }
+    }
+    .facial-popup-card .popup-name {
       font-size: 22px;
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 8px;
-    }
-    .facial-popup-card .popup-name {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 12px 0;
+      margin: 10px 0;
       font-family: 'Noto Serif Thai', serif;
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .facial-popup-card .popup-name { font-size: 28px; margin: 12px 0; }
     }
     .facial-popup-card .popup-detail {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-sub);
-      margin-bottom: 20px;
+      margin-bottom: 14px;
+      word-break: break-word;
     }
-    .facial-popup-card .btn-confirm-face {
-      padding: 13px 32px;
+    @media(min-width: 768px) {
+      .facial-popup-card .popup-detail { font-size: 13px; margin-bottom: 20px; }
+    }
+    .facial-popup-card .btn-confirm-face,
+    .facial-popup-card .btn-facial-register-popup {
+      padding: 11px 20px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
       border-radius: var(--radius-sm);
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       box-shadow: 0 4px 18px rgba(15,118,110,0.30);
       transition: var(--transition);
-      margin: 4px;
+      margin: 3px;
+      width: 100%;
+      max-width: 280px;
     }
-    .facial-popup-card .btn-confirm-face:hover { transform: translateY(-2px); }
+    @media(min-width: 768px) {
+      .facial-popup-card .btn-confirm-face,
+      .facial-popup-card .btn-facial-register-popup { padding: 13px 32px; font-size: 16px; margin: 4px; width: auto; }
+    }
+    .facial-popup-card .btn-confirm-face:hover,
+    .facial-popup-card .btn-facial-register-popup:hover { transform: translateY(-2px); }
     .facial-popup-card .btn-cancel-face {
-      padding: 11px 24px;
+      padding: 9px 16px;
       background: white;
       border: 2px solid #e5e7eb;
       color: #6b7280;
       border-radius: var(--radius-sm);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
-      margin: 4px;
+      margin: 3px;
+      width: 100%;
+      max-width: 280px;
+    }
+    @media(min-width: 768px) {
+      .facial-popup-card .btn-cancel-face { padding: 11px 24px; font-size: 14px; margin: 4px; width: auto; }
     }
     .facial-popup-card .btn-cancel-face:hover { background: #f9fafb; }
 
+    /* ───── REGISTRATION MODAL ───── */
     .reg-overlay {
       display: none;
       position: fixed;
@@ -423,47 +550,58 @@
       z-index: 10000;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 12px;
     }
     .reg-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .reg-modal {
       background: white;
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--shadow-xl);
-      padding: 40px 36px;
-      max-width: 600px;
+      padding: 24px 18px;
+      max-width: 560px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
       border-top: 5px solid var(--accent);
       animation: scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
     }
+    @media(min-width: 768px) {
+      .reg-modal { padding: 40px 36px; max-width: 600px; border-radius: 28px; }
+    }
     .reg-modal h3 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       text-align: center;
+      word-break: break-word;
     }
-    .reg-modal .reg-step {
-      margin-bottom: 20px;
+    @media(min-width: 768px) {
+      .reg-modal h3 { font-size: 20px; margin-bottom: 16px; }
+    }
+    .reg-modal .reg-step { margin-bottom: 16px; }
+    @media(min-width: 768px) {
+      .reg-modal .reg-step { margin-bottom: 20px; }
     }
     .reg-modal label {
       display: block;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
     .reg-modal input {
       width: 100%;
-      padding: 11px 14px;
+      padding: 10px 12px;
       border: 2px solid #e5e7eb;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-size: 14px;
       font-family: inherit;
       transition: var(--transition);
+    }
+    @media(min-width: 768px) {
+      .reg-modal input { padding: 11px 14px; font-size: 15px; }
     }
     .reg-modal input:focus {
       outline: none;
@@ -477,7 +615,10 @@
       border-radius: var(--radius-sm);
       overflow: hidden;
       position: relative;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+    }
+    @media(min-width: 768px) {
+      .reg-camera-area { margin-bottom: 16px; }
     }
     .reg-camera-area video {
       width: 100%;
@@ -486,14 +627,17 @@
     }
     .reg-photo-strip {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+    }
+    @media(min-width: 768px) {
+      .reg-photo-strip { gap: 12px; margin-bottom: 16px; }
     }
     .reg-photo-slot {
-      width: 100px;
-      height: 130px;
+      width: 75px;
+      height: 100px;
       border: 2px dashed #b2dfdb;
       border-radius: var(--radius-xs);
       display: flex;
@@ -504,6 +648,9 @@
       overflow: hidden;
       position: relative;
     }
+    @media(min-width: 768px) {
+      .reg-photo-slot { width: 100px; height: 130px; }
+    }
     .reg-photo-slot img {
       width: 100%;
       height: 100%;
@@ -511,28 +658,37 @@
     }
     .reg-photo-slot.filled { border-color: var(--success); }
     .reg-photo-slot .slot-label {
-      font-size: 10px;
+      font-size: 9px;
       color: #9ca3af;
-      margin-top: 4px;
+      margin-top: 2px;
       text-align: center;
+    }
+    @media(min-width: 768px) {
+      .reg-photo-slot .slot-label { font-size: 10px; margin-top: 4px; }
     }
     .reg-photo-slot.filled .slot-label { color: var(--success); }
     .reg-buttons {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-top: 16px;
+      margin-top: 12px;
+    }
+    @media(min-width: 768px) {
+      .reg-buttons { gap: 12px; margin-top: 16px; }
     }
     .reg-buttons button {
-      padding: 12px 24px;
+      padding: 10px 18px;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
       border: none;
+    }
+    @media(min-width: 768px) {
+      .reg-buttons button { padding: 12px 24px; font-size: 15px; }
     }
     .reg-buttons .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -551,71 +707,93 @@
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #dc2626;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 14px;
-      margin-top: 12px;
+      font-size: 13px;
+      margin-top: 10px;
       display: none;
     }
+    @media(min-width: 768px) {
+      .reg-error { padding: 12px 16px; font-size: 14px; margin-top: 12px; }
+    }
 
+    /* ───── HISTORY PAGE ───── */
     .history-wrap {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 36px 24px;
+      padding: 20px 12px;
+    }
+    @media(min-width: 768px) {
+      .history-wrap { padding: 36px 24px; }
     }
     .history-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 28px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 10px;
+    }
+    @media(min-width: 768px) {
+      .history-header { margin-bottom: 28px; gap: 14px; }
     }
     .history-title-group h2 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 22px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--primary);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .history-title-group h2 { font-size: 22px; gap: 10px; }
     }
     .history-title-group p {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--text-sub);
-      margin-top: 4px;
+      margin-top: 2px;
+    }
+    @media(min-width: 768px) {
+      .history-title-group p { font-size: 14px; margin-top: 4px; }
     }
     .count-badge {
       background: var(--primary);
       color: white;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
       letter-spacing: 0.02em;
       align-self: flex-start;
-      margin-top: 4px;
+      margin-top: 2px;
     }
-
+    @media(min-width: 768px) {
+      .count-badge { font-size: 12px; padding: 4px 12px; margin-top: 4px; }
+    }
     .table-card {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      overflow: hidden;
+      overflow-x: auto;
       border: 1px solid var(--border);
     }
-    .report-table { width: 100%; border-collapse: collapse; }
+    .report-table { width: 100%; border-collapse: collapse; min-width: 500px; }
     .report-table thead tr {
       background: linear-gradient(135deg, #0c5c55 0%, var(--primary) 60%, var(--primary-mid) 100%);
     }
     .report-table thead th {
-      padding: 15px 20px;
+      padding: 10px 12px;
       text-align: left;
       color: rgba(255,255,255,0.95);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
       letter-spacing: 0.02em;
+    }
+    @media(min-width: 768px) {
+      .report-table thead th { padding: 15px 20px; font-size: 13px; }
     }
     .report-table tbody tr {
       border-bottom: 1px solid #f0fdf4;
@@ -624,36 +802,48 @@
     .report-table tbody tr:last-child { border-bottom: none; }
     .report-table tbody tr:hover { background: #f0fdfa; }
     .report-table td {
-      padding: 16px 20px;
-      font-size: 14px;
+      padding: 10px 12px;
+      font-size: 12px;
       color: var(--text);
       vertical-align: middle;
     }
-    .num-cell { color: #aaa; font-size: 12px; font-weight: 500; }
+    @media(min-width: 768px) {
+      .report-table td { padding: 16px 20px; font-size: 14px; }
+    }
+    .num-cell { color: #aaa; font-size: 11px; font-weight: 500; }
+    @media(min-width: 768px) {
+      .num-cell { font-size: 12px; }
+    }
     .type-tag {
       display: inline-flex;
       align-items: center;
-      padding: 4px 11px;
+      padding: 3px 8px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 600;
       background: #ccfbf1;
       color: var(--primary);
       white-space: nowrap;
       border: 1px solid #99f6e4;
     }
-    .title-cell { font-weight: 500; }
-    .date-cell { white-space: nowrap; font-weight: 600; color: var(--primary-mid); font-size: 13px; }
+    @media(min-width: 768px) {
+      .type-tag { padding: 4px 11px; font-size: 12px; }
+    }
+    .title-cell { font-weight: 500; word-break: break-word; }
+    .date-cell { white-space: nowrap; font-weight: 600; color: var(--primary-mid); font-size: 11px; }
+    @media(min-width: 768px) {
+      .date-cell { font-size: 13px; }
+    }
     .btn-edit {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
@@ -661,101 +851,146 @@
       transition: var(--transition);
       box-shadow: 0 2px 10px rgba(15,118,110,0.25);
     }
+    @media(min-width: 768px) {
+      .btn-edit { padding: 8px 18px; border-radius: 8px; font-size: 13px; gap: 6px; }
+    }
     .btn-edit:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(15,118,110,0.35); }
     .btn-edit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
     .empty-state {
-      padding: 70px 20px;
+      padding: 40px 16px;
       text-align: center;
       color: #aaa;
     }
-    .empty-state .empty-icon { font-size: 52px; display: block; margin-bottom: 16px; }
-    .empty-state p { font-size: 15px; }
+    @media(min-width: 768px) {
+      .empty-state { padding: 70px 20px; }
+    }
+    .empty-state .empty-icon { font-size: 36px; display: block; margin-bottom: 10px; }
+    @media(min-width: 768px) {
+      .empty-state .empty-icon { font-size: 52px; margin-bottom: 16px; }
+    }
+    .empty-state p { font-size: 13px; }
+    @media(min-width: 768px) {
+      .empty-state p { font-size: 15px; }
+    }
 
+    /* ───── EDIT FORM PAGE ───── */
     .edit-wrap {
       max-width: 980px;
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 16px 10px;
+    }
+    @media(min-width: 768px) {
+      .edit-wrap { padding: 32px 24px; }
     }
     .edit-header {
       display: flex;
       align-items: center;
-      gap: 18px;
-      margin-bottom: 28px;
+      gap: 10px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
+    }
+    @media(min-width: 768px) {
+      .edit-header { gap: 18px; margin-bottom: 28px; }
     }
     .btn-back {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       background: white;
       border: 2px solid var(--border2);
       color: var(--primary);
-      padding: 10px 20px;
+      padding: 8px 14px;
       border-radius: var(--radius-sm);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
       box-shadow: var(--shadow-sm);
+      white-space: nowrap;
+    }
+    @media(min-width: 768px) {
+      .btn-back { padding: 10px 20px; font-size: 14px; gap: 8px; }
     }
     .btn-back:hover { background: var(--bg); border-color: var(--primary-light); }
     .edit-title-group h2 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 21px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--primary);
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .edit-title-group h2 { font-size: 21px; }
     }
     .edit-title-group p {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--text-sub);
-      margin-top: 3px;
+      margin-top: 2px;
+    }
+    @media(min-width: 768px) {
+      .edit-title-group p { font-size: 13px; margin-top: 3px; }
     }
 
     .form-section {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 30px 34px;
-      margin-bottom: 20px;
+      padding: 18px 14px;
+      margin-bottom: 14px;
       border: 1px solid var(--border);
-      border-left: 5px solid var(--primary);
+      border-left: 4px solid var(--primary);
       transition: box-shadow var(--transition);
+    }
+    @media(min-width: 768px) {
+      .form-section { padding: 30px 34px; margin-bottom: 20px; border-left-width: 5px; }
     }
     .form-section:hover { box-shadow: var(--shadow-lg); }
     .form-section h3 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding-bottom: 14px;
+      gap: 6px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
+      word-break: break-word;
     }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-    @media(max-width: 640px) {
-      .form-row, .form-row.cols3 { grid-template-columns: 1fr; }
+    @media(min-width: 768px) {
+      .form-section h3 { font-size: 16px; margin-bottom: 24px; gap: 10px; padding-bottom: 14px; }
     }
-    .form-group { margin-bottom: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media(min-width: 640px) {
+      .form-row { grid-template-columns: 1fr 1fr; gap: 20px; }
+    }
+    .form-row.cols3 { grid-template-columns: 1fr; }
+    @media(min-width: 640px) {
+      .form-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .form-group { margin-bottom: 12px; }
+    @media(min-width: 768px) {
+      .form-group { margin-bottom: 18px; }
+    }
     .form-group:last-child { margin-bottom: 0; }
     label {
       display: block;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text);
-      margin-bottom: 7px;
+      margin-bottom: 5px;
       letter-spacing: 0.01em;
+    }
+    @media(min-width: 768px) {
+      label { font-size: 13px; margin-bottom: 7px; }
     }
     label .req { color: var(--danger); margin-left: 2px; }
     input[type=text], input[type=number], input[type=date],
     select, textarea {
       width: 100%;
-      padding: 11px 14px;
+      padding: 10px 12px;
       border: 2px solid #e5e7eb;
       border-radius: var(--radius-sm);
       font-size: 14px;
@@ -764,6 +999,10 @@
       background: #fff;
       color: var(--text);
     }
+    @media(min-width: 768px) {
+      input[type=text], input[type=number], input[type=date],
+      select, textarea { padding: 11px 14px; }
+    }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary-light);
@@ -771,13 +1010,19 @@
     }
     input.error-field { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
     input[readonly], input:disabled { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
-    textarea { resize: vertical; min-height: 110px; }
+    textarea { resize: vertical; min-height: 90px; }
+    @media(min-width: 768px) {
+      textarea { min-height: 110px; }
+    }
     .char-counter {
       text-align: right;
-      font-size: 11px;
+      font-size: 10px;
       color: #9ca3af;
-      margin-top: 5px;
+      margin-top: 4px;
       font-weight: 500;
+    }
+    @media(min-width: 768px) {
+      .char-counter { font-size: 11px; margin-top: 5px; }
     }
     .char-counter.warn { color: var(--accent); }
     .char-counter.over { color: var(--danger); }
@@ -786,11 +1031,14 @@
       position: relative;
       border: 2px dashed #b2dfdb;
       border-radius: var(--radius-sm);
-      padding: 20px 16px;
+      padding: 14px 10px;
       text-align: center;
       cursor: pointer;
       transition: var(--transition);
       background: var(--bg2);
+    }
+    @media(min-width: 768px) {
+      .file-upload-box { padding: 20px 16px; }
     }
     .file-upload-box:hover { border-color: var(--primary); background: #d1faf4; }
     .file-upload-box input[type=file] {
@@ -801,50 +1049,75 @@
       cursor: pointer;
       padding: 0; border: none; background: transparent;
     }
-    .file-upload-box .upload-icon { font-size: 22px; display: block; margin-bottom: 6px; pointer-events: none; }
-    .file-upload-box p { font-size: 13px; color: #6b7280; pointer-events: none; }
-    .file-preview { margin-top: 12px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
-    .file-preview img { max-width: 100px; max-height: 100px; border-radius: 8px; border: 2px solid var(--border); object-fit: cover; }
-    .file-preview .file-name { font-size: 12px; color: var(--primary); font-weight: 500; }
+    .file-upload-box .upload-icon { font-size: 18px; display: block; margin-bottom: 4px; pointer-events: none; }
+    @media(min-width: 768px) {
+      .file-upload-box .upload-icon { font-size: 22px; margin-bottom: 6px; }
+    }
+    .file-upload-box p { font-size: 11px; color: #6b7280; pointer-events: none; }
+    @media(min-width: 768px) {
+      .file-upload-box p { font-size: 13px; }
+    }
+    .file-preview { margin-top: 8px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
+    @media(min-width: 768px) {
+      .file-preview { margin-top: 12px; gap: 8px; }
+    }
+    .file-preview img { max-width: 70px; max-height: 70px; border-radius: 8px; border: 2px solid var(--border); object-fit: cover; }
+    @media(min-width: 768px) {
+      .file-preview img { max-width: 100px; max-height: 100px; }
+    }
+    .file-preview .file-name { font-size: 11px; color: var(--primary); font-weight: 500; word-break: break-all; }
+    @media(min-width: 768px) {
+      .file-preview .file-name { font-size: 12px; }
+    }
     .existing-note {
-      font-size: 11px;
+      font-size: 10px;
       color: #0f766e;
-      margin-top: 8px;
+      margin-top: 6px;
       background: #f0fdfa;
       border: 1px solid #99f6e4;
       border-radius: 6px;
-      padding: 5px 10px;
+      padding: 4px 8px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
+    }
+    @media(min-width: 768px) {
+      .existing-note { font-size: 11px; margin-top: 8px; padding: 5px 10px; gap: 4px; }
     }
 
     .save-bar {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 24px 34px;
+      padding: 16px 14px;
       display: flex;
       justify-content: flex-end;
-      gap: 14px;
+      gap: 10px;
       border: 1px solid var(--border);
-      margin-bottom: 48px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    @media(min-width: 768px) {
+      .save-bar { padding: 24px 34px; gap: 14px; margin-bottom: 48px; }
     }
     .btn-save {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
       border: none;
-      padding: 13px 38px;
+      padding: 11px 24px;
       border-radius: var(--radius-sm);
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       box-shadow: 0 4px 18px rgba(15,118,110,0.30);
       transition: var(--transition);
+    }
+    @media(min-width: 768px) {
+      .btn-save { padding: 13px 38px; font-size: 16px; gap: 8px; }
     }
     .btn-save:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(15,118,110,0.40); }
     .btn-save:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
@@ -852,16 +1125,20 @@
       background: white;
       border: 2px solid #e5e7eb;
       color: #6b7280;
-      padding: 13px 28px;
+      padding: 11px 20px;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
     }
+    @media(min-width: 768px) {
+      .btn-cancel { padding: 13px 28px; font-size: 15px; }
+    }
     .btn-cancel:hover { border-color: #d1d5db; background: #f9fafb; }
 
+    /* ───── LOADING OVERLAY ───── */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -877,14 +1154,27 @@
     .loading-spinner-wrap {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 24px;
-      padding: 44px 52px;
+      border-radius: 20px;
+      padding: 28px 32px;
       text-align: center;
     }
-    .loading-overlay img { width: 110px; height: 110px; border-radius: 16px; }
-    .loading-text { color: rgba(255,255,255,0.9); margin-top: 20px; font-size: 16px; font-weight: 500; }
-    .loading-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 6px; }
+    @media(min-width: 768px) {
+      .loading-spinner-wrap { padding: 44px 52px; border-radius: 24px; }
+    }
+    .loading-overlay img { width: 80px; height: 80px; border-radius: 16px; }
+    @media(min-width: 768px) {
+      .loading-overlay img { width: 110px; height: 110px; }
+    }
+    .loading-text { color: rgba(255,255,255,0.9); margin-top: 14px; font-size: 14px; font-weight: 500; }
+    @media(min-width: 768px) {
+      .loading-text { margin-top: 20px; font-size: 16px; }
+    }
+    .loading-sub { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 4px; }
+    @media(min-width: 768px) {
+      .loading-sub { font-size: 13px; margin-top: 6px; }
+    }
 
+    /* ───── RESULT MODAL ───── */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -894,92 +1184,115 @@
       z-index: 9998;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
     }
     .modal-backdrop.active { display: flex; animation: fadeIn 0.25s ease; }
     @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
     .modal-card {
       background: white;
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--shadow-xl);
-      padding: 48px 44px;
-      max-width: 480px;
+      padding: 28px 22px;
+      max-width: 440px;
       width: 100%;
       text-align: center;
       border-top: 5px solid var(--success);
       animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
+    @media(min-width: 768px) {
+      .modal-card { padding: 48px 44px; max-width: 480px; border-radius: 28px; }
+    }
     @keyframes scaleIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
-    .modal-success-icon { font-size: 56px; display: block; margin-bottom: 18px; }
+    .modal-success-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+    @media(min-width: 768px) {
+      .modal-success-icon { font-size: 56px; margin-bottom: 18px; }
+    }
     .modal-card h3 {
       font-family: 'Noto Serif Thai', serif;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--success);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      word-break: break-word;
     }
-    .modal-card .modal-desc { color: var(--text-sub); font-size: 14px; margin-bottom: 4px; }
+    @media(min-width: 768px) {
+      .modal-card h3 { font-size: 22px; margin-bottom: 10px; }
+    }
+    .modal-card .modal-desc { color: var(--text-sub); font-size: 12px; margin-bottom: 3px; }
+    @media(min-width: 768px) {
+      .modal-card .modal-desc { font-size: 14px; margin-bottom: 4px; }
+    }
     .modal-report-num {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text);
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 18px;
-      margin: 18px 0;
+      padding: 8px 14px;
+      margin: 12px 0;
       display: inline-block;
+      word-break: break-all;
     }
-    .modal-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+    @media(min-width: 768px) {
+      .modal-report-num { font-size: 14px; padding: 10px 18px; margin: 18px 0; }
+    }
+    .modal-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    @media(min-width: 768px) {
+      .modal-buttons { gap: 12px; margin-top: 6px; }
+    }
     .modal-btn {
-      padding: 13px 20px;
+      padding: 11px 16px;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       border: none;
       transition: var(--transition);
+      width: 100%;
+    }
+    @media(min-width: 768px) {
+      .modal-btn { padding: 13px 20px; font-size: 15px; }
     }
     .modal-btn:hover { transform: translateY(-1px); }
     .modal-btn.primary { background: linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; box-shadow:0 4px 14px rgba(15,118,110,0.28); }
     .modal-btn.secondary { background: linear-gradient(135deg,#059669,#10b981); color:white; box-shadow:0 4px 14px rgba(5,150,105,0.25); }
     .modal-btn.outline { background: white; border: 2px solid var(--border); color: var(--primary); }
 
+    /* ───── SPINNER ───── */
     .spinner {
       display: inline-block;
-      width: 16px; height: 16px;
+      width: 14px; height: 14px;
       border: 2px solid rgba(255,255,255,0.35);
       border-top-color: white;
       border-radius: 50%;
       animation: spin 0.65s linear infinite;
       vertical-align: middle;
     }
+    @media(min-width: 768px) {
+      .spinner { width: 16px; height: 16px; }
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ───── ALERTS ───── */
     .alert-box {
-      padding: 14px 18px;
+      padding: 10px 14px;
       border-radius: 10px;
-      font-size: 14px;
-      margin-bottom: 20px;
+      font-size: 12px;
+      margin-bottom: 14px;
       animation: slideDown 0.2s ease;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
+      word-break: break-word;
+    }
+    @media(min-width: 768px) {
+      .alert-box { padding: 14px 18px; font-size: 14px; margin-bottom: 20px; gap: 10px; }
     }
     .alert-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
     .alert-box.info { background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; }
     .alert-box.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
-
-    @media(max-width: 640px) {
-      .topbar { padding: 0 16px; }
-      .topbar-brand-text { font-size: 13px; }
-      .login-card-inner { padding: 36px 24px; }
-      .history-wrap, .edit-wrap { padding: 20px 14px; }
-      .form-section { padding: 22px 18px; }
-      .save-bar { padding: 18px; }
-      .btn-save { padding: 12px 24px; font-size: 14px; }
-    }
   </style>
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
@@ -1090,11 +1403,11 @@
       <table class="report-table" id="reportTable">
         <thead>
           <tr>
-            <th style="width:48px">#</th>
+            <th style="width:40px">#</th>
             <th>ประเภท</th>
             <th>เรื่อง / หัวข้อการอบรม</th>
             <th>วันที่อบรม</th>
-            <th style="width:150px"></th>
+            <th style="width:120px"></th>
           </tr>
         </thead>
         <tbody id="reportTableBody">
@@ -1120,96 +1433,45 @@
     <div class="form-section">
       <h3>📋 ข้อมูลทั่วไปและผู้รายงาน</h3>
       <div class="form-row">
-        <div class="form-group">
-          <label>เลขที่รายงาน</label>
-          <input type="text" id="e_reportNumber" readonly>
-        </div>
-        <div class="form-group">
-          <label>วันที่ทำรายงาน <span class="req">*</span></label>
-          <input type="date" id="e_reportDate">
-        </div>
+        <div class="form-group"><label>เลขที่รายงาน</label><input type="text" id="e_reportNumber" readonly></div>
+        <div class="form-group"><label>วันที่ทำรายงาน <span class="req">*</span></label><input type="date" id="e_reportDate"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>กลุ่มสาระ <span class="req">*</span></label>
-          <select id="e_department"><option value="">กำลังโหลด...</option></select>
-        </div>
-        <div class="form-group">
-          <label>ชื่อผู้รายงาน <span class="req">*</span></label>
-          <select id="e_reporterName"><option value="">เลือกชื่อผู้รายงาน</option></select>
-        </div>
+        <div class="form-group"><label>กลุ่มสาระ <span class="req">*</span></label><select id="e_department"><option value="">กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>ชื่อผู้รายงาน <span class="req">*</span></label><select id="e_reporterName"><option value="">เลือกชื่อผู้รายงาน</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>ตำแหน่ง <span class="req">*</span></label>
-          <select id="e_position"><option value="">กำลังโหลด...</option></select>
-        </div>
+        <div class="form-group"><label>ตำแหน่ง <span class="req">*</span></label><select id="e_position"><option value="">กำลังโหลด...</option></select></div>
       </div>
     </div>
 
     <div class="form-section">
       <h3>📄 ข้อมูลการอ้างอิง</h3>
       <div class="form-row">
-        <div class="form-group">
-          <label>ประเภทการไปราชการ</label>
-          <select id="e_type"><option value="">กำลังโหลด...</option></select>
-        </div>
-        <div class="form-group">
-          <label>อ้างถึง</label>
-          <select id="e_reference"><option value="">กำลังโหลด...</option></select>
-        </div>
+        <div class="form-group"><label>ประเภทการไปราชการ</label><select id="e_type"><option value="">กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>อ้างถึง</label><select id="e_reference"><option value="">กำลังโหลด...</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>หน่วยงานที่ออกเอกสาร</label>
-          <input type="text" id="e_invitingOrg" placeholder="เช่น สพม.สิงห์บุรี">
-        </div>
-        <div class="form-group">
-          <label>เลขที่เอกสาร</label>
-          <input type="text" id="e_invitationNumber" placeholder="เช่น ศธ 04234/1234">
-        </div>
+        <div class="form-group"><label>หน่วยงานที่ออกเอกสาร</label><input type="text" id="e_invitingOrg" placeholder="เช่น สพม.สิงห์บุรี"></div>
+        <div class="form-group"><label>เลขที่เอกสาร</label><input type="text" id="e_invitationNumber" placeholder="เช่น ศธ 04234/1234"></div>
       </div>
-      <div class="form-group" style="max-width:50%">
-        <label>ลงวันที่</label>
-        <input type="date" id="e_invitationDate">
-      </div>
+      <div class="form-group" style="max-width:100%"><label>ลงวันที่</label><input type="date" id="e_invitationDate"></div>
     </div>
 
     <div class="form-section">
       <h3>🎓 ข้อมูลการอบรม</h3>
       <div class="form-row">
-        <div class="form-group">
-          <label>วันที่รับการอบรม <span class="req">*</span></label>
-          <input type="date" id="e_trainingStartDate">
-        </div>
-        <div class="form-group">
-          <label>ถึงวันที่ <span class="req">*</span></label>
-          <input type="date" id="e_trainingEndDate">
-        </div>
+        <div class="form-group"><label>วันที่รับการอบรม <span class="req">*</span></label><input type="date" id="e_trainingStartDate"></div>
+        <div class="form-group"><label>ถึงวันที่ <span class="req">*</span></label><input type="date" id="e_trainingEndDate"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>จำนวนวัน <span class="req">*</span></label>
-          <input type="number" id="e_days" min="1" placeholder="จำนวนวัน">
-        </div>
-        <div class="form-group">
-          <label>ชั่วโมงการอบรม <span class="req">*</span></label>
-          <input type="number" id="e_hours" min="1" step="0.5" placeholder="ชั่วโมง">
-        </div>
+        <div class="form-group"><label>จำนวนวัน <span class="req">*</span></label><input type="number" id="e_days" min="1" placeholder="จำนวนวัน"></div>
+        <div class="form-group"><label>ชั่วโมงการอบรม <span class="req">*</span></label><input type="number" id="e_hours" min="1" step="0.5" placeholder="ชั่วโมง"></div>
       </div>
-      <div class="form-group">
-        <label>เรื่องอบรม <span class="req">*</span></label>
-        <input type="text" id="e_trainingTitle" placeholder="หัวข้อการอบรม">
-      </div>
+      <div class="form-group"><label>เรื่องอบรม <span class="req">*</span></label><input type="text" id="e_trainingTitle" placeholder="หัวข้อการอบรม"></div>
       <div class="form-row">
-        <div class="form-group">
-          <label>จัดโดย <span class="req">*</span></label>
-          <input type="text" id="e_organizer" placeholder="หน่วยงานผู้จัด">
-        </div>
-        <div class="form-group">
-          <label>สถานที่ <span class="req">*</span></label>
-          <input type="text" id="e_location" placeholder="สถานที่อบรม">
-        </div>
+        <div class="form-group"><label>จัดโดย <span class="req">*</span></label><input type="text" id="e_organizer" placeholder="หน่วยงานผู้จัด"></div>
+        <div class="form-group"><label>สถานที่ <span class="req">*</span></label><input type="text" id="e_location" placeholder="สถานที่อบรม"></div>
       </div>
     </div>
 
@@ -1242,57 +1504,37 @@
         <div class="form-group"><label>เอกสาร 3</label><input type="text" id="e_doc3"></div>
         <div class="form-group"><label>เอกสาร 4</label><input type="text" id="e_doc4"></div>
       </div>
-      <div class="form-group" style="max-width:50%"><label>เอกสาร 5</label><input type="text" id="e_doc5"></div>
+      <div class="form-group" style="max-width:100%"><label>เอกสาร 5</label><input type="text" id="e_doc5"></div>
     </div>
 
     <div class="form-section">
       <h3>📸 อัปโหลดเอกสารและรูปภาพ</h3>
-      <p style="font-size:13px;color:#6b7280;margin-bottom:22px;">หากไม่อัปโหลดใหม่ ระบบจะใช้ไฟล์เดิมโดยอัตโนมัติ</p>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">หากไม่อัปโหลดใหม่ ระบบจะใช้ไฟล์เดิมโดยอัตโนมัติ</p>
       <div class="form-row">
         <div class="form-group">
           <label>เอกสารประกอบการอบรม</label>
-          <div class="file-upload-box">
-            <input type="file" id="e_trainingDoc" accept=".pdf,.doc,.docx">
-            <span class="upload-icon">📄</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p>
-            <div class="file-preview" id="prev_trainingDoc"></div>
-          </div>
+          <div class="file-upload-box"><input type="file" id="e_trainingDoc" accept=".pdf,.doc,.docx"><span class="upload-icon">📄</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_trainingDoc"></div></div>
         </div>
         <div class="form-group">
           <label>หนังสือเชิญ / คำสั่ง</label>
-          <div class="file-upload-box">
-            <input type="file" id="e_invitationDoc" accept=".pdf,.doc,.docx">
-            <span class="upload-icon">📄</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p>
-            <div class="file-preview" id="prev_invitationDoc"></div>
-          </div>
+          <div class="file-upload-box"><input type="file" id="e_invitationDoc" accept=".pdf,.doc,.docx"><span class="upload-icon">📄</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_invitationDoc"></div></div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label>รูปที่ 1 (ภาพกับป้ายงาน)</label>
-          <div class="file-upload-box">
-            <input type="file" id="e_pic1" accept="image/*">
-            <span class="upload-icon">🖼️</span><p>คลิกเพื่อเลือกรูปใหม่</p>
-            <div class="file-preview" id="prev_pic1"></div>
-          </div>
+          <div class="file-upload-box"><input type="file" id="e_pic1" accept="image/*"><span class="upload-icon">🖼️</span><p>คลิกเพื่อเลือกรูปใหม่</p><div class="file-preview" id="prev_pic1"></div></div>
           <div id="note_pic1"></div>
         </div>
         <div class="form-group">
           <label>รูปที่ 2 (ภาพขณะรับการอบรม)</label>
-          <div class="file-upload-box">
-            <input type="file" id="e_pic2" accept="image/*">
-            <span class="upload-icon">🖼️</span><p>คลิกเพื่อเลือกรูปใหม่</p>
-            <div class="file-preview" id="prev_pic2"></div>
-          </div>
+          <div class="file-upload-box"><input type="file" id="e_pic2" accept="image/*"><span class="upload-icon">🖼️</span><p>คลิกเพื่อเลือกรูปใหม่</p><div class="file-preview" id="prev_pic2"></div></div>
           <div id="note_pic2"></div>
         </div>
       </div>
-      <div class="form-group" style="max-width:460px">
+      <div class="form-group" style="max-width:100%">
         <label>เกียรติบัตร</label>
-        <div class="file-upload-box">
-          <input type="file" id="e_certificate" accept="image/*,.pdf">
-          <span class="upload-icon">🏆</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p>
-          <div class="file-preview" id="prev_certificate"></div>
-        </div>
+        <div class="file-upload-box"><input type="file" id="e_certificate" accept="image/*,.pdf"><span class="upload-icon">🏆</span><p>คลิกเพื่อเลือกไฟล์ใหม่</p><div class="file-preview" id="prev_certificate"></div></div>
         <div id="note_certificate"></div>
       </div>
     </div>
@@ -1310,17 +1552,31 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3
 const SHEET_ID = '1meRq0Cq8C-ToNFIhkbKN5AiEfS29PGE199khwCzU8MU';
 const REG_DRIVE_FOLDER_ID = '1Vi9WlZaQ2gsWG64_e5sU1Gark-3gED6A';
 
-// ═══════════════════════════════════ FACE SETTINGS ═══════════════════════════
+/*
+  ╔══════════════════════════════════════════════════════════════╗
+  ║               FACE LOGIN SETTINGS                          ║
+  ║  เปลี่ยนค่าตัวเลขด้านล่างนี้เพื่อปรับความเข้มงวด            ║
+  ║  • STRICT_DISTANCE: ระยะสูงสุดที่ถือว่าผ่าน (ยิ่งน้อย=เข้ม) ║
+  ║    เช่น 0.45 = 55% → เข้มมาก, 0.65 = 35% → ง่าย            ║
+  ║  • MATCH_DISTANCE: ระยะที่ถือว่าตรง 1 รูป (ยิ่งน้อย=เข้ม)   ║
+  ║    ควรตั้งให้มากกว่า STRICT_DISTANCE เล็กน้อย               ║
+  ║  • REQUIRED_MATCHES: จำนวนรูปที่ต้องตรงขั้นต่ำ (1-3)       ║
+  ║  • GAP_DISTANCE: ระยะห่างจากอันดับ 2 (ยิ่งมาก=ปลอดภัยขึ้น) ║
+  ╚══════════════════════════════════════════════════════════════╝
+*/
 const FACE_SETTINGS = Object.freeze({
   VIDEO_WIDTH: 640,
   VIDEO_HEIGHT: 480,
   FACING_MODE: 'user',
-  SCAN_INTERVAL: 300,
-  DETECTION_SCORE: 0.5,
-  STRICT_DISTANCE: 0.55,
-  MATCH_DISTANCE: 0.60,
-  REQUIRED_MATCHES: 2,
-  GAP_DISTANCE: 0.08,
+  SCAN_INTERVAL: 300,           // ตรวจจับทุกกี่ ms
+  
+  // ★★★ ปรับค่าต่อไปนี้เพื่อเปลี่ยนความเข้มงวด ★★★
+  DETECTION_SCORE: 0.5,        // ขั้นต่ำในการตรวจจับใบหน้า (0-1)
+  STRICT_DISTANCE: 0.45,       // ระยะสูงสุดที่ถือว่าใช่ (75% similarity) ← เปลี่ยนตรงนี้!
+  MATCH_DISTANCE: 0.50,        // ระยะที่ถือว่าตรง 1 รูป (70% similarity) ← เปลี่ยนตรงนี้!
+  REQUIRED_MATCHES: 2,         // ต้องตรงกี่รูปจาก 3 รูป
+  GAP_DISTANCE: 0.08,          // ต้องห่างจากอันดับ 2 เท่าไหร่
+  
   TOTAL_PHOTOS: 3,
   JPEG_QUALITY: 0.85
 });
@@ -1498,6 +1754,12 @@ function stopFacialCamera() {
   matchedUser = null;
 }
 
+/*
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  facialScanTick() - ฟังก์ชันสแกนใบหน้าหลัก                 ║
+  ║  แก้ไข logic ได้ตาม comment ใน FACE_SETTINGS ด้านบน        ║
+  ╚══════════════════════════════════════════════════════════════╝
+*/
 async function facialScanTick() {
   if (!faceApiReady || !facialStream || faceDB.length === 0) return;
   const video = document.getElementById('facialVideo');
@@ -1507,7 +1769,15 @@ async function facialScanTick() {
   try {
     const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: FACE_SETTINGS.DETECTION_SCORE })).withFaceLandmarks(true).withFaceDescriptor();
     const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (!detection) { statusEl.textContent = '🔍 กำลังมองหาใบหน้า... กรุณามองกล้อง'; statusEl.className = 'facial-status'; return; }
+    
+    // ถ้าไม่พบใบหน้าเลย
+    if (!detection) { 
+      statusEl.textContent = '🔍 กำลังมองหาใบหน้า... กรุณามองกล้อง'; 
+      statusEl.className = 'facial-status'; 
+      return; 
+    }
+    
+    // วาดกรอบใบหน้า
     const dims = faceapi.matchDimensions(canvas, video, true);
     const resized = faceapi.resizeResults(detection, dims);
     ctx.strokeStyle = '#14b8a6'; ctx.lineWidth = 3;
@@ -1515,6 +1785,8 @@ async function facialScanTick() {
 
     const descriptor = detection.descriptor;
     const results = [];
+    
+    // เปรียบเทียบกับทุกคนในฐานข้อมูล
     for (const user of faceDB) {
       if (!user.descriptors || user.descriptors.length === 0) continue;
       let bestDistance = Infinity, matchCount = 0;
@@ -1524,39 +1796,133 @@ async function facialScanTick() {
         if (distance < bestDistance) bestDistance = distance;
         if (distance <= FACE_SETTINGS.MATCH_DISTANCE) matchCount++;
       }
-      results.push({ name: user.name, distance: bestDistance, similarity: Math.max(0, (1 - bestDistance) * 100), matchCount, rowIndex: user.rowIndex });
+      // แปลง distance เป็น % similarity: 0 = 100%เหมือน, 1 = 0%เหมือน
+      const similarity = Math.max(0, (1 - bestDistance) * 100);
+      results.push({ name: user.name, distance: bestDistance, similarity: similarity, matchCount, rowIndex: user.rowIndex });
     }
-    if (results.length === 0) { statusEl.textContent = '🔍 ไม่พบข้อมูลใบหน้าในระบบ'; statusEl.className = 'facial-status'; return; }
+    
+    // ไม่มีใครในระบบที่ลงทะเบียนใบหน้าไว้
+    if (results.length === 0) { 
+      statusEl.textContent = '🔍 ไม่พบผู้ใช้ กรุณาลงทะเบียนเพื่อใช้ Facial Login'; 
+      statusEl.className = 'facial-status error';
+      // แสดง popup แนะนำให้ลงทะเบียน
+      showFacialPopup_noUser();
+      return; 
+    }
+    
+    // เรียงจากเหมือนที่สุดไปน้อยที่สุด
     results.sort((a, b) => a.distance - b.distance);
     const best = results[0], second = results.length > 1 ? results[1] : null;
+
     let decision = null;
-    if (results.length === 1) { if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES) decision = best; }
-    else { if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES && (second.distance - best.distance) > FACE_SETTINGS.GAP_DISTANCE) decision = best; }
-    if (decision) {
-      if (!matchedUser || matchedUser.name !== decision.name) { matchedUser = decision; statusEl.textContent = '✅ พบ: ' + decision.name + ' (' + decision.similarity.toFixed(1) + '%)'; statusEl.className = 'facial-status success'; showFacialPopup(decision); }
+
+    // ── DECISION LOGIC ──
+    if (results.length === 1) {
+      // มีคนเดียวในฐานข้อมูล
+      if (best.distance <= FACE_SETTINGS.STRICT_DISTANCE && best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES) {
+        decision = best;
+      }
     } else {
+      // หลายคน — ต้องชนะขาด
+      if (
+        best.distance <= FACE_SETTINGS.STRICT_DISTANCE &&
+        best.matchCount >= FACE_SETTINGS.REQUIRED_MATCHES &&
+        (second.distance - best.distance) > FACE_SETTINGS.GAP_DISTANCE
+      ) {
+        decision = best;
+      }
+    }
+
+    // ── แสดงผล ──
+    if (decision) {
+      // เจอตัวตนที่ตรง!
+      if (!matchedUser || matchedUser.name !== decision.name) { 
+        matchedUser = decision; 
+        statusEl.textContent = '✅ พบ: ' + decision.name + ' (' + decision.similarity.toFixed(1) + '%)'; 
+        statusEl.className = 'facial-status success'; 
+        showFacialPopup_found(decision); 
+      }
+    } else {
+      // ไม่ผ่านเกณฑ์ — แสดงสาเหตุ
       matchedUser = null;
       let debugMsg = `🔍 ดีสุด: ${best.name} (${best.similarity.toFixed(1)}%, ตรง ${best.matchCount} รูป)`;
-      if (best.distance > FACE_SETTINGS.STRICT_DISTANCE) statusEl.textContent = debugMsg + ' — คะแนนต่ำเกินไป';
-      else if (best.matchCount < FACE_SETTINGS.REQUIRED_MATCHES) statusEl.textContent = debugMsg + ' — ตรงไม่พอ';
-      else if (second && (second.distance - best.distance) <= FACE_SETTINGS.GAP_DISTANCE) statusEl.textContent = debugMsg + ' — ใกล้เคียงกับ ' + second.name + ' เกินไป';
-      else statusEl.textContent = debugMsg;
-      statusEl.className = 'facial-status';
+      if (best.distance > FACE_SETTINGS.STRICT_DISTANCE) {
+        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — คะแนนความตรงต่ำเกินไป (' + best.similarity.toFixed(1) + '%)';
+        showFacialPopup_noUser();
+      } else if (best.matchCount < FACE_SETTINGS.REQUIRED_MATCHES) {
+        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — ตรงเพียง ' + best.matchCount + ' รูป (ต้องการ ' + FACE_SETTINGS.REQUIRED_MATCHES + ')';
+        showFacialPopup_noUser();
+      } else if (second && (second.distance - best.distance) <= FACE_SETTINGS.GAP_DISTANCE) {
+        statusEl.textContent = '🔍 ไม่สามารถระบุตัวตน — ใกล้เคียงกับ ' + second.name + ' เกินไป';
+        statusEl.className = 'facial-status error';
+      } else {
+        statusEl.textContent = '🔍 ไม่พบผู้ใช้ — ไม่ผ่านเกณฑ์การจดจำ';
+        showFacialPopup_noUser();
+      }
+      statusEl.className = 'facial-status error';
     }
   } catch(e) { console.warn('Scan tick error:', e); }
 }
 
 // ═══════════════════════════════════ FACIAL POPUP ════════════════════════════
-function showFacialPopup(user) {
+// Popup เมื่อพบผู้ใช้ที่ตรง
+function showFacialPopup_found(user) {
   playBeep();
   const overlay = document.getElementById('facialPopup');
   const card = document.getElementById('facialPopupCard');
   card.className = 'facial-popup-card';
-  card.innerHTML = `<span class="popup-icon">😊</span><h3>พบใบหน้าผู้ใช้</h3><div class="popup-name">${escHtml(user.name)}</div><div class="popup-detail">ความตรง: ${user.similarity.toFixed(1)}% | ตรง ${user.matchCount}/${FACE_SETTINGS.TOTAL_PHOTOS} รูป</div><button class="btn-confirm-face" onclick="confirmFacialLogin('${escHtml(user.name)}')">✅ ยืนยันล็อกอิน</button><button class="btn-cancel-face" onclick="closeFacialPopup()">❌ ยกเลิก</button>`;
+  card.innerHTML = `
+    <span class="popup-icon">😊</span>
+    <h3>พบใบหน้าผู้ใช้</h3>
+    <div class="popup-name">${escHtml(user.name)}</div>
+    <div class="popup-detail">ความตรง: ${user.similarity.toFixed(1)}% | ตรง ${user.matchCount}/${FACE_SETTINGS.TOTAL_PHOTOS} รูป</div>
+    <button class="btn-confirm-face" onclick="confirmFacialLogin('${escHtml(user.name)}')">✅ ยืนยันล็อกอิน</button>
+    <button class="btn-cancel-face" onclick="closeFacialPopup()">❌ ยกเลิก</button>
+  `;
   overlay.classList.add('active');
 }
-function closeFacialPopup() { document.getElementById('facialPopup').classList.remove('active'); matchedUser = null; }
-function confirmFacialLogin(name) { closeFacialPopup(); stopFacialCamera(); setLoggedInUser(name); }
+
+// Popup เมื่อไม่พบผู้ใช้ — แนะนำให้ลงทะเบียน
+function showFacialPopup_noUser() {
+  // แสดง popup แค่ครั้งเดียว ไม่ให้เด้งซ้ำ
+  if (document.getElementById('facialPopup').classList.contains('active')) return;
+  
+  // หยุดสแกนชั่วคราวเพื่อให้ผู้ใช้กด
+  if (facialScanTimer) { clearInterval(facialScanTimer); facialScanTimer = null; }
+  
+  const overlay = document.getElementById('facialPopup');
+  const card = document.getElementById('facialPopupCard');
+  card.className = 'facial-popup-card error-popup';
+  card.innerHTML = `
+    <span class="popup-icon">❓</span>
+    <h3>ไม่พบผู้ใช้ในระบบ</h3>
+    <div class="popup-detail">ไม่พบบุคคลนี้ในฐานข้อมูล Facial Login<br>กรุณาลงทะเบียนใบหน้าเพื่อใช้งาน</div>
+    <button class="btn-facial-register-popup" onclick="closeFacialPopup(); openRegistration();">📸 ลงทะเบียนใบหน้า</button>
+    <button class="btn-cancel-face" onclick="closeFacialPopup(); resumeFacialScan();">❌ ปิด</button>
+  `;
+  overlay.classList.add('active');
+}
+
+function closeFacialPopup() { 
+  document.getElementById('facialPopup').classList.remove('active'); 
+  matchedUser = null; 
+}
+
+// กลับมาสแกนต่อหลังจากปิด popup
+function resumeFacialScan() {
+  if (faceDB.length > 0 && loginMethod === 'facial') {
+    if (facialScanTimer) clearInterval(facialScanTimer);
+    facialScanTimer = setInterval(facialScanTick, FACE_SETTINGS.SCAN_INTERVAL);
+    document.getElementById('facialStatus').textContent = '🔍 กำลังสแกนใบหน้า...';
+    document.getElementById('facialStatus').className = 'facial-status scanning';
+  }
+}
+
+function confirmFacialLogin(name) { 
+  closeFacialPopup(); 
+  stopFacialCamera(); 
+  setLoggedInUser(name); 
+}
 
 // ═══════════════════════════════════ REGISTRATION ════════════════════════════
 async function openRegistration() {
@@ -1661,7 +2027,7 @@ function renderHistory(reports) {
   tbody.innerHTML = '';
   reports.forEach((r, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="num-cell">${i+1}</td><td><span class="type-tag">${escHtml(r.type||'-')}</span></td><td class="title-cell">${escHtml(r.title||'-')}</td><td class="date-cell">${escHtml(r.dateStr||'-')}</td><td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber||'')}')">✏️ แก้ไขรายงาน</button></td>`;
+    tr.innerHTML = `<td class="num-cell">${i+1}</td><td><span class="type-tag">${escHtml(r.type||'-')}</span></td><td class="title-cell">${escHtml(r.title||'-')}</td><td class="date-cell">${escHtml(r.dateStr||'-')}</td><td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber||'')}')">✏️ แก้ไข</button></td>`;
     tbody.appendChild(tr);
   });
 }
@@ -1698,7 +2064,7 @@ function fillEditForm(d) {
   ['trainingDoc','invitationDoc','pic1','pic2','certificate'].forEach(id => { document.getElementById('prev_' + id).innerHTML = ''; document.getElementById('e_' + id).value = ''; });
   calcDays(); loadDropdownsForEdit(d);
 }
-function setFileNote(id, url) { const el = document.getElementById(id); if (el) el.innerHTML = url ? '<span class="existing-note">📎 มีไฟล์เดิม (ใช้ไฟล์เดิมหากไม่อัปโหลดใหม่)</span>' : ''; }
+function setFileNote(id, url) { const el = document.getElementById(id); if (el) el.innerHTML = url ? '<span class="existing-note">📎 มีไฟล์เดิม</span>' : ''; }
 async function loadDropdownsForEdit(d) {
   if (ddData.departments.length > 0) { setupAllDropdowns(d); return; }
   try { const [depts, positions, types, refs] = await Promise.all([gasGet({ action: 'getDepartments' }), gasGet({ action: 'getDropdownOptions', column: 'position' }), gasGet({ action: 'getDropdownOptions', column: 'type' }), gasGet({ action: 'getDropdownOptions', column: 'reference' })]); ddData.departments = depts || []; ddData.positions = positions || []; ddData.types = types || []; ddData.references = refs || []; dropdownsLoaded = true; } catch(e) {}
